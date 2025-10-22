@@ -1,16 +1,16 @@
 <!--
 Sync Impact Report:
-- Version: 1.0.0 → 1.0.1
-- Change Type: PATCH (Clarification of tooling choices)
+- Version: 1.0.1 → 1.0.2
+- Change Type: PATCH (Addition of internationalization requirement)
 - Principles Modified: None (Technology Stack Constraints section updated)
 - Changes:
-  * Specified pnpm as the package manager (was "npm or pnpm")
-  * Specified Vercel as deployment platform with explicit features
+  * Added internationalization requirement: English (default) and Turkish languages
+  * Updated rationale to include bilingual support justification
 - Templates Status:
   ✅ plan-template.md - Compatible (no updates required)
   ✅ spec-template.md - Compatible (no updates required)
   ✅ tasks-template.md - Compatible (no updates required)
-- Follow-up TODOs: Update README.md and SETUP.md to reference pnpm instead of npm
+- Follow-up TODOs: Update active specs to include i18n requirements where applicable
 -->
 
 # JobE Frontend Constitution
@@ -136,9 +136,12 @@ production changes. Critical for multi-tenant HR application handling sensitive 
 
 **Deployment**: Vercel (with preview deployments for PRs and automatic deployments from develop/main)
 
+**Internationalization**: Application MUST support English (default) and Turkish languages from the start
+
 **Rationale**: These constraints align with project requirements ("Next.js with typescript and
 tailwind"), ensure consistency, leverage ecosystem best practices, and minimize complexity
-through standardization.
+through standardization. Bilingual support (EN/TR) is foundational for target market serving
+both international and Turkish HR professionals.
 
 ## Development Workflow
 
@@ -196,4 +199,4 @@ For day-to-day development guidance and best practices, refer to feature-specifi
 generated via `/speckit.plan`. These plans inherit constraints from this constitution and provide
 context-specific technical decisions.
 
-**Version**: 1.0.1 | **Ratified**: 2025-10-22 | **Last Amended**: 2025-10-22
+**Version**: 1.0.2 | **Ratified**: 2025-10-22 | **Last Amended**: 2025-10-22
