@@ -1,0 +1,67 @@
+{
+  "navigation": {
+    "dashboard": "Gösterge Paneli",
+    "organizations": "Organizasyonlar",
+    "positions": "Pozisyonlar",
+    "questionnaire": "Anket",
+    "analytics": "Analitik",
+    "settings": "Ayarlar"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "retry": "Tekrar Dene",
+    "close": "Kapat",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "add": "Ekle",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "export": "Dışa Aktar",
+    "import": "İçe Aktar",
+    "refresh": "Yenile",
+    "collapse": "Daralt",
+    "expand": "Genişlet"
+  },
+  "header": {
+    "skipToContent": "Ana içeriğe atla",
+    "openMenu": "Gezinme menüsünü aç",
+    "changeLanguage": "Dil değiştir",
+    "selectOrganization": "Organizasyon seç"
+  },
+  "pages": {
+    "dashboard": {
+      "title": "Gösterge Paneli",
+      "description": "JobE İK Yönetim Platformuna Hoş Geldiniz"
+    },
+    "organizations": {
+      "title": "Organizasyonlar",
+      "description": "Organizasyonlarınızı burada yönetin"
+    },
+    "positions": {
+      "title": "Pozisyonlar",
+      "description": "İş pozisyonlarını yönetin"
+    },
+    "questionnaire": {
+      "title": "Anket",
+      "description": "Anket ve analizleri yönetin"
+    },
+    "analytics": {
+      "title": "Analitik",
+      "description": "Analitik ve raporları görüntüleyin"
+    },
+    "settings": {
+      "title": "Ayarlar",
+      "description": "Ayarlarınızı ve tercihlerinizi yönetin"
+    }
+  },
+  "errors": {
+    "orgSwitchFailed": "Organizasyon değiştirilemedi. Lütfen tekrar deneyin.",
+    "navigationFailed": "Gezinme başarısız oldu. Lütfen tekrar deneyin.",
+    "translationLoadFailed": "Çeviriler yüklenemedi. Lütfen sayfayı yenileyin.",
+    "permissionDenied": "Bu kaynağa erişim izniniz yok.",
+    "unexpectedError": "Beklenmeyen bir hata oluştu. Hata Kimliği: {errorId}"
+  }
+}

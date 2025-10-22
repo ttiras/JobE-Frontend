@@ -5,6 +5,14 @@
 **Status**: Draft  
 **Input**: User description: "Create the foundational dashboard layout and navigation structure that serves as the container for all JobE features. This shell establishes the UI/UX patterns, routing structure, and provides a visual map of the entire application."
 
+## Clarifications
+
+### Session 2025-10-22
+
+- Q: For a production dashboard serving HR professionals with sensitive organizational data, what level of observability is required for navigation and context-switching operations? → A: Basic error logging with user-facing error messages (log critical failures like org switch errors, failed navigation, translation loading failures with user-friendly error IDs)
+- Q: How should the dashboard determine which navigation items a user can access? → A: Role-based access control (RBAC) with predefined roles (e.g., Admin, HR Manager, Viewer - navigation filtered by role)
+- Q: When a user switches organizations, how should the dashboard handle data synchronization to ensure a smooth user experience? → A: Optimistic UI with background sync (immediately update header/context, show loading states on data-dependent sections while fetching org-specific data)
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Navigate Between Main Sections (Priority: P1)
@@ -120,7 +128,7 @@ An HR professional with motor impairments or who prefers keyboard navigation sho
 ### Edge Cases
 
 - What happens when a user's session expires while they're navigating between sections? (System should preserve intended destination and redirect after re-authentication)
-- How does navigation handle when a user doesn't have permission to access a particular section? (Nav item should be hidden or disabled with appropriate feedback)
+- How does navigation handle when a user doesn't have permission to access a particular section? (Navigation items not permitted by user's role are hidden from the sidebar; attempting direct URL access redirects to dashboard home with permission denied message)
 - What happens on extremely narrow screens (<320px)? (Layout should still be functional, even if less optimal)
 - How does the system handle navigation when the backend is unreachable? (Show cached navigation structure, display connection status, gracefully degrade)
 - What happens when organization switching fails due to network error? (Show error message, maintain current organization context, allow retry)
@@ -153,10 +161,14 @@ An HR professional with motor impairments or who prefers keyboard navigation sho
 - **FR-019**: System MUST translate all navigation labels, page titles, buttons, form labels, error messages, and system text based on selected language
 - **FR-020**: System MUST update the entire interface immediately when language is changed (no page reload required)
 - **FR-021**: System MUST maintain user-generated content (organization names, position titles, etc.) in their original language regardless of UI language selection
+- **FR-022**: System MUST log critical failures (organization switching errors, navigation failures, translation loading failures) with unique error IDs for troubleshooting
+- **FR-023**: System MUST display user-friendly error messages with error IDs when critical operations fail, allowing users to report issues to support
+- **FR-024**: System MUST filter navigation items based on user's role within the current organization (Admin, HR Manager, or Viewer)
+- **FR-025**: System MUST hide navigation items from users who lack the required role, maintaining a clean interface without disabled/grayed items
 
 ### Assumptions
 
-- Organization switching will use client-side context switching with API calls to fetch organization-specific data
+- Organization switching uses optimistic UI pattern: header/context updates immediately, data-dependent sections show loading states while fetching org-specific data in background
 - Navigation structure is flat (one level deep) for MVP; nested navigation will be added in future iterations if needed
 - User authentication and session management are handled by a separate authentication feature
 - Mobile navigation menu opens as an overlay (not push content to side) for better space utilization
@@ -170,9 +182,10 @@ An HR professional with motor impairments or who prefers keyboard navigation sho
 
 ### Key Entities
 
-- **Navigation Item**: Represents a top-level section in the application (label, icon, route path, permission requirements, active state indicator)
+- **Navigation Item**: Represents a top-level section in the application (label, icon, route path, required roles for access, active state indicator)
 - **Organization Context**: Represents the currently selected organization (ID, name, logo, user's role in that organization)
-- **User Session**: Represents the authenticated user (name, email, accessible organizations, current organization, preferences for sidebar state and language)
+- **User Session**: Represents the authenticated user (name, email, accessible organizations, current organization, role per organization, preferences for sidebar state and language)
+- **User Role**: Represents predefined access levels (Admin, HR Manager, Viewer) with associated navigation permissions
 - **Layout State**: Represents the current UI state (sidebar collapsed/expanded, mobile menu open/closed, viewport size category)
 - **Language Context**: Represents the currently selected language (locale code: 'en' or 'tr', display name, text direction)
 
@@ -202,3 +215,30 @@ An HR professional with motor impairments or who prefers keyboard navigation sho
 - Mobile users report equivalent functionality to desktop users (no "need desktop version" feedback)
 - Turkish users report the interface feels natural and professionally translated (no machine translation complaints)
 - English and Turkish users have equivalent feature access and user experience
+
+## Non-Functional Requirements
+
+### Performance
+
+- **NFR-001**: First Contentful Paint (FCP) < 1.8s on 4G networks
+- **NFR-002**: Largest Contentful Paint (LCP) < 2.5s on 4G networks
+- **NFR-003**: Cumulative Layout Shift (CLS) < 0.1 (no janky layout shifts)
+- **NFR-004**: Organization switching completes < 2 seconds (95th percentile)
+- **NFR-005**: Menu animations complete < 300ms
+- **NFR-006**: Dashboard layout responds to viewport changes within 200ms
+- **NFR-007**: Language switching updates UI within 100ms
+
+### Security
+
+- **NFR-008**: Role-based navigation filtering enforced at both UI and API levels
+- **NFR-009**: Unauthorized route access attempts logged with unique error IDs
+- **NFR-010**: User session data (organization context, preferences) stored securely in localStorage with validation
+- **NFR-011**: No sensitive data (user info, org data) exposed in client-side code or network requests beyond authentication requirements
+
+### Scalability
+
+- **NFR-012**: Navigation component handles up to 20 top-level navigation items without performance degradation
+- **NFR-013**: Organization selector supports >10 organizations with search/filter capability
+- **NFR-014**: Sidebar state management optimized to prevent unnecessary re-renders
+
+## Edge Cases
