@@ -1,0 +1,67 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "organizations": "Organizations",
+    "positions": "Positions",
+    "questionnaire": "Questionnaire",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Try Again",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh",
+    "collapse": "Collapse",
+    "expand": "Expand"
+  },
+  "header": {
+    "skipToContent": "Skip to main content",
+    "openMenu": "Open navigation menu",
+    "changeLanguage": "Change language",
+    "selectOrganization": "Select organization"
+  },
+  "pages": {
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "Welcome to JobE HR Management Platform"
+    },
+    "organizations": {
+      "title": "Organizations",
+      "description": "Manage your organizations here"
+    },
+    "positions": {
+      "title": "Positions",
+      "description": "Manage job positions"
+    },
+    "questionnaire": {
+      "title": "Questionnaire",
+      "description": "Manage questionnaires and surveys"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "description": "View analytics and reports"
+    },
+    "settings": {
+      "title": "Settings",
+      "description": "Manage your settings and preferences"
+    }
+  },
+  "errors": {
+    "orgSwitchFailed": "Failed to switch organization. Please try again.",
+    "navigationFailed": "Navigation failed. Please try again.",
+    "translationLoadFailed": "Failed to load translations. Please refresh the page.",
+    "permissionDenied": "You don't have permission to access this resource.",
+    "unexpectedError": "An unexpected error occurred. Error ID: {errorId}"
+  }
+}
