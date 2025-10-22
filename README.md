@@ -37,7 +37,7 @@ This project follows strict principles defined in [`.specify/memory/constitution
 ### Prerequisites
 
 - Node.js 18+ (or latest LTS)
-- npm or pnpm
+- pnpm (recommended package manager)
 - Git
 
 ### Installation
@@ -48,10 +48,10 @@ git clone <repository-url>
 cd JobE-Frontend
 
 # Install dependencies
-npm install
+pnpm install
 
 # Run development server
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view the application.
@@ -101,29 +101,29 @@ Open [http://localhost:3000](http://localhost:3000) to view the application.
 
 ```bash
 # Run unit tests
-npm test
+pnpm test
 
 # Run tests in watch mode
-npm test -- --watch
+pnpm test -- --watch
 
 # Run E2E tests
-npm run test:e2e
+pnpm test:e2e
 
 # Generate coverage report
-npm test -- --coverage
+pnpm test -- --coverage
 ```
 
 ## Code Quality
 
 ```bash
 # Lint code
-npm run lint
+pnpm lint
 
 # Format code
-npm run format
+pnpm format
 
 # Type check
-npm run type-check
+pnpm type-check
 ```
 
 ## Project Structure

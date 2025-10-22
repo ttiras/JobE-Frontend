@@ -1,13 +1,16 @@
 <!--
 Sync Impact Report:
-- Version: 0.0.0 → 1.0.0
-- Change Type: Initial constitution creation
-- Principles Defined: 6 core principles
+- Version: 1.0.0 → 1.0.1
+- Change Type: PATCH (Clarification of tooling choices)
+- Principles Modified: None (Technology Stack Constraints section updated)
+- Changes:
+  * Specified pnpm as the package manager (was "npm or pnpm")
+  * Specified Vercel as deployment platform with explicit features
 - Templates Status:
   ✅ plan-template.md - Compatible (no updates required)
   ✅ spec-template.md - Compatible (no updates required)
   ✅ tasks-template.md - Compatible (no updates required)
-- Follow-up TODOs: None
+- Follow-up TODOs: Update README.md and SETUP.md to reference pnpm instead of npm
 -->
 
 # JobE Frontend Constitution
@@ -127,11 +130,11 @@ production changes. Critical for multi-tenant HR application handling sensitive 
 
 **Code Quality**: ESLint + Prettier (enforced in CI/CD), TypeScript strict mode
 
-**Package Manager**: npm or pnpm (choose one, document in README)
+**Package Manager**: pnpm (fast, efficient, disk-space optimized)
 
 **Build**: Next.js production build with optimizations enabled
 
-**Deployment**: Vercel or equivalent with preview deployments for PRs
+**Deployment**: Vercel (with preview deployments for PRs and automatic deployments from develop/main)
 
 **Rationale**: These constraints align with project requirements ("Next.js with typescript and
 tailwind"), ensure consistency, leverage ecosystem best practices, and minimize complexity
@@ -193,4 +196,4 @@ For day-to-day development guidance and best practices, refer to feature-specifi
 generated via `/speckit.plan`. These plans inherit constraints from this constitution and provide
 context-specific technical decisions.
 
-**Version**: 1.0.0 | **Ratified**: 2025-10-22 | **Last Amended**: 2025-10-22
+**Version**: 1.0.1 | **Ratified**: 2025-10-22 | **Last Amended**: 2025-10-22

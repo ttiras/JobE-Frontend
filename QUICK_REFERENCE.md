@@ -48,16 +48,16 @@
 
 ```bash
 # Development
-npm run dev                 # Start dev server
-npm test -- --watch         # Run tests in watch mode
-npm run lint               # Check code quality
-npm run format             # Auto-format code
+pnpm dev                   # Start dev server
+pnpm test -- --watch       # Run tests in watch mode
+pnpm lint                  # Check code quality
+pnpm format                # Auto-format code
 
 # Quality Checks
-npm test                   # Run all tests
-npm run test:e2e           # E2E tests
-npm test -- --coverage     # Coverage report
-npm run type-check         # TypeScript validation
+pnpm test                  # Run all tests
+pnpm test:e2e              # E2E tests
+pnpm test -- --coverage    # Coverage report
+pnpm type-check            # TypeScript validation
 
 # Branching
 git checkout develop       # Switch to develop

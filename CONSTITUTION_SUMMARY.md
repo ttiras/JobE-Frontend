@@ -192,15 +192,17 @@ src/
 2. **Install Dependencies**
    ```bash
    # Follow SETUP.md sections 2-5
-   npm install testing libraries, configure Jest, Playwright
+   pnpm add -D jest @testing-library/react @testing-library/jest-dom
+   pnpm add -D @playwright/test
+   # Configure Jest, Playwright
    ```
 
 3. **Verify Setup**
    ```bash
-   npm run type-check
-   npm run lint
-   npm test
-   npm run dev
+   pnpm type-check
+   pnpm lint
+   pnpm test
+   pnpm dev
    ```
 
 4. **Create First Feature Spec**
@@ -290,7 +292,7 @@ src/
    
    # For each task:
    # 1. Write test (RED)
-   npm test -- --watch
+   pnpm test -- --watch
    
    # 2. See test fail
    
@@ -306,10 +308,10 @@ src/
 5. **Review**
    ```bash
    # Before PR
-   npm run type-check  # ✅
-   npm run lint        # ✅
-   npm test            # ✅
-   npm run test:e2e    # ✅
+   pnpm type-check     # ✅
+   pnpm lint           # ✅
+   pnpm test           # ✅
+   pnpm test:e2e       # ✅
    
    # Create PR to develop
    # After approval, merge

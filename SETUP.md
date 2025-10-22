@@ -24,14 +24,14 @@ Answer the prompts:
 
 ```bash
 # Testing dependencies
-npm install --save-dev jest @testing-library/react @testing-library/jest-dom @testing-library/user-event jest-environment-jsdom
+pnpm add -D jest @testing-library/react @testing-library/jest-dom @testing-library/user-event jest-environment-jsdom
 
 # Playwright for E2E testing
-npm install --save-dev @playwright/test
+pnpm add -D @playwright/test
 
 # Additional utilities (add as needed, keep minimal per constitution)
-npm install clsx tailwind-merge
-npm install --save-dev @types/node
+pnpm add clsx tailwind-merge
+pnpm add -D @types/node
 ```
 
 ### 3. Configure Jest
@@ -228,13 +228,13 @@ Add these scripts to `package.json`:
 
 ```bash
 # Install husky for git hooks
-npm install --save-dev husky lint-staged
+pnpm add -D husky lint-staged
 
 # Initialize husky
-npx husky install
+pnpm exec husky install
 
 # Add pre-commit hook
-npx husky add .husky/pre-commit "npx lint-staged"
+pnpm exec husky add .husky/pre-commit "pnpm exec lint-staged"
 ```
 
 Create `.lintstagedrc.json`:
@@ -415,16 +415,16 @@ describe('Button', () => {
 
 ```bash
 # Type check
-npm run type-check
+pnpm type-check
 
 # Run linter
-npm run lint
+pnpm lint
 
 # Run tests
-npm test
+pnpm test
 
 # Start development server
-npm run dev
+pnpm dev
 ```
 
 ### 15. Commit Initial Setup
@@ -443,7 +443,7 @@ git commit -m "chore: initialize Next.js project with testing infrastructure
 - Configure ESLint and Prettier
 - Add sample Button component with tests
 - Create project directory structure
-- Add npm scripts for testing and quality checks
+- Add pnpm scripts for testing and quality checks
 
 All tests passing and type-safe."
 ```
@@ -459,18 +459,18 @@ All tests passing and type-safe."
 ## Troubleshooting
 
 ### Tests Fail After Setup
-- Ensure all dependencies installed: `npm install`
+- Ensure all dependencies installed: `pnpm install`
 - Clear Next.js cache: `rm -rf .next`
 - Check Node version: `node --version` (should be 18+)
 
 ### Type Errors
-- Run `npm run type-check` to see all errors
+- Run `pnpm type-check` to see all errors
 - Ensure `tsconfig.json` paths are correct
 - Check `@types` packages are installed
 
 ### Lint Errors
-- Run `npm run format` to auto-fix formatting
-- Run `npm run lint` to see issues
+- Run `pnpm format` to auto-fix formatting
+- Run `pnpm lint` to see issues
 - Fix any remaining issues manually
 
 ## Constitution Compliance
