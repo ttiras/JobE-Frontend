@@ -4,11 +4,11 @@ import { RegisterForm } from '@/components/auth/register-form'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'auth.register' })
+  const t = await getTranslations({ locale, namespace: 'auth' })
   
   return {
-    title: t('title'),
-    description: t('description'),
+    title: t('register.title'),
+    description: t('register.description'),
   }
 }
 
@@ -24,13 +24,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  */
 export default async function RegisterPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'auth.register' })
+  const t = await getTranslations({ locale, namespace: 'auth' })
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <h1 className="text-3xl font-bold">{t('register.title')}</h1>
         <p className="text-muted-foreground">
-          {t('description')}
+          {t('register.description')}
         </p>
       </div>
       

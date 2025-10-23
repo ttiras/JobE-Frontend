@@ -18,12 +18,8 @@ interface RegisterFormProps {
 type PasswordStrength = 'weak' | 'medium' | 'strong'
 
 export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
-  const t = useTranslations('auth.register')
-  const tValidation = useTranslations('auth.validation')
-  const tA11y = useTranslations('auth.a11y')
-  const tStrength = useTranslations('auth.register.strength')
-  const tRequirements = useTranslations('auth.register.requirements')
-  const tFields = useTranslations('auth.fields')
+  // Use top-level 'auth' namespace; reference nested keys explicitly
+  const tAuth = useTranslations('auth')
   const router = useRouter()
   const pathname = usePathname()
   const locale = pathname?.match(/^\/(en|tr)\b/)?.[1] || 'en'
@@ -64,27 +60,27 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
 
   const validateForm = () => {
     if (!displayName) {
-      setError(tValidation('displayNameRequired'))
+  setError(tAuth('validation.displayNameRequired'))
       return false
     }
     if (!email) {
-      setError(tValidation('emailRequired'))
+  setError(tAuth('validation.emailRequired'))
       return false
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError(tValidation('emailInvalid'))
+  setError(tAuth('validation.emailInvalid'))
       return false
     }
     if (!password) {
-      setError(tValidation('passwordRequired'))
+  setError(tAuth('validation.passwordRequired'))
       return false
     }
     if (password.length < 8) {
-      setError(tValidation('passwordMinLength'))
+  setError(tAuth('validation.passwordMinLength'))
       return false
     }
     if (password !== confirmPassword) {
-      setError(tValidation('passwordMismatch'))
+  setError(tAuth('validation.passwordMismatch'))
       return false
     }
     return true
@@ -104,14 +100,14 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
       const result = await register(email, password, displayName)
       
       if (result?.user) {
-        onSuccess?.(result)
-  // Redirect to verify email page (localized)
-  router.push(`/${locale}/verify-email`)
+    onSuccess?.(result)
+    // Redirect to verify email page (localized)
+    router.push(`/${locale}/verify-email`)
       } else {
-        throw new Error(t('error'))
+  throw new Error(tAuth('register.error'))
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : t('error')
+  const errorMessage = err instanceof Error ? err.message : tAuth('register.error')
       setError(errorMessage)
       onError?.(err instanceof Error ? err : new Error(errorMessage))
     } finally {
@@ -133,22 +129,22 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
   const getStrengthText = (strength: PasswordStrength) => {
     switch (strength) {
       case 'weak':
-        return tStrength('weak')
+        return tAuth('register.strength.weak')
       case 'medium':
-        return tStrength('medium')
+        return tAuth('register.strength.medium')
       case 'strong':
-        return tStrength('strong')
+        return tAuth('register.strength.strong')
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="displayName">{t('displayName')}</Label>
+  <Label htmlFor="displayName">{tAuth('register.displayName')}</Label>
         <Input
           id="displayName"
           type="text"
-          placeholder={tFields('displayNamePlaceholder')}
+          placeholder={tAuth('fields.displayNamePlaceholder')}
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           disabled={isLoading}
@@ -158,11 +154,11 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">{t('email')}</Label>
+  <Label htmlFor="email">{tAuth('register.email')}</Label>
         <Input
           id="email"
           type="email"
-          placeholder={tFields('emailPlaceholder')}
+          placeholder={tAuth('fields.emailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={isLoading}
@@ -172,12 +168,12 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">{t('password')}</Label>
+  <Label htmlFor="password">{tAuth('register.password')}</Label>
         <div className="relative">
           <Input
             id="password"
             type={showPassword ? 'text' : 'password'}
-            placeholder={tFields('passwordPlaceholder')}
+            placeholder={tAuth('fields.passwordPlaceholder')}
             value={password}
             onChange={(e) => handlePasswordChange(e.target.value)}
             disabled={isLoading}
@@ -188,7 +184,7 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            aria-label={showPassword ? tA11y('hidePassword') : tA11y('showPassword')}
+            aria-label={showPassword ? tAuth('a11y.hidePassword') : tAuth('a11y.showPassword')}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -218,19 +214,19 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
             <div className="text-xs space-y-1">
               <div className={`flex items-center gap-1 ${password.length >= 8 ? 'text-green-600' : 'text-muted-foreground'}`}>
                 {password.length >= 8 ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                <span>{tRequirements('minLength')}</span>
+                <span>{tAuth('register.requirements.minLength')}</span>
               </div>
               <div className={`flex items-center gap-1 ${/[A-Z]/.test(password) && /[a-z]/.test(password) ? 'text-green-600' : 'text-muted-foreground'}`}>
                 {/[A-Z]/.test(password) && /[a-z]/.test(password) ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                <span>{tRequirements('case')}</span>
+                <span>{tAuth('register.requirements.case')}</span>
               </div>
               <div className={`flex items-center gap-1 ${/\d/.test(password) ? 'text-green-600' : 'text-muted-foreground'}`}>
                 {/\d/.test(password) ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                <span>{tRequirements('number')}</span>
+                <span>{tAuth('register.requirements.number')}</span>
               </div>
               <div className={`flex items-center gap-1 ${/[^a-zA-Z0-9]/.test(password) ? 'text-green-600' : 'text-muted-foreground'}`}>
                 {/[^a-zA-Z0-9]/.test(password) ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                <span>{tRequirements('special')}</span>
+                <span>{tAuth('register.requirements.special')}</span>
               </div>
             </div>
           </div>
@@ -238,12 +234,12 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
+  <Label htmlFor="confirmPassword">{tAuth('register.confirmPassword')}</Label>
         <div className="relative">
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
-            placeholder={tFields('passwordPlaceholder')}
+            placeholder={tAuth('fields.passwordPlaceholder')}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={isLoading}
@@ -254,7 +250,7 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            aria-label={showConfirmPassword ? tA11y('hidePassword') : tA11y('showPassword')}
+            aria-label={showConfirmPassword ? tAuth('a11y.hidePassword') : tAuth('a11y.showPassword')}
           >
             {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -263,7 +259,7 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
 
       <div className="rounded-lg bg-muted p-3 text-sm">
         <p className="text-muted-foreground">
-          {t('emailVerificationNotice')}
+          {tAuth('register.emailVerificationNotice')}
         </p>
       </div>
 
@@ -282,13 +278,13 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
         className="w-full"
         disabled={isLoading}
       >
-        {isLoading ? t('submitting') : t('submit')}
+  {isLoading ? tAuth('register.submitting') : tAuth('register.submit')}
       </Button>
 
       <div className="text-center text-sm">
-        <span className="text-muted-foreground">{t('hasAccount')} </span>
+  <span className="text-muted-foreground">{tAuth('register.hasAccount')} </span>
         <Link href={`/${locale}/login`} className="text-primary hover:underline">
-          {t('signIn')}
+          {tAuth('register.signIn')}
         </Link>
       </div>
     </form>
