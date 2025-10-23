@@ -1,0 +1,40 @@
+import { Metadata } from 'next'
+import { getTranslations } from 'next-intl/server'
+import { RegisterForm } from '@/components/auth/register-form'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'auth.register' })
+  
+  return {
+    title: t('title'),
+    description: t('description'),
+  }
+}
+
+/**
+ * Register Page
+ * 
+ * User registration page with:
+ * - Email, password, display name fields
+ * - Password strength indicator
+ * - Password confirmation
+ * - Email verification notice
+ * - Link to login
+ */
+export default async function RegisterPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'auth.register' })
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2 text-center">
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <p className="text-muted-foreground">
+          {t('description')}
+        </p>
+      </div>
+      
+      <RegisterForm />
+    </div>
+  )
+}

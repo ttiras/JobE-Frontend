@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
+import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { NhostProvider } from "@/components/providers/nhost-provider";
+import { AuthProvider } from "@/lib/contexts/auth-context";
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -31,16 +34,21 @@ export default async function RootLayout({
   return (
     <html lang={locale || "en"} suppressHydrationWarning>
       <body className={inter.className}>
-        <NextIntlClientProvider messages={messages}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem={false}
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-        </NextIntlClientProvider>
+        <NhostProvider>
+          <AuthProvider>
+            <NextIntlClientProvider messages={messages}>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="light"
+                enableSystem={false}
+                disableTransitionOnChange
+              >
+                {children}
+                <Toaster position="top-right" richColors />
+              </ThemeProvider>
+            </NextIntlClientProvider>
+          </AuthProvider>
+        </NhostProvider>
       </body>
     </html>
   );

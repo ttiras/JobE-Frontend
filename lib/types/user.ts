@@ -1,4 +1,12 @@
-export type UserRole = 'Admin' | 'HR Manager' | 'Viewer';
+/**
+ * User role types matching Nhost/Hasura roles
+ * 
+ * Role hierarchy:
+ * - user: Basic authenticated user
+ * - recruiter: Can manage organizations, positions, and questionnaires
+ * - admin: Full system access including analytics
+ */
+export type UserRole = 'user' | 'recruiter' | 'admin';
 
 export interface User {
   id: string;
@@ -7,3 +15,4 @@ export interface User {
   avatar?: string;
   role: UserRole;
 }
+

@@ -4,9 +4,9 @@ import { NavigationItem } from '@/lib/utils/navigation-filter';
  * Navigation configuration with role-based access control
  * 
  * Role hierarchy:
- * - Admin: Full access to all sections
- * - HR Manager: All except Settings
- * - Viewer: Limited to Dashboard, Organizations, Positions, Analytics
+ * - admin: Full access to all sections including analytics
+ * - recruiter: Can manage organizations, positions, questionnaires
+ * - user: Basic access to dashboard, questionnaire, and settings
  */
 export const navigationConfig: NavigationItem[] = [
   {
@@ -14,41 +14,41 @@ export const navigationConfig: NavigationItem[] = [
     label: 'navigation.dashboard',
     icon: 'Home',
     href: '/dashboard',
-    requiredRoles: ['Admin', 'HR Manager', 'Viewer'],
+    requiredRoles: ['user', 'recruiter', 'admin'],
   },
   {
     id: 'organizations',
     label: 'navigation.organizations',
     icon: 'Building2',
     href: '/organizations',
-    requiredRoles: ['Admin', 'HR Manager', 'Viewer'],
+    requiredRoles: ['recruiter', 'admin'],
   },
   {
     id: 'positions',
     label: 'navigation.positions',
     icon: 'Briefcase',
     href: '/positions',
-    requiredRoles: ['Admin', 'HR Manager', 'Viewer'],
+    requiredRoles: ['recruiter', 'admin'],
   },
   {
     id: 'questionnaire',
     label: 'navigation.questionnaire',
     icon: 'ClipboardList',
     href: '/questionnaire',
-    requiredRoles: ['Admin', 'HR Manager'],
+    requiredRoles: ['user', 'recruiter', 'admin'],
   },
   {
     id: 'analytics',
     label: 'navigation.analytics',
     icon: 'BarChart3',
     href: '/analytics',
-    requiredRoles: ['Admin', 'HR Manager', 'Viewer'],
+    requiredRoles: ['admin'],
   },
   {
     id: 'settings',
     label: 'navigation.settings',
     icon: 'Settings',
     href: '/settings',
-    requiredRoles: ['Admin'],
+    requiredRoles: ['user', 'recruiter', 'admin'],
   },
 ];
