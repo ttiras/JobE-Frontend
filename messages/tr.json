@@ -1,6 +1,6 @@
 {
   "navigation": {
-    "dashboard": "Gösterge Paneli",
+    "dashboard": "Dashboard",
     "organizations": "Organizasyonlar",
     "positions": "Pozisyonlar",
     "questionnaire": "Anket",
@@ -23,7 +23,10 @@
     "import": "İçe Aktar",
     "refresh": "Yenile",
     "collapse": "Daralt",
-    "expand": "Genişlet"
+    "expand": "Genişlet",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Kullanım Şartları",
+    "help": "Yardım"
   },
   "header": {
     "skipToContent": "Ana içeriğe atla",
@@ -63,5 +66,142 @@
     "translationLoadFailed": "Çeviriler yüklenemedi. Lütfen sayfayı yenileyin.",
     "permissionDenied": "Bu kaynağa erişim izniniz yok.",
     "unexpectedError": "Beklenmeyen bir hata oluştu. Hata Kimliği: {errorId}"
+  },
+  "auth": {
+    "login": {
+      "title": "Hesabınıza giriş yapın",
+      "description": "Devam etmek için hesabınıza giriş yapın",
+      "email": "E-posta adresi",
+      "password": "Şifre",
+      "rememberMe": "Beni hatırla",
+      "forgotPassword": "Şifrenizi mi unuttunuz?",
+      "submit": "Giriş yap",
+      "submitting": "Giriş yapılıyor…",
+      "noAccount": "Hesabınız yok mu?",
+      "signUp": "Kayıt ol",
+      "success": "Başarıyla giriş yapıldı",
+      "error": "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.",
+      "rateLimit": {
+        "title": "Hesap Geçici Olarak Kilitlendi",
+        "message": "Çok fazla başarısız giriş denemesi. Lütfen {time} sonra tekrar deneyin.",
+        "lockedButton": "Hesap Kilitli",
+        "lockedFor": "Hesap {time} süreyle kilitli."
+      }
+    },
+    "register": {
+      "title": "Hesap oluşturun",
+      "description": "Bugün JobE ile başlayın",
+      "email": "E-posta adresi",
+      "password": "Şifre",
+      "confirmPassword": "Şifreyi onayla",
+      "displayName": "Ad soyad",
+      "submit": "Hesap oluştur",
+      "submitting": "Hesap oluşturuluyor…",
+      "hasAccount": "Zaten hesabınız var mı?",
+      "signIn": "Giriş yap",
+      "emailVerificationNotice": "Hesabınızı tamamlamak için e-postanıza gönderilen doğrulama bağlantısını onaylamanız gerekir.",
+      "success": "Hesap başarıyla oluşturuldu! Lütfen e-postanızı kontrol edin.",
+      "error": "Hesap oluşturulamadı. Lütfen tekrar deneyin.",
+      "strength": {
+        "weak": "Zayıf",
+        "medium": "Orta",
+        "strong": "Güçlü"
+      },
+      "requirements": {
+        "minLength": "En az 8 karakter",
+        "case": "Büyük ve küçük harfler",
+        "number": "En az bir rakam",
+        "special": "En az bir özel karakter"
+      }
+    },
+    "resetPassword": {
+      "title": "Şifrenizi sıfırlayın",
+      "description": "E-posta adresinizi girin, size şifre sıfırlama bağlantısı gönderelim",
+      "emailStep": {
+        "title": "E-postanızı girin",
+        "description": "Şifrenizi sıfırlamak için size bir bağlantı göndereceğiz",
+        "email": "E-posta adresi",
+        "submit": "Sıfırlama bağlantısı gönder",
+        "submitting": "Gönderiliyor...",
+        "success": "Sıfırlama bağlantısı gönderildi! E-postanızı kontrol edin."
+      },
+      "passwordStep": {
+        "title": "Yeni şifre belirleyin",
+        "description": "Yeni şifrenizi girin",
+        "newPassword": "Yeni şifre",
+        "confirmPassword": "Yeni şifreyi onayla",
+        "submit": "Şifreyi sıfırla",
+        "submitting": "Sıfırlanıyor...",
+        "success": "Şifre başarıyla sıfırlandı! Artık giriş yapabilirsiniz."
+      },
+      "backToLogin": "Girişe geri dön",
+      "success": "Şifre sıfırlama bağlantısı gönderildi! E-postanızı kontrol edin.",
+      "error": "Bağlantı gönderilemedi. Lütfen tekrar deneyin."
+    },
+    "verifyEmail": {
+      "title": "E-postanızı doğrulayın",
+      "description": "E-posta adresinize doğrulama bağlantısı gönderdik",
+      "pending": {
+        "title": "E-postanızı kontrol edin",
+        "message": "E-posta adresinize bir doğrulama bağlantısı gönderdik. Hesabınızı doğrulamak için bağlantıya tıklayın.",
+        "checkSpam": "E-posta gelmedi mi? Spam klasörünü kontrol edin veya yeni bir doğrulama e-postası isteyin."
+      },
+      "success": {
+        "title": "E-posta doğrulandı!",
+        "message": "E-postanız başarıyla doğrulandı. Artık hesabınıza giriş yapabilirsiniz.",
+        "continueToLogin": "Girişe devam et"
+      },
+      "error": {
+        "title": "Doğrulama başarısız",
+        "message": "E-postanızı doğrulayamadık. Bağlantı süresi dolmuş veya geçersiz olabilir.",
+        "tryAgain": "Tekrar kayıt olmayı deneyin"
+      },
+      "resend": "Doğrulama e-postasını tekrar gönder",
+      "verifying": "E-postanız doğrulanıyor...",
+      "verified": "E-posta başarıyla doğrulandı!",
+      "verificationFailed": "E-posta doğrulama başarısız. Lütfen tekrar deneyin."
+    },
+    "logout": {
+      "button": "Çıkış yap",
+      "confirm": "Çıkış yapmak istediğinizden emin misiniz?",
+      "success": "Başarıyla çıkış yapıldı"
+    },
+    "errors": {
+      "invalidEmail": "Lütfen geçerli bir e-posta adresi girin",
+      "invalidCredentials": "Geçersiz e-posta veya şifre",
+      "emailAlreadyInUse": "Bu e-posta adresi zaten kayıtlı",
+      "weakPassword": "Şifre en az 8 karakter olmalıdır",
+      "emailNotVerified": "Giriş yapmadan önce lütfen e-postanızı doğrulayın",
+      "rateLimitExceeded": "Çok fazla deneme. Lütfen daha sonra tekrar deneyin.",
+      "userNotFound": "Bu e-posta ile kayıtlı hesap bulunamadı",
+      "sessionExpired": "Oturumunuzun süresi doldu. Lütfen tekrar giriş yapın.",
+      "networkError": "Ağ hatası. Lütfen bağlantınızı kontrol edin.",
+      "passwordMismatch": "Şifreler eşleşmiyor",
+      "required": "Bu alan zorunludur",
+      "unknown": "Bir hata oluştu. Lütfen tekrar deneyin."
+    },
+    "fields": {
+      "emailPlaceholder": "ornek@email.com",
+      "passwordPlaceholder": "••••••••",
+      "displayNamePlaceholder": "Ahmet Yılmaz"
+    },
+    "validation": {
+      "emailRequired": "E-posta gereklidir",
+      "emailInvalid": "Lütfen geçerli bir e-posta adresi girin",
+      "passwordRequired": "Şifre gereklidir",
+      "passwordMinLength": "Şifre en az 8 karakter olmalıdır",
+      "passwordMismatch": "Şifreler eşleşmiyor",
+      "displayNameRequired": "Ad soyad gereklidir"
+    },
+    "captcha": {
+      "loading": "Güvenlik kontrolü yükleniyor...",
+      "error": "Güvenlik kontrolü başarısız. Lütfen tekrar deneyin.",
+      "failed": "reCAPTCHA doğrulaması başarısız. Lütfen tekrar deneyin.",
+      "expired": "reCAPTCHA süresi doldu. Lütfen yenileyin ve tekrar deneyin."
+    },
+    "a11y": {
+      "showPassword": "Şifreyi göster",
+      "hidePassword": "Şifreyi gizle"
+    }
   }
 }

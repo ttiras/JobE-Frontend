@@ -23,7 +23,10 @@
     "import": "Import",
     "refresh": "Refresh",
     "collapse": "Collapse",
-    "expand": "Expand"
+    "expand": "Expand",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "help": "Help"
   },
   "header": {
     "skipToContent": "Skip to main content",
@@ -63,5 +66,139 @@
     "translationLoadFailed": "Failed to load translations. Please refresh the page.",
     "permissionDenied": "You don't have permission to access this resource.",
     "unexpectedError": "An unexpected error occurred. Error ID: {errorId}"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your account",
+      "description": "Enter your email and password to access your account",
+      "email": "Email address",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "success": "Successfully signed in",
+      "error": "Failed to sign in. Please check your credentials.",
+      "rateLimit": {
+        "title": "Account Temporarily Locked",
+        "message": "Too many failed login attempts. Please try again in {time}.",
+        "lockedButton": "Account Locked",
+        "lockedFor": "Account locked for {time}."
+      }
+    },
+    "register": {
+      "title": "Create your account",
+      "description": "Get started with JobE today",
+      "email": "Email address",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "displayName": "Full name",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "success": "Account created successfully! Please check your email to verify.",
+      "error": "Failed to create account. Please try again.",
+      "emailVerificationNotice": "You'll need to verify your email address before you can sign in.",
+      "strength": {
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong"
+      },
+      "requirements": {
+        "minLength": "At least 8 characters",
+        "case": "Uppercase and lowercase letters",
+        "number": "At least one number",
+        "special": "At least one special character"
+      }
+    },
+    "resetPassword": {
+      "title": "Reset your password",
+      "emailStep": {
+        "title": "Enter your email",
+        "description": "We'll send you a link to reset your password",
+        "email": "Email address",
+        "submit": "Send reset link",
+        "submitting": "Sending...",
+        "success": "Reset link sent! Check your email."
+      },
+      "passwordStep": {
+        "title": "Set new password",
+        "description": "Enter your new password",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm password",
+        "submit": "Reset password",
+        "submitting": "Resetting...",
+        "success": "Password reset successfully! You can now log in."
+      },
+      "backToLogin": "Back to login"
+    },
+    "verifyEmail": {
+      "title": "Verify your email",
+      "description": "We've sent a verification link to your email address",
+      "pending": {
+        "title": "Check your email",
+        "message": "We've sent a verification link to your email address. Click the link to verify your account.",
+        "checkSpam": "Can't find the email? Check your spam folder or request a new verification email."
+      },
+      "success": {
+        "title": "Email verified!",
+        "message": "Your email has been successfully verified. You can now sign in to your account.",
+        "continueToLogin": "Continue to login"
+      },
+      "error": {
+        "title": "Verification failed",
+        "message": "We couldn't verify your email. The link may have expired or is invalid.",
+        "tryAgain": "Try registering again"
+      },
+      "resend": "Resend verification email",
+      "verifying": "Verifying your email...",
+      "verified": "Email verified successfully!",
+      "verificationFailed": "Email verification failed. Please try again."
+    },
+    "logout": {
+      "button": "Sign out",
+      "confirm": "Are you sure you want to sign out?",
+      "success": "Successfully signed out"
+    },
+    "errors": {
+      "invalidEmail": "Please enter a valid email address",
+      "invalidCredentials": "Invalid email or password",
+      "emailAlreadyInUse": "This email is already registered",
+      "weakPassword": "Password must be at least 8 characters long",
+      "emailNotVerified": "Please verify your email before signing in",
+      "rateLimitExceeded": "Too many attempts. Please try again later.",
+      "userNotFound": "No account found with this email",
+      "sessionExpired": "Your session has expired. Please sign in again.",
+      "networkError": "Network error. Please check your connection.",
+      "passwordMismatch": "Passwords do not match",
+      "required": "This field is required",
+      "unknown": "An error occurred. Please try again."
+    },
+    "fields": {
+      "emailPlaceholder": "you@example.com",
+      "passwordPlaceholder": "••••••••",
+      "displayNamePlaceholder": "John Doe"
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "passwordMismatch": "Passwords do not match",
+      "displayNameRequired": "Full name is required"
+    },
+    "captcha": {
+      "loading": "Loading security check...",
+      "error": "Security check failed. Please try again.",
+      "expired": "Security check expired. Please try again.",
+      "failed": "reCAPTCHA verification failed. Please try again."
+    },
+    "a11y": {
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    }
   }
 }

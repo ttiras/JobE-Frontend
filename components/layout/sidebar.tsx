@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import { useRef, useEffect, KeyboardEvent } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { navigationConfig } from '@/config/navigation';
+import { filterNavigationByRole } from '@/lib/utils/navigation-filter';
+import { useAuth } from '@/lib/contexts/auth-context';
 import { NavItem } from './nav-item';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -33,6 +35,11 @@ export function Sidebar({
   const pathname = usePathname();
   const t = useTranslations();
   const navRef = useRef<HTMLElement>(null);
+  const { user } = useAuth();
+
+  // Filter navigation items by user role
+  const userRole = user?.defaultRole || 'user';
+  const visibleNavItems = filterNavigationByRole(navigationConfig, userRole);
 
   // Handle arrow key navigation
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -65,7 +72,7 @@ export function Sidebar({
       className="flex flex-col p-4 space-y-2"
       onKeyDown={handleKeyDown}
     >
-      {navigationConfig.map((item, index) => (
+      {visibleNavItems.map((item, index) => (
         <NavItem
           key={item.id}
           item={item}

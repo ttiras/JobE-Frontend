@@ -26,6 +26,16 @@ const config: Config = {
     '!**/node_modules/**',
     '!**/.next/**',
   ],
+  // Transform ESM packages
+  transformIgnorePatterns: [
+    'node_modules/(?!(next-intl|use-intl)/)',
+  ],
+  // Exclude E2E tests from Jest (they use Playwright)
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/.next/',
+    '/tests/e2e/',
+  ],
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
