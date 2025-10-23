@@ -5,11 +5,11 @@ import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: 'auth.verifyEmail' })
+  const t = await getTranslations({ locale: params.locale, namespace: 'auth' })
   
   return {
-    title: t('title'),
-    description: t('description'),
+    title: t('verifyEmail.title'),
+    description: t('verifyEmail.description'),
   }
 }
 
@@ -45,7 +45,7 @@ export default async function VerifyEmailPage({
   searchParams: VerifyEmailPageProps['searchParams']
 }) {
   const { type, refreshToken, error, errorDescription } = searchParams
-  const t = await getTranslations('auth.verifyEmail')
+  const t = await getTranslations({ locale: params.locale, namespace: 'auth' })
   const locale = params.locale
 
   // Determine verification status from Nhost URL parameters
@@ -65,9 +65,9 @@ export default async function VerifyEmailPage({
             <div className="flex justify-center">
               <CheckCircle className="h-16 w-16 text-green-500" />
             </div>
-            <h1 className="text-3xl font-bold">{t('success.title')}</h1>
+            <h1 className="text-3xl font-bold">{t('verifyEmail.success.title')}</h1>
             <p className="text-muted-foreground">
-              {t('success.message')}
+              {t('verifyEmail.success.message')}
             </p>
           </>
         )}
@@ -77,9 +77,9 @@ export default async function VerifyEmailPage({
             <div className="flex justify-center">
               <XCircle className="h-16 w-16 text-destructive" />
             </div>
-            <h1 className="text-3xl font-bold">{t('error.title')}</h1>
+            <h1 className="text-3xl font-bold">{t('verifyEmail.error.title')}</h1>
             <p className="text-muted-foreground">
-              {errorMessage || t('error.message')}
+              {errorMessage || t('verifyEmail.error.message')}
             </p>
           </>
         )}
@@ -89,9 +89,9 @@ export default async function VerifyEmailPage({
             <div className="flex justify-center">
               <Loader2 className="h-16 w-16 text-primary animate-spin" />
             </div>
-            <h1 className="text-3xl font-bold">{t('pending.title')}</h1>
+            <h1 className="text-3xl font-bold">{t('verifyEmail.pending.title')}</h1>
             <p className="text-muted-foreground">
-              {t('pending.message')}
+              {t('verifyEmail.pending.message')}
             </p>
           </>
         )}
@@ -101,7 +101,7 @@ export default async function VerifyEmailPage({
         {isSuccess && (
           <Button asChild>
             <Link href={`/${locale}/login`}>
-              {t('success.continueToLogin')}
+              {t('verifyEmail.success.continueToLogin')}
             </Link>
           </Button>
         )}
@@ -109,14 +109,14 @@ export default async function VerifyEmailPage({
         {isError && (
           <Button asChild variant="outline">
             <Link href={`/${locale}/register`}>
-              {t('error.tryAgain')}
+              {t('verifyEmail.error.tryAgain')}
             </Link>
           </Button>
         )}
 
         {isPending && (
           <p className="text-sm text-center text-muted-foreground">
-            {t('pending.checkSpam')}
+            {t('verifyEmail.pending.checkSpam')}
           </p>
         )}
       </div>

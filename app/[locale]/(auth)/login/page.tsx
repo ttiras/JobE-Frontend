@@ -5,10 +5,10 @@ import { LoginForm } from '@/components/auth/login-form'
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params
   try {
-    const t = await getTranslations({ locale, namespace: 'auth.login' })
+    const t = await getTranslations({ locale, namespace: 'auth' })
     return {
-      title: t('title'),
-      description: t('description'),
+      title: t('login.title'),
+      description: t('login.description'),
     }
   } catch {
     // Fallback metadata if translations are missing
@@ -31,13 +31,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  */
 export default async function LoginPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'auth.login' })
+  const t = await getTranslations({ locale, namespace: 'auth' })
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <h1 className="text-3xl font-bold">{t('login.title')}</h1>
         <p className="text-muted-foreground">
-          {t('description')}
+          {t('login.description')}
         </p>
       </div>
       

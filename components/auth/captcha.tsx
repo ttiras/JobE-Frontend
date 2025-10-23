@@ -27,7 +27,7 @@ export interface CaptchaHandle {
 
 export const Captcha = forwardRef<CaptchaHandle, CaptchaProps>(
   ({ action, onVerify, onError, onExpired, expirationTime = 120000, badge = 'bottomright' }, ref) => {
-    const t = useTranslations('auth.captcha')
+  const tAuth = useTranslations('auth')
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const timerRef = useRef<NodeJS.Timeout | undefined>(undefined)
@@ -132,7 +132,7 @@ export const Captcha = forwardRef<CaptchaHandle, CaptchaProps>(
             aria-busy="true"
             aria-live="polite"
           >
-            {t('loading')}
+            {tAuth('captcha.loading')}
           </div>
         )}
         
@@ -141,7 +141,7 @@ export const Captcha = forwardRef<CaptchaHandle, CaptchaProps>(
             className="text-sm text-destructive text-center"
             role="alert"
           >
-            {t('error')}
+            {tAuth('captcha.error')}
           </div>
         )}
 

@@ -3,11 +3,11 @@ import { getTranslations } from 'next-intl/server'
 import { PasswordResetForm } from '@/components/auth/password-reset-form'
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: 'auth.resetPassword' })
+  const t = await getTranslations({ locale: params.locale, namespace: 'auth' })
   
   return {
-    title: t('title'),
-    description: t('emailStep.description'),
+    title: t('resetPassword.title'),
+    description: t('resetPassword.emailStep.description'),
   }
 }
 
@@ -25,16 +25,16 @@ interface ResetPasswordPageProps {
 export default async function ResetPasswordPage({ searchParams, params }: ResetPasswordPageProps & { params: Promise<{ locale: string }> }) {
   const resetToken = searchParams.token
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'auth.resetPassword' })
+  const t = await getTranslations({ locale, namespace: 'auth' })
 
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center">
         <h1 className="text-3xl font-bold">
-          {resetToken ? t('passwordStep.title') : t('emailStep.title')}
+          {resetToken ? t('resetPassword.passwordStep.title') : t('resetPassword.emailStep.title')}
         </h1>
         <p className="text-muted-foreground">
-          {resetToken ? t('passwordStep.description') : t('emailStep.description')}
+          {resetToken ? t('resetPassword.passwordStep.description') : t('resetPassword.emailStep.description')}
         </p>
       </div>
       

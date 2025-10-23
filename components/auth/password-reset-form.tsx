@@ -17,13 +17,11 @@ interface PasswordResetFormProps {
 }
 
 export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordResetFormProps) {
-  const t = useTranslations('auth.resetPassword')
-  const tValidation = useTranslations('auth.validation')
-  const tA11y = useTranslations('auth.a11y')
+  const tAuth = useTranslations('auth')
   const router = useRouter()
   const pathname = usePathname()
   const locale = pathname?.match(/^\/(en|tr)\b/)?.[1] || 'en'
-  const tFields = useTranslations('auth.fields')
+  const tFields = useTranslations('auth')
 
   // Email step state
   const [email, setEmail] = useState('')
@@ -41,11 +39,11 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
 
   const validateEmailForm = () => {
     if (!email) {
-      setError(tValidation('emailRequired'))
+  setError(tAuth('validation.emailRequired'))
       return false
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError(tValidation('emailInvalid'))
+  setError(tAuth('validation.emailInvalid'))
       return false
     }
     return true
@@ -53,15 +51,15 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
 
   const validatePasswordForm = () => {
     if (!newPassword) {
-      setError(tValidation('passwordRequired'))
+  setError(tAuth('validation.passwordRequired'))
       return false
     }
     if (newPassword.length < 8) {
-      setError(tValidation('passwordMinLength'))
+  setError(tAuth('validation.passwordMinLength'))
       return false
     }
     if (newPassword !== confirmPassword) {
-      setError(tValidation('passwordMismatch'))
+  setError(tAuth('validation.passwordMismatch'))
       return false
     }
     return true
@@ -122,11 +120,11 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
     return (
       <form onSubmit={handleEmailSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">{t('emailStep.email')}</Label>
+          <Label htmlFor="email">{tAuth('resetPassword.emailStep.email')}</Label>
           <Input
             id="email"
             type="email"
-            placeholder={tFields('emailPlaceholder')}
+            placeholder={tFields('fields.emailPlaceholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isLoading || success}
@@ -137,7 +135,7 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
 
         {success && (
           <div className="rounded-lg bg-green-50 dark:bg-green-950 p-4 text-sm text-green-900 dark:text-green-100">
-            {t('emailStep.success')}
+            {tAuth('resetPassword.emailStep.success')}
           </div>
         )}
 
@@ -156,12 +154,12 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
           className="w-full"
           disabled={isLoading || success}
         >
-          {isLoading ? t('emailStep.submitting') : t('emailStep.submit')}
+          {isLoading ? tAuth('resetPassword.emailStep.submitting') : tAuth('resetPassword.emailStep.submit')}
         </Button>
 
         <div className="text-center text-sm">
           <Link href={`/${locale}/login`} className="text-primary hover:underline">
-            {t('backToLogin')}
+            {tAuth('resetPassword.backToLogin')}
           </Link>
         </div>
       </form>
@@ -172,12 +170,12 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
   return (
     <form onSubmit={handlePasswordSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="newPassword">{t('passwordStep.newPassword')}</Label>
+  <Label htmlFor="newPassword">{tAuth('resetPassword.passwordStep.newPassword')}</Label>
         <div className="relative">
           <Input
             id="newPassword"
             type={showPassword ? 'text' : 'password'}
-            placeholder={tFields('passwordPlaceholder')}
+            placeholder={tFields('fields.passwordPlaceholder')}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             disabled={isLoading || success}
@@ -188,7 +186,7 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            aria-label={showPassword ? tA11y('hidePassword') : tA11y('showPassword')}
+            aria-label={showPassword ? tAuth('a11y.hidePassword') : tAuth('a11y.showPassword')}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -196,12 +194,12 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">{t('passwordStep.confirmPassword')}</Label>
+  <Label htmlFor="confirmPassword">{tAuth('resetPassword.passwordStep.confirmPassword')}</Label>
         <div className="relative">
           <Input
             id="confirmPassword"
             type={showConfirmPassword ? 'text' : 'password'}
-            placeholder={tFields('passwordPlaceholder')}
+            placeholder={tFields('fields.passwordPlaceholder')}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             disabled={isLoading || success}
@@ -212,7 +210,7 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            aria-label={showConfirmPassword ? tA11y('hidePassword') : tA11y('showPassword')}
+            aria-label={showConfirmPassword ? tAuth('a11y.hidePassword') : tAuth('a11y.showPassword')}
           >
             {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -221,7 +219,7 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
 
       {success && (
         <div className="rounded-lg bg-green-50 dark:bg-green-950 p-4 text-sm text-green-900 dark:text-green-100">
-          {t('passwordStep.success')}
+          {tAuth('resetPassword.passwordStep.success')}
         </div>
       )}
 
@@ -240,12 +238,12 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
         className="w-full"
         disabled={isLoading || success}
       >
-        {isLoading ? t('passwordStep.submitting') : t('passwordStep.submit')}
+  {isLoading ? tAuth('resetPassword.passwordStep.submitting') : tAuth('resetPassword.passwordStep.submit')}
       </Button>
 
       <div className="text-center text-sm">
         <Link href={`/${locale}/login`} className="text-primary hover:underline">
-          {t('backToLogin')}
+          {tAuth('resetPassword.backToLogin')}
         </Link>
       </div>
     </form>

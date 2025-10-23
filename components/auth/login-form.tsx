@@ -25,11 +25,7 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSuccess, onError }: LoginFormProps) {
-  const t = useTranslations('auth.login')
-  const tValidation = useTranslations('auth.validation')
-  const tFields = useTranslations('auth.fields')
-  const tA11y = useTranslations('auth.a11y')
-  const tRate = useTranslations('auth.login.rateLimit')
+  const tAuth = useTranslations('auth')
   const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
@@ -52,25 +48,25 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
     if (limited && remainingTime) {
       setIsLocked(true)
       setLockoutTime(formatRemainingTime(remainingTime))
-      setError(tRate('message', { time: formatRemainingTime(remainingTime) }))
+      setError(tAuth('login.rateLimit.message', { time: formatRemainingTime(remainingTime) }))
     }
   }, [])
 
   const validateForm = () => {
     if (!email) {
-      setError(tValidation('emailRequired'))
+  setError(tAuth('validation.emailRequired'))
       return false
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError(tValidation('emailInvalid'))
+  setError(tAuth('validation.emailInvalid'))
       return false
     }
     if (!password) {
-      setError(tValidation('passwordRequired'))
+  setError(tAuth('validation.passwordRequired'))
       return false
     }
     if (showCaptcha && !captchaToken) {
-      setError(t('error'))
+  setError(tAuth('login.error'))
       return false
     }
     return true
@@ -91,7 +87,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
       
       if (result?.user) {
         recordSuccessfulAttempt()
-        toast.success(t('success'))
+  toast.success(tAuth('login.success'))
         onSuccess?.(result)
         const redirect = searchParams.get('redirect')
         if (redirect && redirect.startsWith('/')) {
@@ -101,10 +97,10 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
           router.push(`/${locale}/dashboard`)
         }
       } else {
-        throw new Error(t('error'))
+  throw new Error(tAuth('login.error'))
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : t('error')
+  const errorMessage = err instanceof Error ? err.message : tAuth('login.error')
       
       // Record failed attempt and check rate limiting
       const rateLimitResult = recordFailedAttempt()
@@ -113,7 +109,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
         setIsLocked(true)
         const remaining = rateLimitResult.lockedUntil - Date.now()
         setLockoutTime(formatRemainingTime(remaining))
-        setError(tRate('lockedFor', { time: formatRemainingTime(remaining) }))
+  setError(tAuth('login.rateLimit.lockedFor', { time: formatRemainingTime(remaining) }))
       } else {
         setError(errorMessage)
         if (rateLimitResult.showCaptcha) {
@@ -142,20 +138,20 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
         <div className="rounded-lg bg-destructive/10 p-4 flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm font-medium text-destructive">{tRate('title')}</p>
+            <p className="text-sm font-medium text-destructive">{tAuth('login.rateLimit.title')}</p>
             <p className="text-sm text-muted-foreground mt-1">
-              {tRate('message', { time: lockoutTime })}
+              {tAuth('login.rateLimit.message', { time: lockoutTime })}
             </p>
           </div>
         </div>
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="email">{t('email')}</Label>
+  <Label htmlFor="email">{tAuth('login.email')}</Label>
         <Input
           id="email"
           type="email"
-          placeholder={tFields('emailPlaceholder')}
+          placeholder={tAuth('fields.emailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={isLoading}
@@ -166,19 +162,19 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label htmlFor="password">{t('password')}</Label>
+          <Label htmlFor="password">{tAuth('login.password')}</Label>
           <Link 
             href={`/${locale}/reset-password`} 
             className="text-sm text-primary hover:underline"
           >
-            {t('forgotPassword')}
+            {tAuth('login.forgotPassword')}
           </Link>
         </div>
         <div className="relative">
           <Input
             id="password"
             type={showPassword ? 'text' : 'password'}
-            placeholder={tFields('passwordPlaceholder')}
+            placeholder={tAuth('fields.passwordPlaceholder')}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={isLoading}
@@ -189,7 +185,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            aria-label={showPassword ? tA11y('hidePassword') : tA11y('showPassword')}
+            aria-label={showPassword ? tAuth('a11y.hidePassword') : tAuth('a11y.showPassword')}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -207,7 +203,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
           htmlFor="remember-me"
           className="text-sm font-normal cursor-pointer"
         >
-          {t('rememberMe')}
+          {tAuth('login.rememberMe')}
         </Label>
       </div>
 
@@ -234,13 +230,13 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
         className="w-full"
         disabled={isLoading || isLocked || (showCaptcha && !captchaToken)}
       >
-        {isLoading ? t('submitting') : isLocked ? tRate('lockedButton') : t('submit')}
+  {isLoading ? tAuth('login.submitting') : isLocked ? tAuth('login.rateLimit.lockedButton') : tAuth('login.submit')}
       </Button>
 
       <div className="text-center text-sm">
-        <span className="text-muted-foreground">{t('noAccount')} </span>
+  <span className="text-muted-foreground">{tAuth('login.noAccount')} </span>
         <Link href={`/${locale}/register`} className="text-primary hover:underline">
-          {t('signUp')}
+          {tAuth('login.signUp')}
         </Link>
       </div>
     </form>
