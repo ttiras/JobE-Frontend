@@ -1,6 +1,7 @@
-import { ReactNode } from 'react'
+import { ReactNode, Suspense } from 'react'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
+import { CurrentYear } from '@/components/ui/current-year'
 // import { LanguageSwitcher } from '@/components/layout/language-switcher'
 
 interface AuthLayoutProps {
@@ -62,7 +63,15 @@ export default async function AuthLayout({ children, params }: AuthLayoutProps) 
                 {safe(() => t('help'), 'Help')}
               </Link>
             </div>
-            <p>&copy; {new Date().getFullYear()} JobE. All rights reserved.</p>
+            <p>
+              &copy; 
+              <Suspense
+                fallback={<span className="inline-block w-8 h-4 bg-muted rounded align-middle ml-1" aria-hidden />}
+              >
+                <span className="ml-1"><CurrentYear /></span>
+              </Suspense>
+              {' '}JobE. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>

@@ -1,14 +1,17 @@
 import { DashboardShell } from '@/components/layout/dashboard-shell';
-import { AuthGuard } from '@/components/layout/auth-guard';
+import ServerAuthGuard from '@/components/layout/server-auth-guard';
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = await params
   return (
-    <AuthGuard>
+    <ServerAuthGuard locale={locale} allowedRoles={["user", "admin"]}>
       <DashboardShell>{children}</DashboardShell>
-    </AuthGuard>
+    </ServerAuthGuard>
   );
 }

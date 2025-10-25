@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { Toaster } from "sonner";
+import "@/lib/dev/patch-react-debug";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { NhostProvider } from "@/components/providers/nhost-provider";
 import { AuthProvider } from "@/lib/contexts/auth-context";
 import { OrganizationProvider } from "@/lib/contexts/organization-context";
+import { locales } from "@/lib/i18n";
+import { DevPatches } from "@/components/utils/dev-patches";
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -35,24 +39,37 @@ export default async function RootLayout({
   return (
     <html lang={locale || "en"} suppressHydrationWarning>
       <body className={inter.className}>
-        <NhostProvider>
-          <AuthProvider>
-            <NextIntlClientProvider messages={messages}>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="light"
-                enableSystem={false}
-                disableTransitionOnChange
-              >
-                <OrganizationProvider>
-                  {children}
-                </OrganizationProvider>
-                <Toaster position="top-right" richColors />
-              </ThemeProvider>
-            </NextIntlClientProvider>
-          </AuthProvider>
-        </NhostProvider>
+        {/* Dev-only global patches (no-op in production) */}
+        <DevPatches />
+        <Suspense fallback={
+          <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
+            Loading…
+          </div>
+        }>
+          <NhostProvider>
+            <AuthProvider>
+              <NextIntlClientProvider messages={messages}>
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="light"
+                  enableSystem={false}
+                  disableTransitionOnChange
+                >
+                  <OrganizationProvider>
+                    {children}
+                  </OrganizationProvider>
+                  <Toaster position="top-right" richColors />
+                </ThemeProvider>
+              </NextIntlClientProvider>
+            </AuthProvider>
+          </NhostProvider>
+        </Suspense>
       </body>
     </html>
   );
+}
+
+// Pre-generate localized segments so [locale] is satisfied at build time
+export async function generateStaticParams() {
+  return (locales as readonly string[]).map((locale) => ({ locale }));
 }

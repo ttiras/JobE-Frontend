@@ -1,5 +1,7 @@
 import { Metadata } from 'next'
+import { Suspense } from 'react'
 import { getTranslations } from 'next-intl/server'
+import LoginHeader from '@/components/auth/login-header'
 import { LoginForm } from '@/components/auth/login-form'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -31,17 +33,21 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  */
 export default async function LoginPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'auth' })
   return (
     <div className="space-y-6">
-      <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold">{t('login.title')}</h1>
-        <p className="text-muted-foreground">
-          {t('login.description')}
-        </p>
-      </div>
+      <Suspense fallback={
+        <div className="space-y-2 text-center">
+          <div className="h-8 w-40 mx-auto rounded bg-muted animate-pulse" />
+          <div className="h-4 w-64 mx-auto rounded bg-muted animate-pulse" />
+        </div>
+      }>
+        {/* Server component that fetches translations in a non-blocking way */}
+        <LoginHeader locale={locale} />
+      </Suspense>
       
-      <LoginForm />
+      <Suspense fallback={<div className="h-[300px] rounded-md bg-muted animate-pulse" aria-hidden />}> 
+        <LoginForm />
+      </Suspense>
     </div>
   )
 }

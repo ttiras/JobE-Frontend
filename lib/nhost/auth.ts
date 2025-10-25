@@ -16,6 +16,7 @@
  */
 
 import { nhost, getVerifyEmailRedirectUrl, getResetPasswordRedirectUrl } from './client'
+import { setSessionCookie, clearSessionCookie } from './session-cookie'
 import { AuthErrorType, type AuthError } from '@/lib/types/nhost'
 
 /**
@@ -36,7 +37,12 @@ export async function login(email: string, password: string) {
     throw createAuthError(response.body, response.status)
   }
 
-  return response.body.session || null
+  const session = response.body.session || null
+  // Sync cookie so server can read session immediately after login
+  try {
+    setSessionCookie(session)
+  } catch {}
+  return session
 }
 
 /**
@@ -53,7 +59,7 @@ export async function register(
   email: string,
   password: string,
   displayName?: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ) {
   const response = await nhost.auth.signUpEmailPassword({
     email,
@@ -100,6 +106,10 @@ export async function logout() {
 
   // Clear local session
   nhost.clearSession()
+  // Clear server-readable cookie
+  try {
+    clearSessionCookie()
+  } catch {}
   
   return true
 }
@@ -229,6 +239,11 @@ export async function refreshSession() {
     )
   }
 
+  // Keep cookie in sync on refresh
+  try {
+    setSessionCookie(session)
+  } catch {}
+
   return session
 }
 
@@ -239,8 +254,16 @@ export async function refreshSession() {
  * @param status - HTTP status code
  * @returns Typed AuthError
  */
-function createAuthError(errorBody: any, status: number): AuthError {
-  const message = errorBody?.message || errorBody?.error || 'Unknown authentication error'
+function createAuthError(errorBody: unknown, status: number): AuthError {
+  let message = 'Unknown authentication error'
+  if (typeof errorBody === 'object' && errorBody !== null) {
+    const obj = errorBody as Record<string, unknown>
+    if (typeof obj.message === 'string') {
+      message = obj.message
+    } else if (typeof obj.error === 'string') {
+      message = obj.error
+    }
+  }
   
   let type: AuthErrorType
 
@@ -271,7 +294,9 @@ function createAuthError(errorBody: any, status: number): AuthError {
 
   const authError = new Error(message) as AuthError
   authError.type = type
-  authError.originalError = errorBody
+  if (errorBody instanceof Error) {
+    authError.originalError = errorBody
+  }
 
   return authError
 }

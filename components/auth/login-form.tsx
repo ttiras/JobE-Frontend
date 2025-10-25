@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { login } from '@/lib/nhost/auth'
+import { setSessionCookie } from '@/lib/nhost/session-cookie'
+import type { Session } from '@/lib/types/nhost'
 import { Captcha } from './captcha'
 import { 
   isRateLimited, 
@@ -20,7 +22,7 @@ import {
 } from '@/lib/utils/rate-limit'
 
 interface LoginFormProps {
-  onSuccess?: (session: any) => void
+  onSuccess?: (session: Session) => void
   onError?: (error: Error) => void
 }
 
@@ -50,7 +52,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
       setLockoutTime(formatRemainingTime(remainingTime))
       setError(tAuth('login.rateLimit.message', { time: formatRemainingTime(remainingTime) }))
     }
-  }, [])
+  }, [tAuth])
 
   const validateForm = () => {
     if (!email) {
@@ -88,6 +90,10 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
       if (result?.user) {
         recordSuccessfulAttempt()
   toast.success(tAuth('login.success'))
+        // Bridge: sync essential tokens into a cookie for the server guard
+        try {
+          setSessionCookie({ accessToken: result?.accessToken, refreshToken: result?.refreshToken })
+        } catch {}
         onSuccess?.(result)
         const redirect = searchParams.get('redirect')
         if (redirect && redirect.startsWith('/')) {
