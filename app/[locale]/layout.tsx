@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { NhostProvider } from "@/components/providers/nhost-provider";
 import { AuthProvider } from "@/lib/contexts/auth-context";
+import { OrganizationProvider } from "@/lib/contexts/organization-context";
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -43,7 +44,9 @@ export default async function RootLayout({
                 enableSystem={false}
                 disableTransitionOnChange
               >
-                {children}
+                <OrganizationProvider>
+                  {children}
+                </OrganizationProvider>
                 <Toaster position="top-right" richColors />
               </ThemeProvider>
             </NextIntlClientProvider>

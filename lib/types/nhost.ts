@@ -9,7 +9,7 @@ import type { User as NhostUser, Session as NhostSession } from '@nhost/nhost-js
  * User roles in the application
  * Maps to Hasura allowed roles configuration
  */
-export type UserRole = 'user' | 'recruiter' | 'admin'
+export type UserRole = 'user' | 'admin'
 
 /**
  * Application User type

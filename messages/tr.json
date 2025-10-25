@@ -37,11 +37,33 @@
   "pages": {
     "dashboard": {
       "title": "Gösterge Paneli",
-      "description": "JobE İK Yönetim Platformuna Hoş Geldiniz"
+      "description": "JobE İK Yönetim Platformuna Hoş Geldiniz",
+      "noOrg": {
+        "title": "İlk organizasyonunuzu oluşturun",
+        "description": "Başlamak için bir organizasyon oluşturun. Sonrasında pozisyonlar ekleyebilir ve ekip arkadaşlarınızı davet edebilirsiniz.",
+        "createButton": "Organizasyon oluştur"
+      }
     },
     "organizations": {
       "title": "Organizasyonlar",
-      "description": "Organizasyonlarınızı burada yönetin"
+      "description": "Organizasyonlarınızı burada yönetin",
+      "create": {
+        "title": "Organizasyon oluştur",
+        "fields": {
+          "name": "Organizasyon adı",
+          "website": "Web sitesi (opsiyonel)"
+        },
+        "placeholders": {
+          "name": "Acme A.Ş.",
+          "website": "https://ornek.com"
+        },
+        "submit": "Organizasyon oluştur",
+        "submitting": "Oluşturuluyor...",
+        "errors": {
+          "nameRequired": "Organizasyon adı gereklidir",
+          "generic": "Organizasyon oluşturulamadı. Lütfen tekrar deneyin."
+        }
+      }
     },
     "positions": {
       "title": "Pozisyonlar",

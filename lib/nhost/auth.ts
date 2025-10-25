@@ -70,7 +70,11 @@ export async function register(
     throw createAuthError(response.body, response.status)
   }
 
-  return response.body.session || null
+  // Return full response body so callers can distinguish between
+  // immediate session (auto-login) and "email verification required"
+  // scenarios. For email verification flows, session will be null
+  // but user will be present, which should be treated as success.
+  return response.body
 }
 
 /**

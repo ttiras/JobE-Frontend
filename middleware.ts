@@ -23,11 +23,11 @@ interface RouteConfig {
 
 // Protected routes with role requirements
 const PROTECTED_ROUTES: RouteConfig[] = [
-  { path: '/dashboard', allowedRoles: ['user', 'recruiter', 'admin'] },
-  { path: '/settings', allowedRoles: ['user', 'recruiter', 'admin'] },
-  { path: '/organizations', allowedRoles: ['recruiter', 'admin'] },
-  { path: '/positions', allowedRoles: ['recruiter', 'admin'] },
-  { path: '/questionnaire', allowedRoles: ['user', 'recruiter', 'admin'] },
+  { path: '/dashboard', allowedRoles: ['user', 'admin'] },
+  { path: '/settings', allowedRoles: ['user', 'admin'] },
+  { path: '/organizations', allowedRoles: ['user', 'admin'] },
+  { path: '/positions', allowedRoles: ['user', 'admin'] },
+  { path: '/questionnaire', allowedRoles: ['user', 'admin'] },
   { path: '/analytics', allowedRoles: ['admin'] },
 ];
 
@@ -124,6 +124,12 @@ export default async function middleware(request: NextRequest) {
   
   // Remove locale prefix from pathname for route matching
   const pathnameWithoutLocale = pathname.replace(/^\/(en|tr)/, '') || '/';
+
+  // Redirect root to dashboard for a meaningful landing
+  if (pathnameWithoutLocale === '/') {
+    const dashboardUrl = new URL(`/${locale}/dashboard`, request.url);
+    return NextResponse.redirect(dashboardUrl);
+  }
 
   // Check if route requires authentication
   const matchedProtectedRoute = PROTECTED_ROUTES.find(route => 

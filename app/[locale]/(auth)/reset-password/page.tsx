@@ -2,8 +2,9 @@ import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { PasswordResetForm } from '@/components/auth/password-reset-form'
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: 'auth' })
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'auth' })
   
   return {
     title: t('resetPassword.title'),
@@ -11,9 +12,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
   }
 }
 
-interface ResetPasswordPageProps {
-  searchParams: { token?: string }
-}
+type ResetPasswordSearchParams = Promise<{ token?: string }>
 
 /**
  * Password Reset Page
@@ -22,8 +21,8 @@ interface ResetPasswordPageProps {
  * 1. Email request (no token) - user enters email to receive reset link
  * 2. New password (with token) - user sets new password after clicking email link
  */
-export default async function ResetPasswordPage({ searchParams, params }: ResetPasswordPageProps & { params: Promise<{ locale: string }> }) {
-  const resetToken = searchParams.token
+export default async function ResetPasswordPage({ searchParams, params }: { searchParams: ResetPasswordSearchParams; params: Promise<{ locale: string }> }) {
+  const { token: resetToken } = await searchParams
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'auth' })
 

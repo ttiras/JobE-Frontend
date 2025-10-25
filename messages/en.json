@@ -37,11 +37,33 @@
   "pages": {
     "dashboard": {
       "title": "Dashboard",
-      "description": "Welcome to JobE HR Management Platform"
+      "description": "Welcome to JobE HR Management Platform",
+      "noOrg": {
+        "title": "Create your first organization",
+        "description": "To get started, create an organization. You can add positions and invite teammates afterwards.",
+        "createButton": "Create organization"
+      }
     },
     "organizations": {
       "title": "Organizations",
-      "description": "Manage your organizations here"
+      "description": "Manage your organizations here",
+      "create": {
+        "title": "Create organization",
+        "fields": {
+          "name": "Organization name",
+          "website": "Website (optional)"
+        },
+        "placeholders": {
+          "name": "Acme Inc.",
+          "website": "https://example.com"
+        },
+        "submit": "Create organization",
+        "submitting": "Creating...",
+        "errors": {
+          "nameRequired": "Organization name is required",
+          "generic": "Failed to create organization. Please try again."
+        }
+      }
     },
     "positions": {
       "title": "Positions",

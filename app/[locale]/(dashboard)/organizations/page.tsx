@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { CreateOrganizationForm } from '@/components/organizations/create-organization-form'
 
 export const metadata: Metadata = {
   title: 'Organizations | JobE',
@@ -7,11 +8,13 @@ export const metadata: Metadata = {
 
 export default function OrganizationsPage() {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Organizations</h1>
-      <p className="text-muted-foreground">
-        Manage your organizations here
-      </p>
+    <div className="p-8 space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold mb-2">Organizations</h1>
+        <p className="text-muted-foreground">Manage your organizations here</p>
+      </div>
+
+      <CreateOrganizationForm />
     </div>
   );
 }

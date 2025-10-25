@@ -8,20 +8,15 @@ JobE implements a comprehensive Role-Based Access Control (RBAC) system to secur
 
 ### Roles
 
-1. **user** (Basic User)
-   - Access: Dashboard, Questionnaire, Settings
-   - Permissions: View own data, complete questionnaires, manage own profile
-   - Use case: Job candidates, regular employees
-
-2. **recruiter** (HR Recruiter)
+1. **user** (Organization User)
    - Access: Dashboard, Organizations, Positions, Questionnaire, Settings
-   - Permissions: All user permissions + manage organizations, positions, questionnaires
-   - Use case: HR staff, recruiters, hiring managers
+   - Permissions: Full organization scope. Can view and manage organization resources allowed by Hasura policies; complete questionnaires; manage own profile.
+   - Use case: HR staff, hiring managers, regular employees within their organization
 
-3. **admin** (Administrator)
-   - Access: All routes including Analytics
-   - Permissions: Full system access, view analytics, manage all data
-   - Use case: System administrators, HR directors
+2. **admin** (System Administrator)
+   - Access: All routes including Analytics and system administration areas
+   - Permissions: Full system access, view analytics, manage all users and billing/financials
+   - Use case: Platform operators and system admins
 
 ## Implementation
 
@@ -32,12 +27,12 @@ The main protection happens in `middleware.ts`:
 ```typescript
 // Route configuration with role requirements
 const PROTECTED_ROUTES: RouteConfig[] = [
-  { path: '/dashboard', allowedRoles: ['user', 'recruiter', 'admin'] },
-  { path: '/settings', allowedRoles: ['user', 'recruiter', 'admin'] },
-  { path: '/organizations', allowedRoles: ['recruiter', 'admin'] },
-  { path: '/positions', allowedRoles: ['recruiter', 'admin'] },
-  { path: '/questionnaire', allowedRoles: ['user', 'recruiter', 'admin'] },
-  { path: '/analytics', allowedRoles: ['admin'] },
+   { path: '/dashboard', allowedRoles: ['user', 'admin'] },
+   { path: '/settings', allowedRoles: ['user', 'admin'] },
+   { path: '/organizations', allowedRoles: ['user', 'admin'] },
+   { path: '/positions', allowedRoles: ['user', 'admin'] },
+   { path: '/questionnaire', allowedRoles: ['user', 'admin'] },
+   { path: '/analytics', allowedRoles: ['admin'] },
 ];
 ```
 
@@ -79,8 +74,7 @@ const visibleNavItems = filterNavigationByRole(navigationConfig, userRole);
 ```
 
 **Result:**
-- **user**: Sees Dashboard, Questionnaire, Settings
-- **recruiter**: Sees Dashboard, Organizations, Positions, Questionnaire, Settings
+- **user**: Sees Dashboard, Organizations, Positions, Questionnaire, Settings
 - **admin**: Sees all navigation items including Analytics
 
 ### Utility Functions
@@ -105,8 +99,8 @@ getAccessibleRoutes(userRole, navigationItems)
 1. **Update middleware.ts:**
    ```typescript
    const PROTECTED_ROUTES: RouteConfig[] = [
-     // ... existing routes
-     { path: '/new-feature', allowedRoles: ['recruiter', 'admin'] },
+       // ... existing routes
+       { path: '/new-feature', allowedRoles: ['user', 'admin'] },
    ];
    ```
 
@@ -118,7 +112,7 @@ getAccessibleRoutes(userRole, navigationItems)
      label: 'navigation.newFeature',
      icon: 'Icon',
      href: '/new-feature',
-     requiredRoles: ['recruiter', 'admin'],
+       requiredRoles: ['user', 'admin'],
    }
    ```
 
@@ -214,16 +208,22 @@ If a user bookmarks or shares a URL they shouldn't access:
 1. **Create users with different roles:**
    ```bash
    # In Nhost console, manually update user roles
+   # Make an admin
    UPDATE auth.users 
-   SET default_role = 'recruiter', 
-       roles = '{recruiter}' 
-   WHERE email = 'test@example.com';
+   SET default_role = 'admin', 
+       roles = '{admin}' 
+   WHERE email = 'admin@example.com';
+
+   # Make a regular user
+   UPDATE auth.users 
+   SET default_role = 'user', 
+       roles = '{user}' 
+   WHERE email = 'user@example.com';
    ```
 
 2. **Test each role:**
-   - Login as `user` → should NOT see Organizations, Positions, Analytics
-   - Login as `recruiter` → should see Organizations, Positions, NOT Analytics
-   - Login as `admin` → should see everything
+   - Login as `user` → should see Dashboard, Organizations, Positions, Questionnaire, Settings; NOT Analytics
+   - Login as `admin` → should see everything including Analytics
 
 3. **Test direct access:**
    - As `user`, navigate to `/en/analytics`
@@ -261,10 +261,10 @@ test('user cannot access admin routes', async ({ page }) => {
 **Fix:** Ensure both arrays have matching roles:
 ```typescript
 // config/navigation.ts
-{ path: '/organizations', requiredRoles: ['recruiter', 'admin'] }
+{ path: '/organizations', requiredRoles: ['user', 'admin'] }
 
 // middleware.ts  
-{ path: '/organizations', allowedRoles: ['recruiter', 'admin'] }
+{ path: '/organizations', allowedRoles: ['user', 'admin'] }
 ```
 
 ### Role changes not taking effect

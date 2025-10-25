@@ -98,7 +98,7 @@ export function useHasRole(role: string) {
  * 
  * @example
  * ```tsx
- * const canManage = useHasAnyRole(['admin', 'recruiter'])
+ * const canManage = useHasAnyRole(['admin'])
  * if (canManage) {
  *   return <ManagementTools />
  * }
@@ -117,7 +117,7 @@ export function useHasAnyRole(roles: string[]) {
  * 
  * @example
  * ```tsx
- * const hasBothRoles = useHasAllRoles(['admin', 'recruiter'])
+ * const hasBothRoles = useHasAllRoles(['admin'])
  * ```
  */
 export function useHasAllRoles(roles: string[]) {

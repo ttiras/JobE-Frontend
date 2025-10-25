@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
-export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  const t = await getTranslations({ locale: params.locale, namespace: 'auth' })
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'auth' })
   
   return {
     title: t('verifyEmail.title'),
@@ -13,15 +14,13 @@ export async function generateMetadata({ params }: { params: { locale: string } 
   }
 }
 
-interface VerifyEmailPageProps {
-  searchParams: { 
-    type?: string
-    redirectTo?: string
-    refreshToken?: string
-    error?: string
-    errorDescription?: string
-  }
-}
+type VerifyEmailSearchParams = Promise<{
+  type?: string
+  redirectTo?: string
+  refreshToken?: string
+  error?: string
+  errorDescription?: string
+}>
 
 /**
  * Email Verification Page
@@ -41,12 +40,12 @@ export default async function VerifyEmailPage({
   params, 
   searchParams 
 }: { 
-  params: { locale: string }
-  searchParams: VerifyEmailPageProps['searchParams']
+  params: Promise<{ locale: string }>
+  searchParams: VerifyEmailSearchParams
 }) {
-  const { type, refreshToken, error, errorDescription } = searchParams
-  const t = await getTranslations({ locale: params.locale, namespace: 'auth' })
-  const locale = params.locale
+  const { locale } = await params
+  const { type, refreshToken, error, errorDescription } = await searchParams
+  const t = await getTranslations({ locale, namespace: 'auth' })
 
   // Determine verification status from Nhost URL parameters
   const isEmailVerification = type === 'emailVerify'

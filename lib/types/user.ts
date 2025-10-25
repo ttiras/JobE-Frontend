@@ -2,11 +2,10 @@
  * User role types matching Nhost/Hasura roles
  * 
  * Role hierarchy:
- * - user: Basic authenticated user
- * - recruiter: Can manage organizations, positions, and questionnaires
- * - admin: Full system access including analytics
+ * - user: Organization-scoped user; can access all organization features
+ * - admin: System administrator; full system access including analytics and user management
  */
-export type UserRole = 'user' | 'recruiter' | 'admin';
+export type UserRole = 'user' | 'admin';
 
 export interface User {
   id: string;

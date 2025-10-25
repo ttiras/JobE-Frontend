@@ -98,14 +98,13 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
 
     try {
       const result = await register(email, password, displayName)
-      
-      if (result?.user) {
-    onSuccess?.(result)
-    // Redirect to verify email page (localized)
-    router.push(`/${locale}/verify-email`)
-      } else {
-  throw new Error(tAuth('register.error'))
-      }
+
+      // Registration succeeded if no error was thrown. Nhost may require
+      // email verification, in which case session will be null but the
+      // account is created. Treat this as success and guide the user.
+      onSuccess?.(result)
+      // Redirect to verify email page (localized)
+      router.push(`/${locale}/verify-email`)
     } catch (err) {
   const errorMessage = err instanceof Error ? err.message : tAuth('register.error')
       setError(errorMessage)

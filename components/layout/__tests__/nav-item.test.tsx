@@ -16,7 +16,7 @@ describe('NavItem', () => {
     label: 'Dashboard',
     icon: 'Home',
     href: '/dashboard',
-    requiredRoles: ['admin', 'recruiter', 'user'],
+    requiredRoles: ['admin', 'user'],
   };
 
   it('renders with icon and label', () => {

@@ -42,14 +42,14 @@ describe('LanguageSwitcher', () => {
       (useLocale as jest.Mock).mockReturnValue('en');
       render(<LanguageSwitcher />);
       
-      expect(screen.getByText(/🇬🇧/)).toBeInTheDocument();
+  expect(screen.getAllByText(/🇬🇧/).length).toBeGreaterThan(0);
     });
 
     it('displays Turkish flag when locale is Turkish', () => {
       (useLocale as jest.Mock).mockReturnValue('tr');
       render(<LanguageSwitcher />);
       
-      expect(screen.getByText(/🇹🇷/)).toBeInTheDocument();
+  expect(screen.getAllByText(/🇹🇷/).length).toBeGreaterThan(0);
     });
   });
 
@@ -62,8 +62,8 @@ describe('LanguageSwitcher', () => {
       const button = screen.getByRole('button', { name: /language/i });
       await user.click(button);
 
-      expect(screen.getByText(/English/i)).toBeInTheDocument();
-      expect(screen.getByText(/Türkçe/i)).toBeInTheDocument();
+  expect(screen.getByRole('menuitem', { name: /English/i })).toBeInTheDocument();
+  expect(screen.getByRole('menuitem', { name: /Türkçe/i })).toBeInTheDocument();
     });
 
     it('displays flag emojis for both languages', async () => {
@@ -74,8 +74,8 @@ describe('LanguageSwitcher', () => {
       const button = screen.getByRole('button', { name: /language/i });
       await user.click(button);
 
-      const englishOption = screen.getByText(/English/i);
-      const turkishOption = screen.getByText(/Türkçe/i);
+  const englishOption = screen.getByRole('menuitem', { name: /English/i });
+  const turkishOption = screen.getByRole('menuitem', { name: /Türkçe/i });
       
       expect(englishOption.textContent).toContain('🇬🇧');
       expect(turkishOption.textContent).toContain('🇹🇷');
@@ -92,7 +92,7 @@ describe('LanguageSwitcher', () => {
       const button = screen.getByRole('button', { name: /language/i });
       await user.click(button);
 
-      const turkishOption = screen.getByText(/Türkçe/i);
+  const turkishOption = screen.getByRole('menuitem', { name: /Türkçe/i });
       await user.click(turkishOption);
 
       // Should navigate to /tr/dashboard
@@ -108,7 +108,7 @@ describe('LanguageSwitcher', () => {
       const button = screen.getByRole('button', { name: /language/i });
       await user.click(button);
 
-      const englishOption = screen.getByText(/English/i);
+  const englishOption = screen.getByRole('menuitem', { name: /English/i });
       await user.click(englishOption);
 
       // Should navigate to /dashboard (no locale prefix for English)
@@ -124,7 +124,7 @@ describe('LanguageSwitcher', () => {
       const button = screen.getByRole('button', { name: /language/i });
       await user.click(button);
 
-      const turkishOption = screen.getByText(/Türkçe/i);
+  const turkishOption = screen.getByRole('menuitem', { name: /Türkçe/i });
       await user.click(turkishOption);
 
       // Should preserve path: /organizations → /tr/organizations
@@ -140,7 +140,7 @@ describe('LanguageSwitcher', () => {
       const button = screen.getByRole('button', { name: /language/i });
       await user.click(button);
 
-      const englishOption = screen.getByText(/English/i);
+  const englishOption = screen.getByRole('menuitem', { name: /English/i });
       await user.click(englishOption);
 
       // Should preserve nested path: /tr/organizations/123 → /organizations/123
@@ -168,8 +168,8 @@ describe('LanguageSwitcher', () => {
       expect(button).toHaveFocus();
 
       // Open with Enter
-      await user.keyboard('{Enter}');
-      expect(screen.getByText(/English/i)).toBeInTheDocument();
+  await user.keyboard('{Enter}');
+  expect(screen.getByRole('menuitem', { name: /English/i })).toBeInTheDocument();
     });
   });
 });

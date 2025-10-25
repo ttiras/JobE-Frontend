@@ -4,9 +4,8 @@ import { NavigationItem } from '@/lib/utils/navigation-filter';
  * Navigation configuration with role-based access control
  * 
  * Role hierarchy:
- * - admin: Full access to all sections including analytics
- * - recruiter: Can manage organizations, positions, questionnaires
- * - user: Basic access to dashboard, questionnaire, and settings
+ * - admin: Full access to all sections including analytics and system tools
+ * - user: Organization user; access to all organization features (dashboard, organizations, positions, questionnaire, settings)
  */
 export const navigationConfig: NavigationItem[] = [
   {
@@ -14,28 +13,28 @@ export const navigationConfig: NavigationItem[] = [
     label: 'navigation.dashboard',
     icon: 'Home',
     href: '/dashboard',
-    requiredRoles: ['user', 'recruiter', 'admin'],
+    requiredRoles: ['user', 'admin'],
   },
   {
     id: 'organizations',
     label: 'navigation.organizations',
     icon: 'Building2',
     href: '/organizations',
-    requiredRoles: ['recruiter', 'admin'],
+    requiredRoles: ['user', 'admin'],
   },
   {
     id: 'positions',
     label: 'navigation.positions',
     icon: 'Briefcase',
     href: '/positions',
-    requiredRoles: ['recruiter', 'admin'],
+    requiredRoles: ['user', 'admin'],
   },
   {
     id: 'questionnaire',
     label: 'navigation.questionnaire',
     icon: 'ClipboardList',
     href: '/questionnaire',
-    requiredRoles: ['user', 'recruiter', 'admin'],
+    requiredRoles: ['user', 'admin'],
   },
   {
     id: 'analytics',
@@ -49,6 +48,6 @@ export const navigationConfig: NavigationItem[] = [
     label: 'navigation.settings',
     icon: 'Settings',
     href: '/settings',
-    requiredRoles: ['user', 'recruiter', 'admin'],
+    requiredRoles: ['user', 'admin'],
   },
 ];

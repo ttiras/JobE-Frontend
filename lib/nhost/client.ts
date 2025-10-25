@@ -23,7 +23,8 @@ export const nhost = createClient({
  * Defaults to English locale, but can be customized
  */
 export function getVerifyEmailRedirectUrl(locale: string = 'en'): string {
-  return `${getBaseUrl()}/${locale}/auth/verify-email`
+  // Route groups like (auth) are not part of the URL; actual path is /[locale]/verify-email
+  return `${getBaseUrl()}/${locale}/verify-email`
 }
 
 /**
@@ -31,6 +32,7 @@ export function getVerifyEmailRedirectUrl(locale: string = 'en'): string {
  * Defaults to English locale, but can be customized
  */
 export function getResetPasswordRedirectUrl(locale: string = 'en'): string {
-  return `${getBaseUrl()}/${locale}/auth/reset-password`
+  // Route groups like (auth) are not part of the URL; actual path is /[locale]/reset-password
+  return `${getBaseUrl()}/${locale}/reset-password`
 }
 

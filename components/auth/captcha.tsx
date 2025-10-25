@@ -100,8 +100,9 @@ export const Captcha = forwardRef<CaptchaHandle, CaptchaProps>(
       if (!scriptLoadedRef.current && !document.querySelector('script[src*="recaptcha"]')) {
         const script = document.createElement('script')
         script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`
-        script.async = true
-        script.defer = true
+        // Set boolean attributes explicitly for better JSDOM/test detection
+        script.setAttribute('async', '')
+        script.setAttribute('defer', '')
         script.onerror = () => {
           const error = new Error('Failed to load reCAPTCHA script')
           setError(error.message)

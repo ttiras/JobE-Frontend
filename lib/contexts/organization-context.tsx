@@ -8,6 +8,7 @@ interface OrganizationContextType {
   currentOrganization: Organization | null;
   organizations: Organization[];
   switchOrganization: (org: Organization) => void;
+  addOrganization: (org: Organization) => void;
   isLoading: boolean;
 }
 
@@ -32,12 +33,21 @@ export function OrganizationProvider({ children }: { children: React.ReactNode }
     setStoredOrganization(org);
   };
 
+  const addOrganization = (org: Organization) => {
+    setOrganizations(prev => {
+      // Avoid duplicates by id if already present
+      if (prev.some(o => o.id === org.id)) return prev;
+      return [...prev, org];
+    })
+  }
+
   return (
     <OrganizationContext.Provider
       value={{
         currentOrganization,
         organizations,
         switchOrganization,
+        addOrganization,
         isLoading,
       }}
     >
