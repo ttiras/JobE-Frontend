@@ -56,7 +56,7 @@ const GET_COUNTRIES = `
 
 const GET_ORG_SIZES = `
   query GetOrgSizes {
-    org_size(order_by: { value: asc }) {
+    org_size {
       value
       comment
     }
@@ -97,7 +97,24 @@ export function CreateOrganizationForm({ onCreated }: Props) {
 
   const sizeOptions = useMemo(() => {
     const rows = orgSizesData?.org_size ?? []
-    return rows.map((s) => ({ value: s.value, label: s.comment || s.value }))
+    const mapped = rows.map((s) => ({ value: s.value, label: s.comment || s.value }))
+    
+    // Custom sort function that extracts the starting number from size ranges
+    return mapped.sort((a, b) => {
+      // Extract the first number from the display label (what user sees)
+      // Remove commas first (e.g., "1,001" -> "1001")
+      const extractNumber = (str: string): number => {
+        const cleaned = str.replace(/,/g, '')
+        const match = cleaned.match(/^(\d+)/)
+        return match ? parseInt(match[1], 10) : 0
+      }
+      
+      // Sort by the label (comment field), not the value
+      const numA = extractNumber(a.label)
+      const numB = extractNumber(b.label)
+      
+      return numA - numB
+    })
   }, [orgSizesData])
 
   type CreateOrganizationResult = {

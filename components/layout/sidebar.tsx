@@ -2,14 +2,12 @@
 
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useRef, useEffect, KeyboardEvent } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef, KeyboardEvent, useState } from 'react';
 import { navigationConfig } from '@/config/navigation';
 import { filterNavigationByRole } from '@/lib/utils/navigation-filter';
 import { useAuth } from '@/lib/contexts/auth-context';
 import { NavItem } from './nav-item';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetContent,
@@ -18,24 +16,21 @@ import {
 } from '@/components/ui/sheet';
 
 interface SidebarProps {
-  isCollapsed?: boolean;
   isMobile?: boolean;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  onToggleCollapse?: () => void;
 }
 
 export function Sidebar({
-  isCollapsed = false,
   isMobile = false,
   isOpen = false,
   onOpenChange,
-  onToggleCollapse,
 }: SidebarProps) {
   const pathname = usePathname();
   const t = useTranslations();
   const navRef = useRef<HTMLElement>(null);
   const { user } = useAuth();
+  const [isHovered, setIsHovered] = useState(false);
 
   // Filter navigation items by user role
   const userRole = user?.defaultRole || 'user';
@@ -69,16 +64,17 @@ export function Sidebar({
     <nav
       ref={navRef}
       aria-label="Main navigation"
-      className="flex flex-col p-4 space-y-2"
+      className="flex flex-col p-3 space-y-1 flex-1 relative z-10"
       onKeyDown={handleKeyDown}
     >
-      {visibleNavItems.map((item, index) => (
+      {visibleNavItems.map((item) => (
         <NavItem
           key={item.id}
           item={item}
           isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)}
           label={t(item.label)}
-          isCollapsed={isCollapsed && !isMobile}
+          isCollapsed={!isHovered && !isMobile}
+          isHovered={isHovered || isMobile}
         />
       ))}
     </nav>
@@ -104,38 +100,23 @@ export function Sidebar({
     );
   }
 
-  // Desktop/Tablet: Render as persistent sidebar
+  // Desktop/Tablet: Render as persistent sidebar with hover-expand overlay
   return (
     <aside
       role="complementary"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        'border-r bg-background h-screen sticky top-0 transition-all duration-300 flex flex-col',
-        isCollapsed ? 'w-16' : 'w-64'
+        'fixed left-0 top-14 z-50 h-[calc(100vh-3.5rem)] flex flex-col',
+        'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+        'transition-all duration-300 ease-out',
+        isHovered ? 'w-60' : 'w-16',
+        'shadow-sm'
       )}
     >
+      {/* Border that moves with the width */}
+      <div className="absolute right-0 top-0 h-full w-px bg-border" />
       {navContent}
-      
-      {/* Collapse/Expand Toggle Button */}
-      {onToggleCollapse && (
-        <div className="mt-auto p-4 border-t">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleCollapse}
-            className="w-full"
-            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {isCollapsed ? (
-              <ChevronRight className="h-5 w-5" />
-            ) : (
-              <>
-                <ChevronLeft className="h-5 w-5" />
-                <span className="ml-2 text-sm">Collapse</span>
-              </>
-            )}
-          </Button>
-        </div>
-      )}
     </aside>
   );
 }

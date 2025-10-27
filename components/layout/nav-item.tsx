@@ -16,9 +16,10 @@ interface NavItemProps {
   isActive: boolean;
   label: string;
   isCollapsed?: boolean;
+  isHovered?: boolean;
 }
 
-export function NavItem({ item, isActive, label, isCollapsed = false }: NavItemProps) {
+export function NavItem({ item, isActive, label, isCollapsed = false, isHovered = false }: NavItemProps) {
   // Dynamically get the icon component
   const IconComponent = Icons[item.icon as keyof typeof Icons] as React.ComponentType<{ className?: string }>;
 
@@ -26,34 +27,63 @@ export function NavItem({ item, isActive, label, isCollapsed = false }: NavItemP
     <Link
       href={item.href}
       className={cn(
-        'flex items-center gap-3 px-3 py-2 rounded-md transition-colors',
-        'hover:bg-accent hover:text-accent-foreground',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-        isActive && 'bg-accent text-accent-foreground border-l-4 border-primary',
-        isCollapsed && 'justify-center px-2'
+        'group relative flex items-center transition-all duration-200',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+        'text-muted-foreground hover:text-foreground',
+        'justify-start py-2.5',
+        // When expanded, the background spans the full width
+        isHovered ? 'px-2 rounded-lg hover:bg-accent/50' : 'px-2 w-16 rounded-lg',
+        isActive && isHovered && 'bg-accent text-foreground'
       )}
       aria-label={isCollapsed ? label : undefined}
       aria-current={isActive ? 'page' : undefined}
     >
-      {IconComponent && (
-        <IconComponent
-          className="h-5 w-5 flex-shrink-0"
-          aria-hidden="true"
-        />
-      )}
-      {!isCollapsed && <span className="text-sm font-medium">{label}</span>}
+      {/* Icon container - stays in fixed position */}
+      <div className={cn(
+        'flex items-center justify-center transition-all duration-200 flex-shrink-0',
+        'w-8 h-8 rounded-md relative z-10',
+        isActive && !isHovered && 'bg-accent text-foreground',
+        !isActive && !isHovered && 'group-hover:bg-accent/50'
+      )}>
+        {IconComponent && (
+          <IconComponent
+            className={cn(
+              "transition-transform duration-200",
+              'h-4 w-4',
+              !isActive && 'group-hover:scale-110'
+            )}
+            aria-hidden="true"
+          />
+        )}
+      </div>
+      
+      {/* Label that slides in from the right with beautiful animation */}
+      <span className={cn(
+        "absolute left-14 text-sm font-medium whitespace-nowrap px-3 py-2",
+        "transition-all duration-300 ease-out",
+        isActive && 'text-foreground',
+        isHovered 
+          ? 'opacity-100 translate-x-0 visible pointer-events-auto' 
+          : 'opacity-0 -translate-x-4 invisible pointer-events-none'
+      )}>
+        {label}
+      </span>
     </Link>
   );
 
   // Wrap with Tooltip when collapsed
-  if (isCollapsed) {
+  if (isCollapsed && !isHovered) {
     return (
-      <TooltipProvider delayDuration={0}>
+      <TooltipProvider delayDuration={300}>
         <Tooltip>
           <TooltipTrigger asChild>
             {linkContent}
           </TooltipTrigger>
-          <TooltipContent side="right" className="font-medium">
+          <TooltipContent 
+            side="right" 
+            className="font-medium bg-popover/95 backdrop-blur-sm border shadow-lg"
+            sideOffset={8}
+          >
             {label}
           </TooltipContent>
         </Tooltip>
