@@ -16,8 +16,7 @@
  */
 
 import { nhost, getVerifyEmailRedirectUrl, getResetPasswordRedirectUrl } from './client'
-import { setSessionCookie, clearSessionCookie } from './session-cookie'
-import { AuthErrorType, type AuthError } from '@/lib/types/nhost'
+import { AuthErrorType, type AuthError, type Session } from '@/lib/types/nhost'
 
 /**
  * Login with email and password
@@ -27,7 +26,7 @@ import { AuthErrorType, type AuthError } from '@/lib/types/nhost'
  * @returns Session object on success
  * @throws AuthError on failure
  */
-export async function login(email: string, password: string) {
+export async function login(email: string, password: string): Promise<Session | null> {
   const response = await nhost.auth.signInEmailPassword({
     email,
     password,
@@ -37,12 +36,10 @@ export async function login(email: string, password: string) {
     throw createAuthError(response.body, response.status)
   }
 
-  const session = response.body.session || null
-  // Sync cookie so server can read session immediately after login
-  try {
-    setSessionCookie(session)
-  } catch {}
-  return session
+  // Important: After successful sign-in, the Nhost client updates its internal session.
+  // We return the canonical session from the client, which includes decodedToken
+  // and matches our app-wide Session type.
+  return nhost.getUserSession()
 }
 
 /**
@@ -106,10 +103,6 @@ export async function logout() {
 
   // Clear local session
   nhost.clearSession()
-  // Clear server-readable cookie
-  try {
-    clearSessionCookie()
-  } catch {}
   
   return true
 }
@@ -239,11 +232,7 @@ export async function refreshSession() {
     )
   }
 
-  // Keep cookie in sync on refresh
-  try {
-    setSessionCookie(session)
-  } catch {}
-
+  // Note: Nhost's CookieStorage automatically handles cookie persistence
   return session
 }
 

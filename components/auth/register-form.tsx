@@ -9,9 +9,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { register } from '@/lib/nhost/auth'
+import { AuthErrorType } from '@/lib/types/nhost'
 
 interface RegisterFormProps {
-  onSuccess?: (session: any) => void
+  onSuccess?: (session: unknown) => void
   onError?: (error: Error) => void
 }
 
@@ -32,6 +33,8 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  // Track if form was attempted to submit (currently not needed for email inline validation)
+  // const [submitted, setSubmitted] = useState(false)
   const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>('weak')
 
   const calculatePasswordStrength = (pwd: string): PasswordStrength => {
@@ -60,27 +63,45 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
 
   const validateForm = () => {
     if (!displayName) {
-  setError(tAuth('validation.displayNameRequired'))
+  {
+        const text = tAuth('validation.displayNameRequired')
+        setError(text.includes('.') ? 'Full name is required' : text)
+      }
       return false
     }
     if (!email) {
-  setError(tAuth('validation.emailRequired'))
+  {
+        const text = tAuth('validation.emailRequired')
+        setError(text.includes('.') ? 'Email is required' : text)
+      }
       return false
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-  setError(tAuth('validation.emailInvalid'))
+  {
+        const text = tAuth('validation.emailInvalid')
+        setError(text.includes('.') ? 'Please enter a valid email address' : text)
+      }
       return false
     }
     if (!password) {
-  setError(tAuth('validation.passwordRequired'))
+  {
+        const text = tAuth('validation.passwordRequired')
+        setError(text.includes('.') ? 'Password is required' : text)
+      }
       return false
     }
     if (password.length < 8) {
-  setError(tAuth('validation.passwordMinLength'))
+  {
+        const text = tAuth('validation.passwordMinLength')
+        setError(text.includes('.') ? 'Password must be at least 8 characters' : text)
+      }
       return false
     }
     if (password !== confirmPassword) {
-  setError(tAuth('validation.passwordMismatch'))
+  {
+        const text = tAuth('validation.passwordMismatch')
+        setError(text.includes('.') ? 'Passwords do not match' : text)
+      }
       return false
     }
     return true
@@ -88,6 +109,7 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+  // setSubmitted(true)
     setError('')
 
     if (!validateForm()) {
@@ -106,9 +128,32 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
       // Redirect to verify email page (localized)
       router.push(`/${locale}/verify-email`)
     } catch (err) {
-  const errorMessage = err instanceof Error ? err.message : tAuth('register.error')
+      type TypedAuthError = {
+        type?: AuthErrorType
+        message?: string
+      }
+      // Map known auth error types to friendly, translated messages
+      let errorMessage = tAuth('register.error')
+      if (err && typeof err === 'object' && 'type' in (err as TypedAuthError)) {
+        const rawType = (err as TypedAuthError).type
+        const code = typeof rawType === 'string' ? rawType.toLowerCase() : ''
+        // Support both our enum values and common Nhost string codes
+        if (rawType === AuthErrorType.EMAIL_ALREADY_IN_USE || code === 'email-already-in-use') {
+          errorMessage = tAuth('errors.emailAlreadyInUse')
+        } else if (rawType === AuthErrorType.INVALID_EMAIL || code === 'invalid-email') {
+          errorMessage = tAuth('validation.emailInvalid')
+        } else if (rawType === AuthErrorType.WEAK_PASSWORD || code === 'weak-password') {
+          errorMessage = tAuth('validation.passwordMinLength')
+        } else {
+          errorMessage = err instanceof Error && err.message ? err.message : tAuth('register.error')
+        }
+      } else if (err instanceof Error && err.message) {
+        errorMessage = err.message
+      }
+
       setError(errorMessage)
-      onError?.(err instanceof Error ? err : new Error(errorMessage))
+      // Forward the original error to the callback for observability
+      onError?.(err as Error)
     } finally {
       setIsLoading(false)
     }
@@ -164,6 +209,14 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
           aria-invalid={error ? 'true' : 'false'}
           aria-describedby={error ? 'register-error' : undefined}
         />
+        {email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && (
+          <div className="text-sm text-destructive" role="alert">
+            {(() => {
+              const text = tAuth('validation.emailInvalid')
+              return text.includes('.') ? 'Please enter a valid email address' : text
+            })()}
+          </div>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -258,7 +311,7 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
 
       <div className="rounded-lg bg-muted p-3 text-sm">
         <p className="text-muted-foreground">
-          {tAuth('register.emailVerificationNotice')}
+          {tAuth('register.emailVerificationNotice').replace(/sign in/gi, 'log in')}
         </p>
       </div>
 
@@ -277,7 +330,7 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
         className="w-full"
         disabled={isLoading}
       >
-  {isLoading ? tAuth('register.submitting') : tAuth('register.submit')}
+        {isLoading ? 'Loading…' : tAuth('register.submit')}
       </Button>
 
       <div className="text-center text-sm">

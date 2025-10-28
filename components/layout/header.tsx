@@ -1,13 +1,24 @@
 "use client";
 
 import Link from 'next/link';
-import { Menu, LogOut, User, Building2, ChevronDown } from 'lucide-react';
+import { Menu, LogOut, User, Building2, ChevronDown, Settings, Sun, Moon, Monitor } from 'lucide-react';
 import { RefObject } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ThemeToggle } from './theme-toggle';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+} from '@/components/ui/dropdown-menu';
 import { logout } from '@/lib/nhost/auth';
 import { useAuth } from '@/lib/hooks/use-auth';
 import { useOrganization } from '@/lib/contexts/organization-context';
@@ -29,6 +40,12 @@ export default function Header({
   const locale = pathname?.match(/^\/(en|tr)\b/)?.[1] || 'en';
   const { isAuthenticated, user } = useAuth();
   const { currentOrganization } = useOrganization();
+  const { setTheme } = useTheme();
+
+  // Debug: Log auth state on mount and when it changes
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[Header] Render - pathname:', pathname, 'isAuthenticated:', isAuthenticated, 'hasUser:', !!user);
+  }
 
   const handleLogout = async () => {
     try {
@@ -75,7 +92,7 @@ export default function Header({
           </Button>
         )}
         <Link
-          href="/dashboard"
+          href={`/${locale}/dashboard`}
           className={cn(
             "text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent",
             "hover:from-primary/80 hover:to-primary/40 transition-all duration-200",
@@ -102,38 +119,101 @@ export default function Header({
       </div>
       
       <div className="flex items-center gap-2">
-        <ThemeToggle />
-        
-        {isAuthenticated && (
-          <div className="flex items-center gap-2 pl-2 border-l">
-            {/* User Profile Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="gap-2 h-9 px-2"
-            >
-              <Avatar className="h-7 w-7 border-2 border-primary/10">
-                <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                  {getUserInitials()}
-                </AvatarFallback>
-              </Avatar>
-              <span className="hidden md:inline text-sm font-medium">
-                {user?.displayName || user?.email?.split('@')[0] || 'User'}
-              </span>
-            </Button>
+        {isAuthenticated ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-full ml-2 border-l pl-4"
+              >
+                <Avatar className="h-8 w-8 border-2 border-primary/20 ring-1 ring-background">
+                  <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary text-xs font-semibold">
+                    {getUserInitials()}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
             
-            {/* Logout Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              className="h-9 w-9 hover:bg-destructive/10 hover:text-destructive"
-              aria-label="Sign out"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
-        )}
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {user?.displayName || 'User'}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user?.email || 'user@example.com'}
+                  </p>
+                  {user?.roles && user.roles.length > 0 && (
+                    <p className="text-xs leading-none text-muted-foreground mt-1">
+                      Role: {user.roles.join(', ')}
+                    </p>
+                  )}
+                </div>
+              </DropdownMenuLabel>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem 
+                className="cursor-pointer"
+                onClick={() => router.push(`/${locale}/profile`)}
+              >
+                <User className="mr-2 h-4 w-4" />
+                <span>Profile</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem 
+                className="cursor-pointer"
+                onClick={() => router.push(`/${locale}/settings`)}
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Settings</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="cursor-pointer">
+                  <Monitor className="mr-2 h-4 w-4" />
+                  <span>Theme</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem 
+                    className="cursor-pointer"
+                    onClick={() => setTheme('light')}
+                  >
+                    <Sun className="mr-2 h-4 w-4" />
+                    <span>Light</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="cursor-pointer"
+                    onClick={() => setTheme('dark')}
+                  >
+                    <Moon className="mr-2 h-4 w-4" />
+                    <span>Dark</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="cursor-pointer"
+                    onClick={() => setTheme('system')}
+                  >
+                    <Monitor className="mr-2 h-4 w-4" />
+                    <span>System</span>
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem 
+                className="cursor-pointer text-destructive focus:text-destructive"
+                onClick={handleLogout}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Sign out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
       </div>
     </header>
   );

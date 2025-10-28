@@ -11,7 +11,7 @@
  * - Email verification notice
  */
 
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { NextIntlClientProvider } from 'next-intl'
 import { RegisterForm } from '../register-form'
@@ -133,6 +133,9 @@ describe('RegisterForm', () => {
     it('should show error for invalid email format', async () => {
       renderRegisterForm()
       const user = userEvent.setup()
+
+      const displayNameInput = screen.getByLabelText(/full name/i)
+      await user.type(displayNameInput, 'John Doe')
 
       const emailInput = screen.getByLabelText(/^email address/i)
       await user.type(emailInput, 'invalid-email')
@@ -270,8 +273,7 @@ describe('RegisterForm', () => {
         expect(mockRegister).toHaveBeenCalledWith(
           'test@example.com',
           'password123',
-          'John Doe',
-          undefined
+          'John Doe'
         )
       })
     })
@@ -352,8 +354,9 @@ describe('RegisterForm', () => {
 
   describe('Error Handling', () => {
     it('should display error message when email is already in use', async () => {
-      const error = new Error('Email already in use')
-      ;(error as any).type = 'email-already-in-use'
+  const error = new Error('Email already in use')
+  const typed = error as Error & { type?: string }
+  typed.type = 'email-already-in-use'
       mockRegister.mockRejectedValueOnce(error)
       renderRegisterForm()
       const user = userEvent.setup()

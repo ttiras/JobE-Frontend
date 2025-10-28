@@ -46,9 +46,10 @@ export default async function RootLayout({
             Loading…
           </div>
         }>
-          <NhostProvider>
-            <AuthProvider>
-              <NextIntlClientProvider messages={messages}>
+          {/* Intl provider must wrap the entire tree so client dialogs inside AuthProvider have context */}
+          <NextIntlClientProvider messages={messages} locale={locale || "en"}>
+            <NhostProvider>
+              <AuthProvider>
                 <ThemeProvider
                   attribute="class"
                   defaultTheme="light"
@@ -60,9 +61,9 @@ export default async function RootLayout({
                   </OrganizationProvider>
                   <Toaster position="top-right" richColors />
                 </ThemeProvider>
-              </NextIntlClientProvider>
-            </AuthProvider>
-          </NhostProvider>
+              </AuthProvider>
+            </NhostProvider>
+          </NextIntlClientProvider>
         </Suspense>
       </body>
     </html>

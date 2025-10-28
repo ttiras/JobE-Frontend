@@ -26,7 +26,7 @@ export interface CaptchaHandle {
 }
 
 export const Captcha = forwardRef<CaptchaHandle, CaptchaProps>(
-  ({ action, onVerify, onError, onExpired, expirationTime = 120000, badge = 'bottomright' }, ref) => {
+  ({ action, onVerify, onError, onExpired, expirationTime = 120000 }, ref) => {
   const tAuth = useTranslations('auth')
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -119,6 +119,7 @@ export const Captcha = forwardRef<CaptchaHandle, CaptchaProps>(
           clearTimeout(timerRef.current)
         }
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [action])
 
     useImperativeHandle(ref, () => ({
@@ -126,7 +127,7 @@ export const Captcha = forwardRef<CaptchaHandle, CaptchaProps>(
     }))
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-2" data-testid="recaptcha-container">
         {isLoading && (
           <div 
             className="text-sm text-muted-foreground text-center"

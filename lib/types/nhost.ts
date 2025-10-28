@@ -3,7 +3,8 @@
  * Extends base Nhost types with application-specific properties
  */
 
-import type { User as NhostUser, Session as NhostSession } from '@nhost/nhost-js/auth'
+import type { User as NhostUser } from '@nhost/nhost-js/auth'
+import type { Session as NhostSession } from '@nhost/nhost-js/session'
 
 /**
  * User roles in the application

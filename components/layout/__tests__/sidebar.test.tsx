@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Sidebar } from '@/components/layout/sidebar';
 
 // Mock next-intl
@@ -6,10 +6,7 @@ jest.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-// Mock next/navigation
-jest.mock('next/navigation', () => ({
-  usePathname: () => '/dashboard',
-}));
+// next/navigation is globally mocked in jest.setup.ts
 
 describe('Sidebar', () => {
   it('renders all navigation items', () => {
@@ -36,11 +33,15 @@ describe('Sidebar', () => {
     expect(dashboardLink).toBeInTheDocument();
   });
 
-  it('has proper width on desktop (256px)', () => {
-    const { container } = render(<Sidebar />);
-    const sidebar = container.firstChild as HTMLElement;
+  it('has collapsed width by default (w-16) and expands on hover (w-60)', () => {
+    render(<Sidebar />);
+    const aside = screen.getByRole('complementary');
     
-    // Check if sidebar has w-64 class (256px in Tailwind)
-    expect(sidebar).toHaveClass('w-64');
+    // Default is collapsed
+    expect(aside).toHaveClass('w-16');
+
+    // Hover expands
+    fireEvent.mouseEnter(aside);
+    expect(aside).toHaveClass('w-60');
   });
 });

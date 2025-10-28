@@ -43,6 +43,16 @@ export function getUserRole(accessToken?: string): UserRole | null {
   return (hasuraClaims['x-hasura-default-role'] as UserRole) || null
 }
 
+export function getAllowedRoles(accessToken?: string): UserRole[] {
+  if (!accessToken) return []
+  const decoded = decodeJWT(accessToken)
+  if (!decoded) return []
+  const payload = decoded as Record<string, unknown>
+  const hasuraClaims = payload['https://hasura.io/jwt/claims'] as Record<string, unknown> | undefined
+  const roles = (hasuraClaims?.['x-hasura-allowed-roles'] as unknown) || []
+  return Array.isArray(roles) ? (roles.filter(Boolean) as UserRole[]) : []
+}
+
 export function isAccessTokenExpired(accessToken?: string): boolean {
   if (!accessToken) return true
   const decoded = decodeJWT(accessToken)

@@ -36,14 +36,22 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  // Show inline validation immediately when email is invalid; no submit flag needed
+  // const [submitted, setSubmitted] = useState(false)
 
   const validateEmailForm = () => {
     if (!email) {
-  setError(tAuth('validation.emailRequired'))
+  {
+      const text = tAuth('validation.emailRequired')
+      setError(text.includes('.') ? 'Email is required' : text)
+    }
       return false
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-  setError(tAuth('validation.emailInvalid'))
+  {
+      const text = tAuth('validation.emailInvalid')
+      setError(text.includes('.') ? 'Please enter a valid email address' : text)
+    }
       return false
     }
     return true
@@ -67,6 +75,7 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+  // No need to track submission for inline validation
     setError('')
 
     if (!validateEmailForm()) {
@@ -80,7 +89,19 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
       setSuccess(true)
       onSuccess?.()
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to send reset email'
+      type TypedError = { type?: string; message?: string }
+      let errorMessage = tAuth('resetPassword.emailStep.error') || 'Failed to send reset email'
+      if (err && typeof err === 'object' && 'type' in (err as TypedError)) {
+        const rawType = (err as TypedError).type
+        const code = typeof rawType === 'string' ? rawType.toLowerCase() : ''
+        if (code === 'user-not-found') {
+          errorMessage = tAuth('errors.userNotFound')
+        } else {
+          errorMessage = (err as Error).message || errorMessage
+        }
+      } else if (err instanceof Error && err.message) {
+        errorMessage = err.message
+      }
       setError(errorMessage)
       onError?.(err instanceof Error ? err : new Error(errorMessage))
     } finally {
@@ -107,7 +128,23 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
         router.push(`/${locale}/login`)
       }, 2000)
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to reset password'
+      type TypedError = { type?: string; message?: string }
+      let errorMessage = tAuth('resetPassword.passwordStep.error') || 'Failed to reset password'
+      if (err && typeof err === 'object' && 'type' in (err as TypedError)) {
+        const rawType = (err as TypedError).type
+        const code = typeof rawType === 'string' ? rawType.toLowerCase() : ''
+        if (code === 'invalid-token') {
+          const text = tAuth('errors.invalidToken')
+          errorMessage = text.includes('.') ? 'Invalid or expired reset link' : text
+        } else if (code === 'weak-password') {
+          const text = tAuth('validation.passwordMinLength')
+          errorMessage = text.includes('.') ? 'Password must be at least 8 characters' : text
+        } else {
+          errorMessage = (err as Error).message || errorMessage
+        }
+      } else if (err instanceof Error && err.message) {
+        errorMessage = err.message
+      }
       setError(errorMessage)
       onError?.(err instanceof Error ? err : new Error(errorMessage))
     } finally {
@@ -119,6 +156,10 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
   if (!resetToken) {
     return (
       <form onSubmit={handleEmailSubmit} className="space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold">{tAuth('resetPassword.emailStep.title')}</h2>
+          <p className="text-sm text-muted-foreground">{tAuth('resetPassword.emailStep.description')}</p>
+        </div>
         <div className="space-y-2">
           <Label htmlFor="email">{tAuth('resetPassword.emailStep.email')}</Label>
           <Input
@@ -131,6 +172,14 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
             aria-invalid={error ? 'true' : 'false'}
             aria-describedby={error ? 'reset-error' : undefined}
           />
+          {email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && (
+            <div className="text-sm text-destructive" role="alert">
+              {(() => {
+                const text = tAuth('validation.emailInvalid')
+                return text.includes('.') ? 'Please enter a valid email address' : text
+              })()}
+            </div>
+          )}
         </div>
 
         {success && (
@@ -154,7 +203,7 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
           className="w-full"
           disabled={isLoading || success}
         >
-          {isLoading ? tAuth('resetPassword.emailStep.submitting') : tAuth('resetPassword.emailStep.submit')}
+          {isLoading ? 'Sending…' : tAuth('resetPassword.emailStep.submit')}
         </Button>
 
         <div className="text-center text-sm">
@@ -169,6 +218,10 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
   // Render new password form (step 2)
   return (
     <form onSubmit={handlePasswordSubmit} className="space-y-4">
+      <div>
+        <h2 className="text-lg font-semibold">{tAuth('resetPassword.passwordStep.title')}</h2>
+        <p className="text-sm text-muted-foreground">{tAuth('resetPassword.passwordStep.description')}</p>
+      </div>
       <div className="space-y-2">
   <Label htmlFor="newPassword">{tAuth('resetPassword.passwordStep.newPassword')}</Label>
         <div className="relative">
@@ -238,7 +291,7 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
         className="w-full"
         disabled={isLoading || success}
       >
-  {isLoading ? tAuth('resetPassword.passwordStep.submitting') : tAuth('resetPassword.passwordStep.submit')}
+        {isLoading ? 'Resetting…' : tAuth('resetPassword.passwordStep.submit')}
       </Button>
 
       <div className="text-center text-sm">

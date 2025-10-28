@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import ServerAuthGuard from '@/components/layout/server-auth-guard'
+import { AuthGuard } from '@/components/layout/auth-guard'
 
 export default async function AnalyticsLayout({
   children,
@@ -8,10 +8,8 @@ export default async function AnalyticsLayout({
   children: ReactNode
   params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params
+  await params
   return (
-    <ServerAuthGuard locale={locale} allowedRoles={["admin"]}>
-      {children}
-    </ServerAuthGuard>
+    <AuthGuard>{children}</AuthGuard>
   )
 }
