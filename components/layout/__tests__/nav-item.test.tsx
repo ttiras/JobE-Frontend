@@ -27,7 +27,7 @@ describe('NavItem', () => {
   });
 
   it('applies active styles when isActive is true', () => {
-    render(<NavItem item={mockItem} isActive={true} label="Dashboard" />);
+    render(<NavItem item={mockItem} isActive={true} label="Dashboard" isHovered={true} />);
     
     const link = screen.getByRole('link');
     // Active state should have specific styling
@@ -50,12 +50,12 @@ describe('NavItem', () => {
 
   it('shows hover state on mouse over', async () => {
     const user = userEvent.setup();
-    render(<NavItem item={mockItem} isActive={false} label="Dashboard" />);
+    render(<NavItem item={mockItem} isActive={false} label="Dashboard" isHovered={true} />);
     
     const link = screen.getByRole('link');
     await user.hover(link);
     
     // Link should have hover class
-    expect(link).toHaveClass('hover:bg-accent');
+    expect(link).toHaveClass('hover:bg-accent/50');
   });
 });

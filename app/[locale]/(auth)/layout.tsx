@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { CurrentYear } from '@/components/ui/current-year'
 // import { LanguageSwitcher } from '@/components/layout/language-switcher'
+import RedirectIfAuthenticated from '../../../components/layout/redirect-if-authenticated'
 
 interface AuthLayoutProps {
   children: ReactNode
@@ -44,6 +45,8 @@ export default async function AuthLayout({ children, params }: AuthLayoutProps) 
       {/* Main content - centered */}
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
+          {/* If the user is already authenticated, redirect them away from auth pages */}
+          <RedirectIfAuthenticated />
           {children}
         </div>
       </main>

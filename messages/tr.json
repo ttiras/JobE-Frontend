@@ -224,6 +224,12 @@
     "a11y": {
       "showPassword": "Şifreyi göster",
       "hidePassword": "Şifreyi gizle"
+    },
+    "sessionExpired": {
+      "title": "Oturum Süresi Doldu",
+      "defaultMessage": "Oturumunuzun süresi doldu. Devam etmek için lütfen tekrar giriş yapın.",
+      "loginButton": "Tekrar Giriş Yap",
+      "cancelButton": "İptal"
     }
   }
 }

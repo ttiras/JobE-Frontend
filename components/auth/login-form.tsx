@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams, usePathname } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { Eye, EyeOff, AlertCircle } from 'lucide-react'
@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { login } from '@/lib/nhost/auth'
-import { setSessionCookie } from '@/lib/nhost/session-cookie'
+import { useAuth } from '@/lib/contexts/auth-context'
 import type { Session } from '@/lib/types/nhost'
 import { Captcha } from './captcha'
 import { 
@@ -20,6 +20,7 @@ import {
   recordSuccessfulAttempt,
   formatRemainingTime 
 } from '@/lib/utils/rate-limit'
+import { AuthErrorFactory } from '@/lib/utils/auth-errors'
 
 interface LoginFormProps {
   onSuccess?: (session: Session) => void
@@ -29,9 +30,9 @@ interface LoginFormProps {
 export function LoginForm({ onSuccess, onError }: LoginFormProps) {
   const tAuth = useTranslations('auth')
   const router = useRouter()
-  const searchParams = useSearchParams()
   const pathname = usePathname()
   const locale = pathname?.match(/^\/(en|tr)\b/)?.[1] || 'en'
+  const { checkSession } = useAuth()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -43,6 +44,8 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [isLocked, setIsLocked] = useState(false)
   const [lockoutTime, setLockoutTime] = useState<string>('')
+  const [returnParam, setReturnParam] = useState<string | null>(null)
+  const [submitted, setSubmitted] = useState(false)
 
   // Check rate limiting on mount
   useEffect(() => {
@@ -54,28 +57,29 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
     }
   }, [tAuth])
 
+  // Extract return URL from the browser location (avoids relying on useSearchParams in tests)
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const sp = new URLSearchParams(window.location.search)
+      const raw = sp.get('returnUrl') || sp.get('redirect')
+      setReturnParam(raw)
+    }
+  }, [])
+
+  const isValidEmail = (val: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)
+
   const validateForm = () => {
-    if (!email) {
-  setError(tAuth('validation.emailRequired'))
-      return false
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-  setError(tAuth('validation.emailInvalid'))
-      return false
-    }
-    if (!password) {
-  setError(tAuth('validation.passwordRequired'))
-      return false
-    }
-    if (showCaptcha && !captchaToken) {
-  setError(tAuth('login.error'))
-      return false
-    }
+    // Client-side validation is shown inline; reserve `error` for server/rate-limit issues
+    if (!email) return false
+    if (!isValidEmail(email)) return false
+    if (!password) return false
+    if (showCaptcha && !captchaToken) return false
     return true
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  e.preventDefault()
+  setSubmitted(true)
     setError('')
 
     if (!validateForm()) {
@@ -87,26 +91,36 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
     try {
       const result = await login(email, password)
       
-      if (result?.user) {
+      if (result && result.user) {
         recordSuccessfulAttempt()
-  toast.success(tAuth('login.success'))
-        // Bridge: sync essential tokens into a cookie for the server guard
-        try {
-          setSessionCookie({ accessToken: result?.accessToken, refreshToken: result?.refreshToken })
-        } catch {}
+        toast.success(tAuth('login.success'))
+        // Force immediate session check to update AuthContext state
+        // This ensures RedirectIfAuthenticated can immediately detect the authenticated state
+        checkSession()
+        
         onSuccess?.(result)
-        const redirect = searchParams.get('redirect')
-        if (redirect && redirect.startsWith('/')) {
-          const target = /^\/(en|tr)\b/.test(redirect) ? redirect : `/${locale}${redirect}`
-          router.push(target)
+        // Support both 'returnUrl' (from SessionExpiredDialog) and 'redirect' (legacy)
+  const rawReturn = returnParam
+        // Decode if URL-encoded, but guard against double-decoding
+        let normalized = rawReturn ?? ''
+        if (normalized) {
+          try {
+            if (/%[0-9A-Fa-f]{2}/.test(normalized)) {
+              normalized = decodeURIComponent(normalized)
+            }
+          } catch {}
+        }
+        if (normalized && normalized.startsWith('/')) {
+          const target = /^\/(en|tr)\b/.test(normalized) ? normalized : `/${locale}${normalized}`
+          router.replace(target)
         } else {
-          router.push(`/${locale}/dashboard`)
+          router.replace(`/${locale}/dashboard`)
         }
       } else {
-  throw new Error(tAuth('login.error'))
+        throw new Error(tAuth('login.error'))
       }
     } catch (err) {
-  const errorMessage = err instanceof Error ? err.message : tAuth('login.error')
+  const errorMessage = AuthErrorFactory.categorize(err).getMessage('en')
       
       // Record failed attempt and check rate limiting
       const rateLimitResult = recordFailedAttempt()
@@ -138,7 +152,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form noValidate onSubmit={handleSubmit} className="space-y-4">
       {/* Rate Limit Warning */}
       {isLocked && (
         <div className="rounded-lg bg-destructive/10 p-4 flex items-start gap-3">
@@ -153,7 +167,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
       )}
 
       <div className="space-y-2">
-  <Label htmlFor="email">{tAuth('login.email')}</Label>
+    <Label htmlFor="email">{tAuth('login.email')}</Label>
         <Input
           id="email"
           type="email"
@@ -161,9 +175,15 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={isLoading}
-          aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={error ? 'login-error' : undefined}
+          aria-invalid={submitted && (!email || !isValidEmail(email)) ? 'true' : 'false'}
+          aria-describedby={submitted && (!email || !isValidEmail(email)) ? 'email-error' : error ? 'login-error' : undefined}
         />
+        {submitted && !email && (
+          <p id="email-error" className="text-sm text-destructive">{tAuth('validation.emailRequired')}</p>
+        )}
+        {submitted && email && !isValidEmail(email) && (
+          <p id="email-error" className="text-sm text-destructive">{tAuth('validation.emailInvalid')}</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -184,8 +204,8 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={isLoading}
-            aria-invalid={error ? 'true' : 'false'}
-            aria-describedby={error ? 'login-error' : undefined}
+            aria-invalid={submitted && !password ? 'true' : 'false'}
+            aria-describedby={submitted && !password ? 'password-error' : error ? 'login-error' : undefined}
           />
           <button
             type="button"
@@ -196,6 +216,9 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
         </div>
+        {submitted && !password && (
+          <p id="password-error" className="text-sm text-destructive">{tAuth('validation.passwordRequired')}</p>
+        )}
       </div>
 
       <div className="flex items-center space-x-2">
@@ -236,7 +259,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
         className="w-full"
         disabled={isLoading || isLocked || (showCaptcha && !captchaToken)}
       >
-  {isLoading ? tAuth('login.submitting') : isLocked ? tAuth('login.rateLimit.lockedButton') : tAuth('login.submit')}
+  {isLoading ? tAuth('login.submitting') : tAuth('login.submit')}
       </Button>
 
       <div className="text-center text-sm">

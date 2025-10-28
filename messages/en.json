@@ -123,7 +123,7 @@
       "signIn": "Sign in",
       "success": "Account created successfully! Please check your email to verify.",
       "error": "Failed to create account. Please try again.",
-      "emailVerificationNotice": "You'll need to verify your email address before you can sign in.",
+  "emailVerificationNotice": "You'll need to verify your email address before you can log in.",
       "strength": {
         "weak": "Weak",
         "medium": "Medium",
@@ -140,7 +140,7 @@
       "title": "Reset your password",
       "emailStep": {
         "title": "Enter your email",
-        "description": "We'll send you a link to reset your password",
+  "description": "We will send you a link to reset your password",
         "email": "Email address",
         "submit": "Send reset link",
         "submitting": "Sending...",
@@ -218,9 +218,17 @@
       "expired": "Security check expired. Please try again.",
       "failed": "reCAPTCHA verification failed. Please try again."
     },
-    "a11y": {
+  "a11y": {
       "showPassword": "Show password",
-      "hidePassword": "Hide password"
+      "hidePassword": "Hide password",
+      "show": "Show",
+      "hide": "Hide"
+  },
+    "sessionExpired": {
+      "title": "Session Expired",
+      "defaultMessage": "Your session has expired. Please log in again to continue.",
+      "loginButton": "Log In Again",
+      "cancelButton": "Cancel"
     }
   }
 }

@@ -11,11 +11,13 @@
  * - CAPTCHA integration after failed attempts
  */
 
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { NextIntlClientProvider } from 'next-intl'
 import { LoginForm } from '../login-form'
 import * as authUtils from '@/lib/nhost/auth'
+
+type ErrorWithType = Error & { type?: string }
 
 // Mock the auth utilities
 jest.mock('@/lib/nhost/auth')
@@ -79,7 +81,7 @@ describe('LoginForm', () => {
       renderLoginForm()
 
       expect(screen.getByLabelText(/email address/i)).toBeInTheDocument()
-      expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
+        expect(screen.getByLabelText(/password/i, { selector: 'input' })).toBeInTheDocument()
       expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
     })
 
@@ -153,7 +155,7 @@ describe('LoginForm', () => {
       const user = userEvent.setup()
 
       const emailInput = screen.getByLabelText(/email address/i)
-      const passwordInput = screen.getByLabelText(/password/i)
+        const passwordInput = screen.getByLabelText(/password/i, { selector: 'input' })
 
       await user.type(emailInput, 'test@example.com')
       await user.type(passwordInput, 'password123')
@@ -172,8 +174,8 @@ describe('LoginForm', () => {
       renderLoginForm()
       const user = userEvent.setup()
 
-      const emailInput = screen.getByLabelText(/email address/i)
-      const passwordInput = screen.getByLabelText(/password/i)
+  const emailInput = screen.getByLabelText(/email address/i)
+  const passwordInput = screen.getByLabelText(/password/i, { selector: 'input' })
 
       await user.type(emailInput, 'test@example.com')
       await user.type(passwordInput, 'password123')
@@ -191,8 +193,8 @@ describe('LoginForm', () => {
       renderLoginForm()
       const user = userEvent.setup()
 
-      const emailInput = screen.getByLabelText(/email address/i)
-      const passwordInput = screen.getByLabelText(/password/i)
+  const emailInput = screen.getByLabelText(/email address/i)
+  const passwordInput = screen.getByLabelText(/password/i, { selector: 'input' })
 
       await user.type(emailInput, 'test@example.com')
       await user.type(passwordInput, 'password123')
@@ -209,8 +211,8 @@ describe('LoginForm', () => {
       renderLoginForm()
       const user = userEvent.setup()
 
-      const emailInput = screen.getByLabelText(/email address/i)
-      const passwordInput = screen.getByLabelText(/password/i)
+  const emailInput = screen.getByLabelText(/email address/i)
+  const passwordInput = screen.getByLabelText(/password/i, { selector: 'input' })
 
       await user.type(emailInput, 'test@example.com')
       await user.type(passwordInput, 'password123')
@@ -226,14 +228,14 @@ describe('LoginForm', () => {
 
   describe('Error Handling', () => {
     it('should display error message on login failure', async () => {
-      const error = new Error('Invalid credentials')
-      ;(error as any).type = 'invalid-credentials'
+  const error = new Error('Invalid credentials')
+  ;(error as ErrorWithType).type = 'invalid-credentials'
       mockLogin.mockRejectedValueOnce(error)
       renderLoginForm()
       const user = userEvent.setup()
 
       const emailInput = screen.getByLabelText(/email address/i)
-      const passwordInput = screen.getByLabelText(/password/i)
+        const passwordInput = screen.getByLabelText(/password/i, { selector: 'input' })
 
       await user.type(emailInput, 'test@example.com')
       await user.type(passwordInput, 'wrongpassword')
@@ -252,8 +254,8 @@ describe('LoginForm', () => {
       renderLoginForm()
       const user = userEvent.setup()
 
-      const emailInput = screen.getByLabelText(/email address/i)
-      const passwordInput = screen.getByLabelText(/password/i)
+  const emailInput = screen.getByLabelText(/email address/i)
+  const passwordInput = screen.getByLabelText(/password/i, { selector: 'input' })
 
       await user.type(emailInput, 'test@example.com')
       await user.type(passwordInput, 'wrongpassword')
@@ -272,7 +274,7 @@ describe('LoginForm', () => {
       renderLoginForm()
       const user = userEvent.setup()
 
-      const passwordInput = screen.getByLabelText(/password/i) as HTMLInputElement
+        const passwordInput = screen.getByLabelText(/password/i, { selector: 'input' }) as HTMLInputElement
 
       // Initially password should be hidden
       expect(passwordInput.type).toBe('password')
@@ -312,15 +314,15 @@ describe('LoginForm', () => {
 
   describe('CAPTCHA Integration', () => {
     it('should show CAPTCHA after 3 failed login attempts', async () => {
-      const error = new Error('Invalid credentials')
-      ;(error as any).type = 'invalid-credentials'
+  const error = new Error('Invalid credentials')
+  ;(error as ErrorWithType).type = 'invalid-credentials'
       mockLogin.mockRejectedValue(error)
       
       renderLoginForm()
       const user = userEvent.setup()
 
-      const emailInput = screen.getByLabelText(/email address/i)
-      const passwordInput = screen.getByLabelText(/password/i)
+  const emailInput = screen.getByLabelText(/email address/i)
+  const passwordInput = screen.getByLabelText(/password/i, { selector: 'input' })
       const submitButton = screen.getByRole('button', { name: /sign in/i })
 
       // Attempt 1
@@ -352,8 +354,8 @@ describe('LoginForm', () => {
     it('should have proper labels for form inputs', () => {
       renderLoginForm()
 
-      const emailInput = screen.getByLabelText(/email address/i)
-      const passwordInput = screen.getByLabelText(/password/i)
+  const emailInput = screen.getByLabelText(/email address/i)
+  const passwordInput = screen.getByLabelText(/password/i, { selector: 'input' })
 
       expect(emailInput).toHaveAttribute('type', 'email')
       expect(passwordInput).toHaveAttribute('type', 'password')

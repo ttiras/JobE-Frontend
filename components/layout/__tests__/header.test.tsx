@@ -38,13 +38,14 @@ describe('Header', () => {
     render(<Header />);
     const header = screen.getByRole('banner');
     expect(header).toHaveClass('border-b');
-    expect(header).toHaveClass('bg-background');
+    expect(header).toHaveClass('bg-background/95');
+    expect(header).toHaveClass('supports-[backdrop-filter]:bg-background/60');
   });
 
   it('has proper height for layout', () => {
     render(<Header />);
     const header = screen.getByRole('banner');
-    expect(header).toHaveClass('h-16');
+    expect(header).toHaveClass('h-14');
   });
 
   it('logo text is visible', () => {

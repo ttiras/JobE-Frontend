@@ -1,5 +1,5 @@
 import { DashboardShell } from '@/components/layout/dashboard-shell';
-import ServerAuthGuard from '@/components/layout/server-auth-guard';
+import { AuthGuard } from '@/components/layout/auth-guard';
 
 export default async function DashboardLayout({
   children,
@@ -8,10 +8,11 @@ export default async function DashboardLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params
+  await params
   return (
-    <ServerAuthGuard locale={locale} allowedRoles={["user", "admin"]}>
-      <DashboardShell>{children}</DashboardShell>
-    </ServerAuthGuard>
+    <DashboardShell>
+      {/* Client-side guard: client owns session; server validates only at data-access boundaries */}
+      <AuthGuard>{children}</AuthGuard>
+    </DashboardShell>
   );
 }

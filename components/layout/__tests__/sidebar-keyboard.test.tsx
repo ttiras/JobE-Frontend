@@ -32,7 +32,7 @@ describe('Sidebar - Keyboard Navigation', () => {
   describe('Tab Navigation', () => {
     it('allows tabbing through navigation items in order', async () => {
       const user = userEvent.setup();
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
+  render(<Sidebar isMobile={false} />);
 
       const links = screen.getAllByRole('link');
       expect(links).toHaveLength(3);
@@ -52,7 +52,7 @@ describe('Sidebar - Keyboard Navigation', () => {
 
     it('supports Shift+Tab to navigate backwards', async () => {
       const user = userEvent.setup();
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
+  render(<Sidebar isMobile={false} />);
 
       const links = screen.getAllByRole('link');
 
@@ -69,7 +69,7 @@ describe('Sidebar - Keyboard Navigation', () => {
 
     it('displays visible focus indicators on all interactive elements', async () => {
       const user = userEvent.setup();
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
+  render(<Sidebar isMobile={false} />);
 
       const firstLink = screen.getAllByRole('link')[0];
       await user.tab();
@@ -83,7 +83,7 @@ describe('Sidebar - Keyboard Navigation', () => {
   describe('Enter/Space Key Activation', () => {
     it('activates navigation item on Enter key press', async () => {
       const user = userEvent.setup();
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
+  render(<Sidebar isMobile={false} />);
 
       const firstLink = screen.getAllByRole('link')[0];
       await user.tab();
@@ -96,7 +96,7 @@ describe('Sidebar - Keyboard Navigation', () => {
 
     it('activates navigation item on Space key press', async () => {
       const user = userEvent.setup();
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
+  render(<Sidebar isMobile={false} />);
 
       const firstLink = screen.getAllByRole('link')[0];
       await user.tab();
@@ -111,7 +111,7 @@ describe('Sidebar - Keyboard Navigation', () => {
   describe('Arrow Key Navigation', () => {
     it('navigates to next item on ArrowDown key', async () => {
       const user = userEvent.setup();
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
+  render(<Sidebar isMobile={false} />);
 
       const links = screen.getAllByRole('link');
       
@@ -126,7 +126,7 @@ describe('Sidebar - Keyboard Navigation', () => {
 
     it('navigates to previous item on ArrowUp key', async () => {
       const user = userEvent.setup();
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
+  render(<Sidebar isMobile={false} />);
 
       const links = screen.getAllByRole('link');
       
@@ -142,7 +142,7 @@ describe('Sidebar - Keyboard Navigation', () => {
 
     it('wraps to last item when ArrowUp at first item', async () => {
       const user = userEvent.setup();
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
+      render(<Sidebar isMobile={false} />);
 
       const links = screen.getAllByRole('link');
       
@@ -157,7 +157,7 @@ describe('Sidebar - Keyboard Navigation', () => {
 
     it('wraps to first item when ArrowDown at last item', async () => {
       const user = userEvent.setup();
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
+      render(<Sidebar isMobile={false} />);
 
       const links = screen.getAllByRole('link');
       

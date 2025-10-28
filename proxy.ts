@@ -21,7 +21,7 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.redirect(target)
   }
 
-  // Defer auth/session to server components (Cache Components best practice)
+  // Continue with normal processing
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return intlMiddleware(request as unknown as any)
 }

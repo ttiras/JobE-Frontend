@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { Sidebar } from '../sidebar';
 
@@ -7,10 +7,7 @@ jest.mock('next-intl', () => ({
   useTranslations: jest.fn(),
 }));
 
-// Mock next/navigation
-jest.mock('next/navigation', () => ({
-  usePathname: jest.fn(() => '/dashboard'),
-}));
+// next/navigation is globally mocked in jest.setup.ts
 
 // Mock navigation config
 jest.mock('@/config/navigation', () => ({
@@ -27,33 +24,29 @@ describe('Sidebar - Responsive Behavior', () => {
   });
 
   describe('Desktop (≥1024px)', () => {
-    it('renders full-width sidebar (256px) on desktop', () => {
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
-      const sidebar = screen.getByRole('complementary');
-      expect(sidebar).toHaveClass('w-64'); // 256px
+    it('is collapsed by default and expands on hover', () => {
+      render(<Sidebar isMobile={false} />);
+      const aside = screen.getByRole('complementary');
+      expect(aside).toHaveClass('w-16');
+      fireEvent.mouseEnter(aside);
+      expect(aside).toHaveClass('w-60');
     });
 
     it('shows full navigation labels on desktop', () => {
-      render(<Sidebar isCollapsed={false} isMobile={false} />);
+      render(<Sidebar isMobile={false} />);
       expect(screen.getByText('navigation.dashboard')).toBeInTheDocument();
-    });
-
-    it('renders collapsed sidebar (64px) when collapsed prop is true', () => {
-      render(<Sidebar isCollapsed={true} isMobile={false} />);
-      const sidebar = screen.getByRole('complementary');
-      expect(sidebar).toHaveClass('w-16'); // 64px
     });
   });
 
   describe('Tablet (768px - 1024px)', () => {
     it('renders icon-only sidebar on tablet', () => {
-      render(<Sidebar isCollapsed={true} isMobile={false} />);
+      render(<Sidebar isMobile={false} />);
       const sidebar = screen.getByRole('complementary');
       expect(sidebar).toHaveClass('w-16');
     });
 
     it('shows tooltips for collapsed items on tablet', () => {
-      render(<Sidebar isCollapsed={true} isMobile={false} />);
+      render(<Sidebar isMobile={false} />);
       // Tooltip should be present for accessibility
       const navItem = screen.getByRole('link', { name: /dashboard/i });
       expect(navItem).toBeInTheDocument();
@@ -62,19 +55,19 @@ describe('Sidebar - Responsive Behavior', () => {
 
   describe('Mobile (<768px)', () => {
     it('does not render sidebar on mobile by default', () => {
-      render(<Sidebar isCollapsed={false} isMobile={true} isOpen={false} />);
+      render(<Sidebar isMobile={true} isOpen={false} />);
       const sidebar = screen.queryByRole('complementary');
       expect(sidebar).not.toBeInTheDocument();
     });
 
     it('renders sidebar as Sheet overlay when isOpen is true on mobile', () => {
-      render(<Sidebar isCollapsed={false} isMobile={true} isOpen={true} />);
+      render(<Sidebar isMobile={true} isOpen={true} />);
       const sidebar = screen.getByRole('dialog'); // Sheet uses dialog role
       expect(sidebar).toBeInTheDocument();
     });
 
     it('sidebar overlay has proper ARIA label on mobile', () => {
-      render(<Sidebar isCollapsed={false} isMobile={true} isOpen={true} />);
+      render(<Sidebar isMobile={true} isOpen={true} />);
       const sidebar = screen.getByRole('dialog');
       expect(sidebar).toHaveAttribute('aria-label', 'Mobile navigation menu');
     });
@@ -82,20 +75,24 @@ describe('Sidebar - Responsive Behavior', () => {
 
   describe('State Management', () => {
     it('accepts isCollapsed prop for desktop/tablet', () => {
-      const { rerender } = render(<Sidebar isCollapsed={false} isMobile={false} />);
-      let sidebar = screen.getByRole('complementary');
-      expect(sidebar).toHaveClass('w-64');
+      const { rerender } = render(<Sidebar isMobile={false} />);
+      let aside = screen.getByRole('complementary');
+      expect(aside).toHaveClass('w-16');
 
-      rerender(<Sidebar isCollapsed={true} isMobile={false} />);
-      sidebar = screen.getByRole('complementary');
-      expect(sidebar).toHaveClass('w-16');
+      fireEvent.mouseEnter(aside);
+      expect(aside).toHaveClass('w-60');
+
+      // On rerender remains expanded when hovered
+      rerender(<Sidebar isMobile={false} />);
+      aside = screen.getByRole('complementary');
+      expect(aside).toBeInTheDocument();
     });
 
     it('accepts isOpen prop for mobile', () => {
-      const { rerender } = render(<Sidebar isCollapsed={false} isMobile={true} isOpen={false} />);
+      const { rerender } = render(<Sidebar isMobile={true} isOpen={false} />);
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
-      rerender(<Sidebar isCollapsed={false} isMobile={true} isOpen={true} />);
+      rerender(<Sidebar isMobile={true} isOpen={true} />);
       expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
   });

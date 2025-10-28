@@ -23,9 +23,6 @@ type OrgsResult = {
     currency?: string | null
     created_at?: string
     updated_at?: string
-    org_size?: {
-      comment?: string | null
-    } | null
   }>
 }
 
@@ -44,9 +41,6 @@ const GET_USER_ORGS = `
       currency
       created_at
       updated_at
-      org_size {
-        comment
-      }
     }
   }
 `
@@ -221,7 +215,7 @@ export default function OrganizationsPage() {
                     <div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors">
                       <Users className="h-4 w-4 flex-shrink-0" />
                       <span className="font-medium min-w-[70px]">Size</span>
-                      <span className="text-foreground font-medium">{org.org_size?.comment || org.size || 'Not set'}</span>
+                      <span className="text-foreground font-medium">{org.size || 'Not set'}</span>
                     </div>
                     
                     <div className="flex items-center gap-3 text-muted-foreground hover:text-foreground transition-colors">

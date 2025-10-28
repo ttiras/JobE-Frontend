@@ -28,7 +28,7 @@ const config: Config = {
   ],
   // Transform ESM packages
   transformIgnorePatterns: [
-    'node_modules/(?!(next-intl|use-intl)/)',
+    'node_modules/(?!(next-intl|use-intl|@nhost)/)',
   ],
   // Exclude E2E tests from Jest (they use Playwright)
   testPathIgnorePatterns: [
