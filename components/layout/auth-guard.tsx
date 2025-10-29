@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useAuth } from '@/lib/contexts/auth-context'
 
 interface AuthGuardProps {
@@ -17,6 +18,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const { isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
+  const t = useTranslations('common')
 
   useEffect(() => {
     if (isLoading) return
@@ -35,7 +37,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   if (isLoading || !isAuthenticated) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center text-sm text-muted-foreground">
-        Redirecting to sign in…
+        {t('redirectingToSignIn')}
       </div>
     )
   }

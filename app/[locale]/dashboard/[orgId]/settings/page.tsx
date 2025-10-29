@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useAuth } from '@/lib/contexts/auth-context'
 import { changeEmail, changePassword } from '@/lib/nhost/auth'
 import { nhost } from '@/lib/nhost/client'
@@ -25,6 +26,7 @@ import { Loader2, User, Lock, Trash2, Mail } from 'lucide-react'
 export default function SettingsPage() {
   const router = useRouter()
   const { user, isLoading } = useAuth()
+  const t = useTranslations('pages.settings')
   
   // Profile state
   const [displayName, setDisplayName] = useState(user?.displayName || '')
@@ -164,7 +166,7 @@ export default function SettingsPage() {
   if (!user) {
     return (
       <div className="p-8">
-        <p className="text-muted-foreground">Please log in to access settings.</p>
+        <p className="text-muted-foreground">{t('pleaseLogIn')}</p>
       </div>
     )
   }
@@ -172,9 +174,9 @@ export default function SettingsPage() {
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Settings</h1>
+        <h1 className="text-3xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Manage your account settings and preferences
+          {t('managePreferences')}
         </p>
       </div>
 
@@ -185,16 +187,16 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Profile
+            {t('profile.titleShort')}
           </CardTitle>
           <CardDescription>
-            Update your profile information
+            {t('profile.updateInfo')}
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleUpdateProfile}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('profile.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -203,24 +205,24 @@ export default function SettingsPage() {
                 className="bg-muted"
               />
               <p className="text-sm text-muted-foreground">
-                Email cannot be changed here. Use the Email section below.
+                {t('profile.emailCannotChange')}
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="displayName">Display Name</Label>
+              <Label htmlFor="displayName">{t('profile.displayName')}</Label>
               <Input
                 id="displayName"
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                placeholder="Enter your display name"
+                placeholder={t('profile.displayNamePlaceholder')}
               />
             </div>
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isUpdatingProfile}>
               {isUpdatingProfile && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Save Changes
+              {t('profile.updateButton')}
             </Button>
           </CardFooter>
         </form>
@@ -231,16 +233,16 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5" />
-            Email Address
+            {t('email.titleShort')}
           </CardTitle>
           <CardDescription>
-            Change your email address. A verification email will be sent to the new address.
+            {t('email.changeDescription')}
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleChangeEmail}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="currentEmail">Current Email</Label>
+              <Label htmlFor="currentEmail">{t('email.currentEmail')}</Label>
               <Input
                 id="currentEmail"
                 type="email"
@@ -250,20 +252,20 @@ export default function SettingsPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="newEmail">New Email</Label>
+              <Label htmlFor="newEmail">{t('email.newEmail')}</Label>
               <Input
                 id="newEmail"
                 type="email"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                placeholder="Enter new email address"
+                placeholder={t('email.newEmailPlaceholder')}
               />
             </div>
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isChangingEmail || !newEmail}>
               {isChangingEmail && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Change Email
+              {t('email.changeButton')}
             </Button>
           </CardFooter>
         </form>
@@ -274,39 +276,39 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Lock className="h-5 w-5" />
-            Password
+            {t('password.titleShort')}
           </CardTitle>
           <CardDescription>
-            Change your password to keep your account secure
+            {t('password.changeDescription')}
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleChangePassword}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="newPassword">New Password</Label>
+              <Label htmlFor="newPassword">{t('password.newPassword')}</Label>
               <Input
                 id="newPassword"
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter new password (min 8 characters)"
+                placeholder={t('password.newPasswordPlaceholder')}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Label htmlFor="confirmPassword">{t('password.confirmPassword')}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm new password"
+                placeholder={t('password.confirmPasswordPlaceholder')}
               />
             </div>
           </CardContent>
           <CardFooter>
             <Button type="submit" disabled={isChangingPassword || !newPassword || !confirmPassword}>
               {isChangingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Change Password
+              {t('password.changeButton')}
             </Button>
           </CardFooter>
         </form>
@@ -317,52 +319,51 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
             <Trash2 className="h-5 w-5" />
-            Danger Zone
+            {t('deleteAccount.titleShort')}
           </CardTitle>
           <CardDescription>
-            Permanently delete your account and all associated data
+            {t('deleteAccount.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground mb-4">
-            Once you delete your account, there is no going back. Please be certain.
+            {t('deleteAccount.warningDescription')}
           </p>
           <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
             <DialogTrigger asChild>
               <Button variant="destructive">
-                Delete Account
+                {t('deleteAccount.button')}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogTitle>{t('deleteAccount.dialog.title')}</DialogTitle>
                 <DialogDescription>
-                  This action cannot be undone. This will permanently delete your
-                  account and remove all your data from our servers.
+                  {t('deleteAccount.dialog.description')}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="deleteConfirmation">
-                    Type <span className="font-bold">DELETE</span> to confirm
+                    {t('deleteAccount.dialog.confirmLabel')}
                   </Label>
                   <Input
                     id="deleteConfirmation"
                     value={deleteConfirmation}
                     onChange={(e) => setDeleteConfirmation(e.target.value)}
-                    placeholder="DELETE"
+                    placeholder={t('deleteAccount.dialog.confirmPlaceholder')}
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="deletePassword">
-                    Enter your password to confirm
+                    {t('deleteAccount.dialog.passwordLabel')}
                   </Label>
                   <Input
                     id="deletePassword"
                     type="password"
                     value={deletePassword}
                     onChange={(e) => setDeletePassword(e.target.value)}
-                    placeholder="Your password"
+                    placeholder={t('deleteAccount.dialog.passwordPlaceholder')}
                   />
                 </div>
               </div>
@@ -372,7 +373,7 @@ export default function SettingsPage() {
                   onClick={() => setShowDeleteDialog(false)}
                   disabled={isDeleting}
                 >
-                  Cancel
+                  {t('deleteAccount.dialog.cancelButton')}
                 </Button>
                 <Button
                   variant="destructive"
@@ -380,7 +381,7 @@ export default function SettingsPage() {
                   disabled={isDeleting || deleteConfirmation !== 'DELETE' || !deletePassword}
                 >
                   {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Delete Account
+                  {t('deleteAccount.dialog.confirmButton')}
                 </Button>
               </DialogFooter>
             </DialogContent>

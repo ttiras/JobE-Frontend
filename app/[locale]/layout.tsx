@@ -38,6 +38,9 @@ export default async function RootLayout({
   // Get messages for the current locale
   const messages = await getMessages({ locale: locale || "en" });
 
+  // Get loading text for fallback
+  const loadingText = messages?.common?.loadingEllipsis as string || "Loading…";
+
   return (
     <html lang={locale || "en"} suppressHydrationWarning>
       <body className={inter.className}>
@@ -45,7 +48,7 @@ export default async function RootLayout({
         <DevPatches />
         <Suspense fallback={
           <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">
-            Loading…
+            {loadingText}
           </div>
         }>
           {/* Intl provider must wrap the entire tree so client dialogs inside AuthProvider have context */}

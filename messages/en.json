@@ -8,10 +8,13 @@
   },
   "common": {
     "loading": "Loading...",
+    "loadingEllipsis": "Loading…",
+    "redirectingToSignIn": "Redirecting to sign in…",
     "error": "Error",
     "retry": "Try Again",
     "close": "Close",
     "save": "Save",
+    "saveChanges": "Save Changes",
     "cancel": "Cancel",
     "delete": "Delete",
     "edit": "Edit",
@@ -43,6 +46,7 @@
     "dashboard": {
       "title": "Dashboard",
       "description": "Welcome to JobE HR Management Platform",
+      "welcomeMessage": "Welcome to JobE - HR Management Platform",
       "noOrg": {
         "title": "Create your first organization",
         "description": "To get started, create an organization. You can add positions and invite teammates afterwards.",
@@ -85,18 +89,28 @@
     "settings": {
       "title": "Settings",
       "description": "Manage your settings and preferences",
+      "managePreferences": "Manage your account settings and preferences",
+      "pleaseLogIn": "Please log in to access settings.",
       "profile": {
         "title": "Profile Information",
+        "titleShort": "Profile",
         "description": "Update your account's profile information",
+        "updateInfo": "Update your profile information",
         "displayName": "Display Name",
-        "email": "Email Address",
+        "displayNamePlaceholder": "Enter your display name",
+        "email": "Email",
+        "emailCannotChange": "Email cannot be changed here. Use the Email section below.",
         "updateButton": "Update Profile",
         "updating": "Updating..."
       },
       "email": {
         "title": "Change Email",
+        "titleShort": "Email Address",
         "description": "Update your email address",
+        "changeDescription": "Change your email address. A verification email will be sent to the new address.",
+        "currentEmail": "Current Email",
         "newEmail": "New Email Address",
+        "newEmailPlaceholder": "Enter new email address",
         "changeButton": "Change Email",
         "changing": "Changing...",
         "success": "Verification email sent! Please check your new email address.",
@@ -105,10 +119,14 @@
       },
       "password": {
         "title": "Change Password",
+        "titleShort": "Password",
         "description": "Ensure your account is using a strong password",
+        "changeDescription": "Change your password to keep your account secure",
         "currentPassword": "Current Password",
         "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter new password (min 8 characters)",
         "confirmPassword": "Confirm Password",
+        "confirmPasswordPlaceholder": "Confirm new password",
         "changeButton": "Change Password",
         "changing": "Changing...",
         "success": "Password changed successfully!",
@@ -119,6 +137,7 @@
       },
       "deleteAccount": {
         "title": "Delete Account",
+        "titleShort": "Danger Zone",
         "description": "Permanently delete your account and all associated data",
         "warningTitle": "Danger Zone",
         "warningDescription": "Once you delete your account, there is no going back. Please be certain.",
@@ -126,7 +145,7 @@
         "deleting": "Deleting...",
         "dialog": {
           "title": "Are you absolutely sure?",
-          "description": "This action cannot be undone. This will permanently delete your account and remove all associated data from our servers.",
+          "description": "This action cannot be undone. This will permanently delete your account and remove all your data from our servers.",
           "confirmLabel": "Type DELETE to confirm",
           "confirmPlaceholder": "DELETE",
           "passwordLabel": "Enter your password to confirm",

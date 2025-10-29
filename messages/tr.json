@@ -8,10 +8,13 @@
   },
   "common": {
     "loading": "Yükleniyor...",
+    "loadingEllipsis": "Yükleniyor…",
+    "redirectingToSignIn": "Giriş sayfasına yönlendiriliyorsunuz…",
     "error": "Hata",
     "retry": "Tekrar Dene",
     "close": "Kapat",
     "save": "Kaydet",
+    "saveChanges": "Değişiklikleri Kaydet",
     "cancel": "İptal",
     "delete": "Sil",
     "edit": "Düzenle",
@@ -43,6 +46,7 @@
     "dashboard": {
       "title": "Gösterge Paneli",
       "description": "JobE İK Yönetim Platformuna Hoş Geldiniz",
+      "welcomeMessage": "JobE - İK Yönetim Platformuna Hoş Geldiniz",
       "noOrg": {
         "title": "İlk organizasyonunuzu oluşturun",
         "description": "Başlamak için bir organizasyon oluşturun. Sonrasında pozisyonlar ekleyebilir ve ekip arkadaşlarınızı davet edebilirsiniz.",
@@ -85,18 +89,28 @@
     "settings": {
       "title": "Ayarlar",
       "description": "Ayarlarınızı ve tercihlerinizi yönetin",
+      "managePreferences": "Hesap ayarlarınızı ve tercihlerinizi yönetin",
+      "pleaseLogIn": "Ayarlara erişmek için lütfen giriş yapın.",
       "profile": {
         "title": "Profil Bilgileri",
+        "titleShort": "Profil",
         "description": "Hesabınızın profil bilgilerini güncelleyin",
+        "updateInfo": "Profil bilgilerinizi güncelleyin",
         "displayName": "Görünen Ad",
+        "displayNamePlaceholder": "Görünen adınızı girin",
         "email": "E-posta Adresi",
+        "emailCannotChange": "E-posta buradan değiştirilemez. Aşağıdaki E-posta bölümünü kullanın.",
         "updateButton": "Profili Güncelle",
         "updating": "Güncelleniyor..."
       },
       "email": {
         "title": "E-posta Değiştir",
+        "titleShort": "E-posta Adresi",
         "description": "E-posta adresinizi güncelleyin",
+        "changeDescription": "E-posta adresinizi değiştirin. Yeni adresinize bir doğrulama e-postası gönderilecektir.",
+        "currentEmail": "Mevcut E-posta",
         "newEmail": "Yeni E-posta Adresi",
+        "newEmailPlaceholder": "Yeni e-posta adresi girin",
         "changeButton": "E-postayı Değiştir",
         "changing": "Değiştiriliyor...",
         "success": "Doğrulama e-postası gönderildi! Lütfen yeni e-posta adresinizi kontrol edin.",
@@ -105,10 +119,14 @@
       },
       "password": {
         "title": "Şifre Değiştir",
+        "titleShort": "Şifre",
         "description": "Hesabınızın güçlü bir şifre kullandığından emin olun",
+        "changeDescription": "Hesabınızı güvende tutmak için şifrenizi değiştirin",
         "currentPassword": "Mevcut Şifre",
         "newPassword": "Yeni Şifre",
+        "newPasswordPlaceholder": "Yeni şifre girin (en az 8 karakter)",
         "confirmPassword": "Şifreyi Onayla",
+        "confirmPasswordPlaceholder": "Yeni şifreyi onaylayın",
         "changeButton": "Şifreyi Değiştir",
         "changing": "Değiştiriliyor...",
         "success": "Şifre başarıyla değiştirildi!",
@@ -119,6 +137,7 @@
       },
       "deleteAccount": {
         "title": "Hesabı Sil",
+        "titleShort": "Tehlike Bölgesi",
         "description": "Hesabınızı ve ilişkili tüm verileri kalıcı olarak silin",
         "warningTitle": "Tehlike Bölgesi",
         "warningDescription": "Hesabınızı sildiğinizde geri dönüş yoktur. Lütfen emin olun.",
@@ -126,7 +145,7 @@
         "deleting": "Siliniyor...",
         "dialog": {
           "title": "Kesinlikle emin misiniz?",
-          "description": "Bu işlem geri alınamaz. Hesabınızı kalıcı olarak silecek ve sunucularımızdaki tüm ilişkili verileri kaldıracaktır.",
+          "description": "Bu işlem geri alınamaz. Hesabınızı kalıcı olarak silecek ve sunucularımızdaki tüm verilerinizi kaldıracaktır.",
           "confirmLabel": "Onaylamak için DELETE yazın",
           "confirmPlaceholder": "DELETE",
           "passwordLabel": "Onaylamak için şifrenizi girin",
