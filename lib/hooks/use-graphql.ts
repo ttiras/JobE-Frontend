@@ -27,19 +27,19 @@
  * ```
  */
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { executeQuery, executeMutation } from '@/lib/nhost/graphql/client'
 
-export interface UseGraphQLOptions {
+export interface UseGraphQLOptions<T = unknown> {
   /** Initial data */
-  initialData?: any
+  initialData?: T
   /** Callback when query succeeds */
-  onSuccess?: (data: any) => void
+  onSuccess?: (data: T) => void
   /** Callback when query fails */
   onError?: (error: Error) => void
 }
 
-export interface UseGraphQLReturn<T = any> {
+export interface UseGraphQLReturn<T = unknown> {
   /** Query/mutation result data */
   data: T | null
   /** Loading state */
@@ -47,28 +47,28 @@ export interface UseGraphQLReturn<T = any> {
   /** Error if any */
   error: Error | null
   /** Execute a query */
-  query: (queryString: string, variables?: Record<string, any>) => Promise<T>
+  query: (queryString: string, variables?: Record<string, unknown>) => Promise<T>
   /** Execute a mutation */
-  mutate: (mutationString: string, variables?: Record<string, any>) => Promise<T>
+  mutate: (mutationString: string, variables?: Record<string, unknown>) => Promise<T>
   /** Generic execute (same as query) */
-  execute: (queryString: string, variables?: Record<string, any>) => Promise<T>
+  execute: (queryString: string, variables?: Record<string, unknown>) => Promise<T>
   /** Reset state */
   reset: () => void
   /** Refetch last query */
   refetch: () => Promise<T | null>
 }
 
-export function useGraphQL<T = any>(options: UseGraphQLOptions = {}): UseGraphQLReturn<T> {
+export function useGraphQL<T = unknown>(options: UseGraphQLOptions<T> = {}): UseGraphQLReturn<T> {
   const [data, setData] = useState<T | null>((options.initialData as T) || null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
   const [lastQuery, setLastQuery] = useState<{
     query: string
-    variables?: Record<string, any>
+    variables?: Record<string, unknown>
   } | null>(null)
 
   const reset = useCallback(() => {
-    setData(options.initialData || null)
+    setData((options.initialData as T | undefined) ?? null)
     setLoading(false)
     setError(null)
     setLastQuery(null)
@@ -76,7 +76,7 @@ export function useGraphQL<T = any>(options: UseGraphQLOptions = {}): UseGraphQL
 
   const query = useCallback(async (
     queryString: string,
-    variables?: Record<string, any>
+    variables?: Record<string, unknown>
   ): Promise<T> => {
     try {
       setLoading(true)
@@ -104,7 +104,7 @@ export function useGraphQL<T = any>(options: UseGraphQLOptions = {}): UseGraphQL
 
   const mutate = useCallback(async (
     mutationString: string,
-    variables?: Record<string, any>
+    variables?: Record<string, unknown>
   ): Promise<T> => {
     try {
       setLoading(true)
@@ -163,24 +163,33 @@ export function useGraphQL<T = any>(options: UseGraphQLOptions = {}): UseGraphQL
  * )
  * ```
  */
-export interface UseQueryOptions extends UseGraphQLOptions {
+export interface UseQueryOptions<T = unknown> extends UseGraphQLOptions<T> {
   /** Skip automatic execution */
   skip?: boolean
 }
 
-export function useQuery<T = any>(
+export function useQuery<T = unknown>(
   queryString: string,
-  variables?: Record<string, any>,
-  options: UseQueryOptions = {}
+  variables?: Record<string, unknown>,
+  options: UseQueryOptions<T> = {}
 ) {
   const graphql = useGraphQL<T>(options)
+  const hasExecutedRef = useRef(false)
+  const variablesRef = useRef(variables)
+  
+  // Update variables ref
+  variablesRef.current = variables
 
   // Auto-execute query on mount (unless skip is true)
-  useState(() => {
-    if (!options.skip) {
-      graphql.query(queryString, variables)
+  useEffect(() => {
+    if (!options.skip && !hasExecutedRef.current) {
+      hasExecutedRef.current = true
+      graphql.query(queryString, variablesRef.current).catch(() => {
+        // Error is already handled by the hook
+      })
     }
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [options.skip, queryString, graphql.query])
 
   return {
     data: graphql.data,
@@ -205,14 +214,14 @@ export function useQuery<T = any>(
  * }
  * ```
  */
-export function useMutation<T = any>(
+export function useMutation<T = unknown>(
   mutationString: string,
-  options: UseGraphQLOptions = {}
+  options: UseGraphQLOptions<T> = {}
 ) {
   const graphql = useGraphQL<T>(options)
 
   const executeMutation = useCallback(
-    (variables?: Record<string, any>) => {
+    (variables?: Record<string, unknown>) => {
       return graphql.mutate(mutationString, variables)
     },
     [graphql, mutationString]

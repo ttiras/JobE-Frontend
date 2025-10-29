@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Menu, LogOut, User, Building2, ChevronDown, Settings, Sun, Moon, Monitor } from 'lucide-react';
+import { Menu, LogOut, User, Settings, Sun, Moon, Monitor } from 'lucide-react';
 import { RefObject } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { logout } from '@/lib/nhost/auth';
 import { useAuth } from '@/lib/hooks/use-auth';
-import { useOrganization } from '@/lib/contexts/organization-context';
+import { OrganizationSwitcher } from '@/components/layout/organization-switcher';
 import { cn } from '@/lib/utils';
 
 interface HeaderProps {
@@ -39,7 +39,6 @@ export default function Header({
   const pathname = usePathname();
   const locale = pathname?.match(/^\/(en|tr)\b/)?.[1] || 'en';
   const { isAuthenticated, user } = useAuth();
-  const { currentOrganization } = useOrganization();
   const { setTheme } = useTheme();
 
   // Debug: Log auth state on mount and when it changes
@@ -102,23 +101,22 @@ export default function Header({
           JobE
         </Link>
 
-        {/* Organization Selector - Similar to Supabase project selector */}
-        {isAuthenticated && currentOrganization && (
-          <div className="hidden md:flex items-center ml-4 pl-4 border-l">
-            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-accent transition-colors text-left group">
-              <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Building2 className="h-3.5 w-3.5 text-primary" />
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">{currentOrganization.name}</span>
-                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
-              </div>
-            </button>
+        {/* Organization Switcher - Supabase style */}
+        {isAuthenticated && (
+          <div className="hidden sm:flex items-center ml-2 sm:ml-4 pl-2 sm:pl-4 border-l">
+            <OrganizationSwitcher />
           </div>
         )}
       </div>
       
       <div className="flex items-center gap-2">
+        {/* Mobile Organization Switcher */}
+        {isAuthenticated && (
+          <div className="sm:hidden">
+            <OrganizationSwitcher />
+          </div>
+        )}
+
         {isAuthenticated ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -34,7 +34,9 @@ export default async function RootLayout({
   params: Promise<{ locale?: string }>;
 }) {
   const { locale } = await params;
-  const messages = await getMessages();
+  
+  // Get messages for the current locale
+  const messages = await getMessages({ locale: locale || "en" });
 
   return (
     <html lang={locale || "en"} suppressHydrationWarning>

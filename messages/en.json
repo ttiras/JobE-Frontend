@@ -1,7 +1,6 @@
 {
   "navigation": {
     "dashboard": "Dashboard",
-    "organizations": "Organizations",
     "positions": "Positions",
     "questionnaire": "Questionnaire",
     "analytics": "Analytics",
@@ -32,7 +31,13 @@
     "skipToContent": "Skip to main content",
     "openMenu": "Open navigation menu",
     "changeLanguage": "Change language",
-    "selectOrganization": "Select organization"
+    "selectOrganization": "Select organization",
+    "createOrganization": "Create Organization",
+    "switchOrganization": "Switch Organization",
+    "noOrganizations": "No organizations found",
+    "yourOrganizations": "Your Organizations",
+    "searchOrganizations": "Search organizations...",
+    "newOrganization": "New organization"
   },
   "pages": {
     "dashboard": {
@@ -79,7 +84,62 @@
     },
     "settings": {
       "title": "Settings",
-      "description": "Manage your settings and preferences"
+      "description": "Manage your settings and preferences",
+      "profile": {
+        "title": "Profile Information",
+        "description": "Update your account's profile information",
+        "displayName": "Display Name",
+        "email": "Email Address",
+        "updateButton": "Update Profile",
+        "updating": "Updating..."
+      },
+      "email": {
+        "title": "Change Email",
+        "description": "Update your email address",
+        "newEmail": "New Email Address",
+        "changeButton": "Change Email",
+        "changing": "Changing...",
+        "success": "Verification email sent! Please check your new email address.",
+        "error": "Failed to change email",
+        "required": "Please enter a new email address"
+      },
+      "password": {
+        "title": "Change Password",
+        "description": "Ensure your account is using a strong password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm Password",
+        "changeButton": "Change Password",
+        "changing": "Changing...",
+        "success": "Password changed successfully!",
+        "error": "Failed to change password",
+        "mismatch": "Passwords do not match",
+        "minLength": "Password must be at least 8 characters",
+        "allFieldsRequired": "Please fill in all password fields"
+      },
+      "deleteAccount": {
+        "title": "Delete Account",
+        "description": "Permanently delete your account and all associated data",
+        "warningTitle": "Danger Zone",
+        "warningDescription": "Once you delete your account, there is no going back. Please be certain.",
+        "button": "Delete Account",
+        "deleting": "Deleting...",
+        "dialog": {
+          "title": "Are you absolutely sure?",
+          "description": "This action cannot be undone. This will permanently delete your account and remove all associated data from our servers.",
+          "confirmLabel": "Type DELETE to confirm",
+          "confirmPlaceholder": "DELETE",
+          "passwordLabel": "Enter your password to confirm",
+          "passwordPlaceholder": "Your password",
+          "confirmButton": "Delete My Account",
+          "cancelButton": "Cancel",
+          "confirmMismatch": "Please type DELETE to confirm",
+          "passwordRequired": "Password is required",
+          "success": "Account deleted successfully",
+          "error": "Failed to delete account"
+        }
+      },
+      "comingSoon": "Display name updates will be available soon"
     }
   },
   "errors": {

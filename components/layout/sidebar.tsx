@@ -1,8 +1,8 @@
 "use client";
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useRef, KeyboardEvent, useState } from 'react';
+import { useRef, KeyboardEvent, useState, useMemo } from 'react';
 import { navigationConfig } from '@/config/navigation';
 import { filterNavigationByRole } from '@/lib/utils/navigation-filter';
 import { useAuth } from '@/lib/contexts/auth-context';
@@ -27,14 +27,29 @@ export function Sidebar({
   onOpenChange,
 }: SidebarProps) {
   const pathname = usePathname();
+  const params = useParams();
   const t = useTranslations();
   const navRef = useRef<HTMLElement>(null);
   const { user } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
 
+  // Get orgId from URL params
+  const orgId = params?.orgId as string | undefined;
+  const locale = params?.locale as string | undefined;
+
   // Filter navigation items by user role
   const userRole = user?.defaultRole || 'user';
   const visibleNavItems = filterNavigationByRole(navigationConfig, userRole);
+
+  // Make nav items org-aware
+  const orgAwareNavItems = useMemo(() => {
+    if (!orgId || !locale) return visibleNavItems;
+    
+    return visibleNavItems.map(item => ({
+      ...item,
+      href: `/${locale}/dashboard/${orgId}${item.href}`
+    }));
+  }, [visibleNavItems, orgId, locale]);
 
   // Handle arrow key navigation
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -67,16 +82,23 @@ export function Sidebar({
       className="flex flex-col p-3 space-y-1 flex-1 relative z-10"
       onKeyDown={handleKeyDown}
     >
-      {visibleNavItems.map((item) => (
-        <NavItem
-          key={item.id}
-          item={item}
-          isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)}
-          label={t(item.label)}
-          isCollapsed={!isHovered && !isMobile}
-          isHovered={isHovered || isMobile}
-        />
-      ))}
+      {orgAwareNavItems.map((item) => {
+        // Special handling for dashboard (empty href becomes the org root)
+        const isActive = item.href 
+          ? pathname === item.href || pathname.startsWith(`${item.href}/`)
+          : pathname === `/${locale}/dashboard/${orgId}`;
+        
+        return (
+          <NavItem
+            key={item.id}
+            item={item}
+            isActive={isActive}
+            label={t(item.label)}
+            isCollapsed={!isHovered && !isMobile}
+            isHovered={isHovered || isMobile}
+          />
+        );
+      })}
     </nav>
   );
 

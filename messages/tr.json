@@ -1,7 +1,6 @@
 {
   "navigation": {
     "dashboard": "Dashboard",
-    "organizations": "Organizasyonlar",
     "positions": "Pozisyonlar",
     "questionnaire": "Anket",
     "analytics": "Analitik",
@@ -32,7 +31,13 @@
     "skipToContent": "Ana içeriğe atla",
     "openMenu": "Gezinme menüsünü aç",
     "changeLanguage": "Dil değiştir",
-    "selectOrganization": "Organizasyon seç"
+    "selectOrganization": "Organizasyon seç",
+    "createOrganization": "Organizasyon Oluştur",
+    "switchOrganization": "Organizasyon Değiştir",
+    "noOrganizations": "Organizasyon bulunamadı",
+    "yourOrganizations": "Organizasyonlarınız",
+    "searchOrganizations": "Organizasyon ara...",
+    "newOrganization": "Yeni organizasyon"
   },
   "pages": {
     "dashboard": {
@@ -79,7 +84,62 @@
     },
     "settings": {
       "title": "Ayarlar",
-      "description": "Ayarlarınızı ve tercihlerinizi yönetin"
+      "description": "Ayarlarınızı ve tercihlerinizi yönetin",
+      "profile": {
+        "title": "Profil Bilgileri",
+        "description": "Hesabınızın profil bilgilerini güncelleyin",
+        "displayName": "Görünen Ad",
+        "email": "E-posta Adresi",
+        "updateButton": "Profili Güncelle",
+        "updating": "Güncelleniyor..."
+      },
+      "email": {
+        "title": "E-posta Değiştir",
+        "description": "E-posta adresinizi güncelleyin",
+        "newEmail": "Yeni E-posta Adresi",
+        "changeButton": "E-postayı Değiştir",
+        "changing": "Değiştiriliyor...",
+        "success": "Doğrulama e-postası gönderildi! Lütfen yeni e-posta adresinizi kontrol edin.",
+        "error": "E-posta değiştirilemedi",
+        "required": "Lütfen yeni bir e-posta adresi girin"
+      },
+      "password": {
+        "title": "Şifre Değiştir",
+        "description": "Hesabınızın güçlü bir şifre kullandığından emin olun",
+        "currentPassword": "Mevcut Şifre",
+        "newPassword": "Yeni Şifre",
+        "confirmPassword": "Şifreyi Onayla",
+        "changeButton": "Şifreyi Değiştir",
+        "changing": "Değiştiriliyor...",
+        "success": "Şifre başarıyla değiştirildi!",
+        "error": "Şifre değiştirilemedi",
+        "mismatch": "Şifreler eşleşmiyor",
+        "minLength": "Şifre en az 8 karakter olmalıdır",
+        "allFieldsRequired": "Lütfen tüm şifre alanlarını doldurun"
+      },
+      "deleteAccount": {
+        "title": "Hesabı Sil",
+        "description": "Hesabınızı ve ilişkili tüm verileri kalıcı olarak silin",
+        "warningTitle": "Tehlike Bölgesi",
+        "warningDescription": "Hesabınızı sildiğinizde geri dönüş yoktur. Lütfen emin olun.",
+        "button": "Hesabı Sil",
+        "deleting": "Siliniyor...",
+        "dialog": {
+          "title": "Kesinlikle emin misiniz?",
+          "description": "Bu işlem geri alınamaz. Hesabınızı kalıcı olarak silecek ve sunucularımızdaki tüm ilişkili verileri kaldıracaktır.",
+          "confirmLabel": "Onaylamak için DELETE yazın",
+          "confirmPlaceholder": "DELETE",
+          "passwordLabel": "Onaylamak için şifrenizi girin",
+          "passwordPlaceholder": "Şifreniz",
+          "confirmButton": "Hesabımı Sil",
+          "cancelButton": "İptal",
+          "confirmMismatch": "Onaylamak için DELETE yazın",
+          "passwordRequired": "Şifre gereklidir",
+          "success": "Hesap başarıyla silindi",
+          "error": "Hesap silinemedi"
+        }
+      },
+      "comingSoon": "Görünen ad güncellemeleri yakında kullanıma sunulacak"
     }
   },
   "errors": {

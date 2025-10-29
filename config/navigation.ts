@@ -5,21 +5,16 @@ import { NavigationItem } from '@/lib/utils/navigation-filter';
  * 
  * Role hierarchy:
  * - admin: Full access to all sections including analytics and system tools
- * - user: Organization user; access to all organization features (dashboard, organizations, positions, questionnaire, settings)
+ * - user: Organization user; access to organization features (dashboard, positions, questionnaire, settings)
+ * 
+ * Note: These paths are org-relative. The sidebar will prepend /{locale}/dashboard/{orgId} to each href.
  */
 export const navigationConfig: NavigationItem[] = [
   {
     id: 'dashboard',
     label: 'navigation.dashboard',
     icon: 'Home',
-    href: '/dashboard',
-    requiredRoles: ['user', 'admin'],
-  },
-  {
-    id: 'organizations',
-    label: 'navigation.organizations',
-    icon: 'Building2',
-    href: '/organizations',
+    href: '',
     requiredRoles: ['user', 'admin'],
   },
   {

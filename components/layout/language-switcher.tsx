@@ -27,21 +27,15 @@ export function LanguageSwitcher() {
     if (newLocale === locale) return;
 
     // Remove current locale from pathname if present
-    let newPathname = pathname;
+    let pathWithoutLocale = pathname;
     if (pathname.startsWith(`/${locale}`)) {
-      newPathname = pathname.slice(locale.length + 1) || '/';
+      pathWithoutLocale = pathname.slice(locale.length + 1) || '/';
     }
 
-    // Add new locale prefix (except for English which is the default)
-    if (newLocale !== 'en') {
-      newPathname = `/${newLocale}${newPathname}`;
-    }
+    // Build new path with new locale
+    const newPathname = `/${newLocale}${pathWithoutLocale}`;
 
-    // Ensure path starts with /
-    if (!newPathname.startsWith('/')) {
-      newPathname = `/${newPathname}`;
-    }
-
+    // Use replace to change locale without adding to history
     router.replace(newPathname);
   };
 
