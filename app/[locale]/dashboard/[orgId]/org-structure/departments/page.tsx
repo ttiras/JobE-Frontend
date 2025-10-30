@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { DepartmentsContent } from '@/components/organizations/departments-content';
+import { DepartmentsPageClient } from './departments-page-client';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('pages.departments');
@@ -11,15 +11,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     locale: string;
     orgId: string;
-  };
+  }>;
 }
 
 export default async function DepartmentsPage({ params }: PageProps) {
-  // TODO: Fetch real departments data from database
-  const departments: Array<{id: string; name: string; code: string; positions: number}> = [];
+  const { locale, orgId } = await params;
 
-  return <DepartmentsContent initialDepartments={departments} />;
+  return <DepartmentsPageClient locale={locale} orgId={orgId} />;
 }

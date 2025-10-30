@@ -23,10 +23,9 @@ export const INSERT_POSITIONS = `
         id
         pos_code
         title
-        dept_code
-        reports_to_pos_code
+        department_id
+        reports_to_id
         is_manager
-        is_active
         incumbents_count
         organization_id
         created_at
@@ -48,10 +47,9 @@ export const INSERT_POSITION = `
       id
       pos_code
       title
-      dept_code
-      reports_to_pos_code
+      department_id
+      reports_to_id
       is_manager
-      is_active
       incumbents_count
       organization_id
       created_at
@@ -78,10 +76,9 @@ export const UPDATE_POSITIONS_BULK = `
         id
         pos_code
         title
-        dept_code
-        reports_to_pos_code
+        department_id
+        reports_to_id
         is_manager
-        is_active
         incumbents_count
         updated_at
       }
@@ -115,10 +112,9 @@ export const UPDATE_POSITION = `
         id
         pos_code
         title
-        dept_code
-        reports_to_pos_code
+        department_id
+        reports_to_id
         is_manager
-        is_active
         incumbents_count
         updated_at
       }
@@ -151,10 +147,9 @@ export const UPSERT_POSITIONS = `
         id
         pos_code
         title
-        dept_code
-        reports_to_pos_code
+        department_id
+        reports_to_id
         is_manager
-        is_active
         incumbents_count
         organization_id
         created_at

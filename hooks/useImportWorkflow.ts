@@ -23,6 +23,8 @@ import { detectDepartmentOperations, detectPositionOperations } from '@/lib/util
 import { getImportSummary } from '@/lib/nhost/graphql/mutations/import-workflow';
 import { ValidationContext, ValidationStatus } from '@/lib/types/import';
 import { executeServerImport } from '@/lib/actions/import';
+import { executeQuery } from '@/lib/nhost/graphql/client';
+import { GET_EXISTING_DEPT_CODES, GET_EXISTING_POS_CODES, type ExistingCodesResponse } from '@/lib/nhost/graphql/queries/org-structure';
 
 export interface UseImportWorkflowReturn {
   // State
@@ -100,18 +102,51 @@ export function useImportWorkflow(importType: 'departments' | 'positions' = 'dep
         positions: excelData.positions.length
       })
       
+      // Fetch existing codes from database for validation
+      console.log('Fetching existing codes from database...')
+      const [deptResponse, posResponse] = await Promise.all([
+        executeQuery<ExistingCodesResponse>(GET_EXISTING_DEPT_CODES, {
+          organization_id: organizationId
+        }),
+        executeQuery<ExistingCodesResponse>(GET_EXISTING_POS_CODES, {
+          organization_id: organizationId
+        })
+      ]);
+      
+      console.log('Existing departments in DB:', deptResponse.departments?.length || 0)
+      console.log('Existing positions in DB:', posResponse.positions?.length || 0)
+      
+      // Build sets of existing codes from database
+      const existingDeptCodes = new Set<string>();
+      const existingPosCodes = new Set<string>();
+      
+      if (deptResponse.departments) {
+        deptResponse.departments.forEach(d => existingDeptCodes.add(d.dept_code));
+      }
+      
+      if (posResponse.positions) {
+        posResponse.positions.forEach(p => existingPosCodes.add(p.pos_code));
+      }
+      
       // Create validation context
-      // TODO: Query existing codes from database for UPDATE detection
-      const validDepartmentCodes = new Set(excelData.departments.map(d => d.dept_code));
-      const validPositionCodes = new Set(excelData.positions.map(p => p.pos_code));
+      // validDepartmentCodes = codes from file + codes from DB
+      // validPositionCodes = codes from file + codes from DB
+      const validDepartmentCodes = new Set([
+        ...excelData.departments.map(d => d.dept_code),
+        ...existingDeptCodes
+      ]);
+      const validPositionCodes = new Set([
+        ...excelData.positions.map(p => p.pos_code),
+        ...existingPosCodes
+      ]);
       
       const validationContext: ValidationContext = {
         departments: excelData.departments,
         positions: excelData.positions,
         validDepartmentCodes,
         validPositionCodes,
-        existingDepartmentCodes: new Set(), // TODO: Query from database
-        existingPositionCodes: new Set(), // TODO: Query from database
+        existingDepartmentCodes: existingDeptCodes,
+        existingPositionCodes: existingPosCodes,
       };
       
       // Validate departments and positions
@@ -124,10 +159,9 @@ export function useImportWorkflow(importType: 'departments' | 'positions' = 'dep
         ? ValidationStatus.VALID 
         : ValidationStatus.ERRORS;
       
-      // Detect CREATE/UPDATE operations
-      // For now, assume all are CREATE operations (no existing codes)
-      const departmentsWithOps = detectDepartmentOperations(excelData.departments, new Set());
-      const positionsWithOps = detectPositionOperations(excelData.positions, new Set());
+      // Detect CREATE/UPDATE operations using existing codes from DB
+      const departmentsWithOps = detectDepartmentOperations(excelData.departments, existingDeptCodes);
+      const positionsWithOps = detectPositionOperations(excelData.positions, existingPosCodes);
       
       // Generate summary
       const summary = getImportSummary(departmentsWithOps, positionsWithOps);

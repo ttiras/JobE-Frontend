@@ -150,7 +150,7 @@ export function DataPreviewTable({
               <tbody className="divide-y">
                 {displayDepartments.map((dept, index) => (
                   <tr 
-                    key={`${dept.dept_code}-${index}`}
+                    key={`dept-${dept.dept_code}-${dept.excelRow}-${index}`}
                     className="hover:bg-secondary/50 transition-colors"
                     tabIndex={0}
                   >
@@ -214,13 +214,16 @@ export function DataPreviewTable({
                     {t('nameTr')}
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider bg-secondary/30">
-                    {t('active')}
-                  </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider bg-secondary/30">
                     {t('departmentCode')}
                   </th>
                   <th className="px-4 py-2 text-left text-xs font-medium uppercase tracking-wider bg-secondary/30">
                     {t('reportingToCode')}
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase tracking-wider bg-secondary/30">
+                    {t('isManager')}
+                  </th>
+                  <th className="px-4 py-2 text-center text-xs font-medium uppercase tracking-wider bg-secondary/30">
+                    {t('incumbents')}
                   </th>
                 </tr>
               </thead>
@@ -231,7 +234,7 @@ export function DataPreviewTable({
               <tbody className="divide-y">
                 {displayPositions.map((pos, index) => (
                   <tr 
-                    key={`${pos.pos_code}-${index}`}
+                    key={`pos-${pos.pos_code}-${pos.excelRow}-${index}`}
                     className="hover:bg-secondary/50 transition-colors"
                     tabIndex={0}
                   >
@@ -247,15 +250,6 @@ export function DataPreviewTable({
                     </td>
                     <td className="px-4 py-3 text-sm">{pos.title}</td>
                     <td className="px-4 py-3 text-sm">{pos.title}</td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                        pos.is_active 
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
-                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
-                      }`}>
-                        {pos.is_active ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
                     <td className="px-4 py-3">
                       <code className="text-sm font-mono bg-secondary px-2 py-0.5 rounded">
                         {pos.dept_code}
@@ -269,6 +263,18 @@ export function DataPreviewTable({
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
                       )}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                        pos.is_manager 
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400' 
+                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400'
+                      }`}>
+                        {pos.is_manager ? 'Yes' : 'No'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-center text-sm font-medium">
+                      {pos.incumbents_count}
                     </td>
                   </tr>
                 ))}

@@ -68,7 +68,6 @@ export interface PositionPreview {
   dept_code: string;
   reports_to_pos_code?: string | null;
   is_manager: boolean;
-  is_active: boolean;
   incumbents_count: number;
   excelRow: number;
 }
@@ -219,9 +218,8 @@ export interface PositionRow {
   pos_code: string;
   title: string;
   dept_code: string;
-  reports_to_pos_code?: string | null;
+  reports_to_pos_code?: string | null; // Position code (will be resolved to UUID during import)
   is_manager: boolean;
-  is_active: boolean;
   incumbents_count: number;
   excelRow: number; // For error reporting
 }

@@ -32,6 +32,13 @@ export const navigationConfig: NavigationItem[] = [
         requiredRoles: ['user', 'admin'],
       },
       {
+        id: 'organizationChart',
+        label: 'navigation.organizationChart',
+        icon: 'Network',
+        href: '/org-structure/hierarchy',
+        requiredRoles: ['user', 'admin'],
+      },
+      {
         id: 'positions',
         label: 'navigation.positions',
         icon: 'Briefcase',

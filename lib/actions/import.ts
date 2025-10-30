@@ -176,7 +176,6 @@ export async function executeServerImport(
         department_id: deptCodeToId.get(pos.dept_code) || null,
         reports_to_id: pos.reports_to_pos_code ? posCodeToId.get(pos.reports_to_pos_code) || null : null,
         is_manager: pos.is_manager,
-        is_active: pos.is_active,
         incumbents_count: pos.incumbents_count,
       }));
 
@@ -204,7 +203,6 @@ export async function executeServerImport(
             department_id: deptCodeToId.get(pos.dept_code) || null,
             reports_to_id: pos.reports_to_pos_code ? posCodeToId.get(pos.reports_to_pos_code) || null : null,
             is_manager: pos.is_manager,
-            is_active: pos.is_active,
             incumbents_count: pos.incumbents_count,
           };
 

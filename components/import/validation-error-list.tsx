@@ -162,9 +162,9 @@ export function ValidationErrorList({
                     {error.affectedCodes && error.affectedCodes.length > 0 && (
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-xs text-muted-foreground">Affected codes:</span>
-                        {error.affectedCodes.map(code => (
+                        {error.affectedCodes.map((code, codeIndex) => (
                           <code 
-                            key={code}
+                            key={`${error.type}-${error.row}-${code}-${codeIndex}`}
                             className="text-xs px-2 py-0.5 rounded bg-secondary font-mono"
                           >
                             {code}

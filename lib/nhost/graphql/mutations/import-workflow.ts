@@ -290,7 +290,6 @@ export async function executeImportWorkflow(
         dept_code: pos.dept_code,
         reports_to_pos_code: pos.reports_to_pos_code || null,
         is_manager: pos.is_manager,
-        is_active: pos.is_active,
         incumbents_count: pos.incumbents_count,
       }));
 
@@ -325,7 +324,6 @@ export async function executeImportWorkflow(
             dept_code: pos.dept_code,
             reports_to_pos_code: pos.reports_to_pos_code || null,
             is_manager: pos.is_manager,
-            is_active: pos.is_active,
             incumbents_count: pos.incumbents_count,
           },
         }

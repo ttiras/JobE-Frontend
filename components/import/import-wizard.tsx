@@ -337,6 +337,7 @@ export function ImportWizard({ onSuccess, importType = 'positions', initialFile 
                 onBack={goBack}
                 onConfirm={handleStep2Confirm}
                 isLoading={isLoading || context.state === ImportWorkflowState.CONFIRMING}
+                importType={importType}
               />
             )}
 

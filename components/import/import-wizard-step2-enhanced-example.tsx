@@ -1,17 +1,15 @@
 /**
- * ImportWizardStep2 Component
+ * Example: Enhanced Import Wizard Step 2 with Hierarchy View
  * 
- * Step 2: Data Preview & Validation
- * - Show parsed departments and positions
- * - Display validation errors
- * - Show statistics (new vs updates)
- * - Allow back to Step 1 or confirm to proceed with import
+ * This is an example showing how to integrate the hierarchy visualization
+ * into your import preview step. You can copy parts of this into your
+ * existing import-wizard-step2.tsx file.
  */
 
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { AlertCircle, AlertTriangle, CheckCircle2, Building2, Users } from 'lucide-react'
+import { AlertCircle, AlertTriangle, CheckCircle2, Building2, Users, Network } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -19,23 +17,24 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataPreviewTable } from '@/components/import/data-preview-table'
 import { ValidationErrorList } from '@/components/import/validation-error-list'
+import { ImportPreviewHierarchy } from '@/components/hierarchy/import-preview-hierarchy'
 import { ImportWorkflowContext } from '@/lib/types/import'
 
-interface ImportWizardStep2Props {
+interface EnhancedImportWizardStep2Props {
   context: ImportWorkflowContext
   onBack: () => void
   onConfirm: () => void
   isLoading?: boolean
-  importType?: 'departments' | 'positions'
+  importType: 'departments' | 'positions'
 }
 
-export function ImportWizardStep2({
+export function EnhancedImportWizardStep2({
   context,
   onBack,
   onConfirm,
   isLoading = false,
-  importType = 'departments',
-}: ImportWizardStep2Props) {
+  importType,
+}: EnhancedImportWizardStep2Props) {
   const t = useTranslations('import.wizard.step2')
   const tCommon = useTranslations('common')
 
@@ -147,118 +146,86 @@ export function ImportWizardStep2({
         </Alert>
       )}
 
-      {/* Data Tables */}
-      <Tabs defaultValue={importType} className="w-full">
-        {(departmentStats.total > 0 || positionStats.total > 0) && (
-          <TabsList className="grid w-full grid-cols-2">
-            {departmentStats.total > 0 && (
-              <TabsTrigger value="departments">
-                <Building2 className="mr-2 h-4 w-4" />
-                {t('tabs.departments')} ({departmentStats.total})
-              </TabsTrigger>
-            )}
-            {positionStats.total > 0 && (
-              <TabsTrigger value="positions">
-                <Users className="mr-2 h-4 w-4" />
-                {t('tabs.positions')} ({positionStats.total})
-              </TabsTrigger>
-            )}
-          </TabsList>
-        )}
-
-        {departmentStats.total > 0 && (
-          <TabsContent value="departments" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">{t('preview.departmentsTitle')}</CardTitle>
-              <CardDescription>{t('preview.departmentsDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {context.preview?.departments && context.preview.departments.length > 0 ? (
-                <DataPreviewTable
-                  departments={context.preview.departments}
-                  positions={[]}
-                />
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  {t('preview.noDepartments')}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        )}
-
-        {positionStats.total > 0 && (
-          <TabsContent value="positions" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">{t('preview.positionsTitle')}</CardTitle>
-              <CardDescription>{t('preview.positionsDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {context.preview?.positions && context.preview.positions.length > 0 ? (
-                <DataPreviewTable
-                  departments={[]}
-                  positions={context.preview.positions}
-                />
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  {t('preview.noPositions')}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        )}
-      </Tabs>
-
       {/* Validation Errors */}
-      {hasErrors && (
-        <Card className="border-red-200">
-          <CardHeader>
-            <CardTitle className="text-base text-red-600 dark:text-red-400">
-              {t('errors.title')}
-            </CardTitle>
-            <CardDescription>{t('errors.description')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ValidationErrorList errors={context.errors.filter(e => e.severity === 'ERROR')} />
-          </CardContent>
-        </Card>
+      {context.errors.length > 0 && (
+        <ValidationErrorList errors={context.errors} />
       )}
 
-      {/* Warnings */}
-      {hasWarnings && (
-        <Card className="border-yellow-200">
-          <CardHeader>
-            <CardTitle className="text-base text-yellow-600 dark:text-yellow-400">
-              {t('warnings.title')}
-            </CardTitle>
-            <CardDescription>{t('warnings.description')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ValidationErrorList errors={warnings} />
-          </CardContent>
-        </Card>
+      {/* ENHANCED: Show Hierarchy View for Departments */}
+      {importType === 'departments' && context.preview && departmentStats.total > 0 && (
+        <ImportPreviewHierarchy 
+          departments={context.preview.departments}
+          showTableView={true}
+        />
       )}
 
-      {/* Navigation Buttons */}
-      <div className="flex justify-between">
+      {/* Traditional Table View for Positions or when no hierarchy */}
+      {(importType === 'positions' || !context.preview || departmentStats.total === 0) && (
+        <Tabs defaultValue="departments" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="departments" className="flex items-center gap-2">
+              <Building2 className="h-4 w-4" />
+              <span className="hidden sm:inline">{t('tabs.departments')}</span>
+              <span className="sm:hidden">Depts</span>
+              <Badge variant="secondary" className="ml-1">
+                {departmentStats.total}
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger value="positions" className="flex items-center gap-2">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">{t('tabs.positions')}</span>
+              <span className="sm:hidden">Pos</span>
+              <Badge variant="secondary" className="ml-1">
+                {positionStats.total}
+              </Badge>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="departments" className="mt-4">
+            {context.preview && (
+              <DataPreviewTable
+                departments={context.preview.departments}
+                positions={[]}
+                showOperations={true}
+              />
+            )}
+          </TabsContent>
+
+          <TabsContent value="positions" className="mt-4">
+            {context.preview && (
+              <DataPreviewTable
+                departments={[]}
+                positions={context.preview.positions}
+                showOperations={true}
+              />
+            )}
+          </TabsContent>
+        </Tabs>
+      )}
+
+      {/* Action Buttons */}
+      <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4">
         <Button
-          onClick={onBack}
           variant="outline"
+          onClick={onBack}
           disabled={isLoading}
+          className="w-full sm:w-auto"
         >
-          {t('backButton')}
+          {tCommon('back')}
         </Button>
         <Button
           onClick={onConfirm}
           disabled={hasErrors || isLoading}
-          size="lg"
-          className="min-w-[160px]"
+          className="w-full sm:flex-1"
         >
-          {isLoading ? tCommon('loading') : t('confirmButton')}
+          {isLoading ? (
+            <>
+              <span className="mr-2">{t('confirmButton.loading')}</span>
+              <span className="animate-spin">⏳</span>
+            </>
+          ) : (
+            t('confirmButton.default')
+          )}
         </Button>
       </div>
     </div>

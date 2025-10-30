@@ -20,7 +20,6 @@ const POSITION_COLUMNS = [
   'dept_code',
   'reports_to_pos_code',
   'is_manager',
-  'is_active',
   'incumbents_count',
 ];
 
@@ -213,7 +212,6 @@ function parsePositionSheet(sheet: XLSX.WorkSheet): PositionRow[] {
         ? String(row.reports_to_pos_code).trim()
         : null,
       is_manager: parseBoolean(row.is_manager),
-      is_active: parseBoolean(row.is_active),
       incumbents_count: parseInteger(row.incumbents_count),
       excelRow,
     };
