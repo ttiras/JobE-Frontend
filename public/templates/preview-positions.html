@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+    padding: 40px;
+    background: #f8f9fa;
+  }
+  .excel-preview {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 1200px;
+  }
+  table { 
+    border-collapse: collapse; 
+    width: 100%;
+    background: white;
+    font-size: 11px;
+  }
+  th, td { 
+    border: 1px solid #d1d5db; 
+    padding: 10px 12px; 
+    text-align: left;
+  }
+  th { 
+    background: #f3f4f6; 
+    font-weight: 600; 
+    font-size: 11px;
+    color: #374151;
+  }
+  td { 
+    color: #1f2937;
+  }
+  .col-letter {
+    display: block;
+    font-size: 9px;
+    color: #9ca3af;
+    font-weight: 400;
+    margin-bottom: 2px;
+  }
+  .instructions {
+    margin-top: 20px;
+    padding: 16px;
+    background: #fef3c7;
+    border-left: 4px solid #fbbf24;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #78350f;
+  }
+</style>
+</head>
+<body>
+<div class="excel-preview">
+  <h2 style="margin-top: 0; color: #111827; font-size: 20px;">Positions Format</h2>
+  <table>
+    <thead>
+      <tr>
+        <th><span class="col-letter">A</span>code</th>
+        <th><span class="col-letter">B</span>title</th>
+        <th><span class="col-letter">C</span>department_code</th>
+        <th><span class="col-letter">D</span>description</th>
+        <th><span class="col-letter">E</span>employment_type</th>
+        <th><span class="col-letter">F</span>location</th>
+        <th><span class="col-letter">G</span>salary_min</th>
+        <th><span class="col-letter">H</span>salary_max</th>
+        <th><span class="col-letter">I</span>salary_currency</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>IT-DEV-01</td>
+        <td>Senior Developer</td>
+        <td>IT-DEV</td>
+        <td>Lead development team</td>
+        <td>Full-time</td>
+        <td>Remote</td>
+        <td>80000</td>
+        <td>120000</td>
+        <td>USD</td>
+      </tr>
+      <tr>
+        <td>IT-DEV-02</td>
+        <td>Junior Developer</td>
+        <td>IT-DEV</td>
+        <td>Support development</td>
+        <td>Full-time</td>
+        <td>Office</td>
+        <td>50000</td>
+        <td>70000</td>
+        <td>USD</td>
+      </tr>
+      <tr>
+        <td>HR-MGR-01</td>
+        <td>HR Manager</td>
+        <td>HR</td>
+        <td>Manage HR operations</td>
+        <td>Full-time</td>
+        <td>Office</td>
+        <td>60000</td>
+        <td>90000</td>
+        <td>USD</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="instructions">
+    <strong>💡 Instructions:</strong> Columns A-C are required. Columns D-I are optional but recommended.
+  </div>
+</div>
+
+<script>
+// Instructions to create PNG:
+// 1. Open this file in a browser
+// 2. Zoom to 100%
+// 3. Take screenshot of the .excel-preview div only
+// 4. Crop to approximately 1000x200px
+// 5. Save as: /public/templates/preview-positions.png
+</script>
+</body>
+</html>

@@ -1,7 +1,10 @@
 {
   "navigation": {
     "dashboard": "Dashboard",
+    "orgStructure": "Org Structure",
+    "departments": "Departments",
     "positions": "Positions",
+    "import": "Import Data",
     "questionnaire": "Questionnaire",
     "analytics": "Analytics",
     "settings": "Settings"
@@ -46,11 +49,45 @@
     "dashboard": {
       "title": "Dashboard",
       "description": "Welcome to JobE HR Management Platform",
+      "welcome": "Welcome",
+      "welcomeDescription": "Your organization dashboard will show key metrics and insights here.",
       "welcomeMessage": "Welcome to JobE - HR Management Platform",
       "noOrg": {
         "title": "Create your first organization",
         "description": "To get started, create an organization. You can add positions and invite teammates afterwards.",
         "createButton": "Create organization"
+      },
+      "onboarding": {
+        "title": "Welcome to Your Organization",
+        "description": "Let's get started by setting up your organizational structure. Follow these steps to import or create your departments and positions.",
+        "stepNumber": "Step {number}",
+        "completed": "Completed",
+        "helpText": "Need help getting started?",
+        "helpLink": "View Documentation",
+        "steps": {
+          "import": {
+            "title": "Import Your Data",
+            "description": "Upload an Excel file with your departments and positions for quick setup. We'll guide you through the process.",
+            "action": "Start Import"
+          },
+          "departments": {
+            "title": "Review Departments",
+            "description": "View and manage your organizational departments. You can edit, add, or remove departments as needed.",
+            "action": "View Departments"
+          },
+          "positions": {
+            "title": "Manage Positions",
+            "description": "Review all positions in your organization and start evaluating them to build your compensation structure.",
+            "action": "View Positions"
+          }
+        },
+        "progress": {
+          "title": "Setup Progress",
+          "complete": "Complete",
+          "departments": "Departments Added",
+          "positions": "Positions Added",
+          "evaluations": "Positions Evaluated"
+        }
       }
     },
     "organizations": {
@@ -76,7 +113,78 @@
     },
     "positions": {
       "title": "Positions",
-      "description": "Manage job positions"
+      "description": "Manage job positions",
+      "search": {
+        "placeholder": "Search positions..."
+      },
+      "actions": {
+        "new": "New Position",
+        "edit": "Edit",
+        "import": "Import from Excel",
+        "filter": "Filter",
+        "filterDept": "Filter by Department",
+        "filterStatus": "Filter by Status",
+        "evaluate": "Evaluate",
+        "viewEvaluation": "View Evaluation"
+      },
+      "emptyState": {
+        "title": "No Positions Yet",
+        "description": "Start by importing positions from Excel or create them manually.",
+        "import": "Import from Excel",
+        "create": "Create Position"
+      }
+    },
+    "departments": {
+      "title": "Departments",
+      "description": "Manage organizational departments",
+      "search": {
+        "placeholder": "Search departments..."
+      },
+      "actions": {
+        "new": "New Department",
+        "edit": "Edit",
+        "import": "Import from Excel",
+        "filter": "Filter",
+        "viewPositions": "View Positions"
+      },
+      "emptyState": {
+        "title": "No Departments Yet",
+        "description": "Start by importing departments from Excel or create them manually.",
+        "import": "Import from Excel",
+        "create": "Create Department"
+      }
+    },
+    "orgStructure": {
+      "title": "Organization Structure",
+      "description": "Manage your organization's departments and positions",
+      "stats": {
+        "departments": "Departments",
+        "departmentsDesc": "Total organizational departments",
+        "positions": "Positions",
+        "positionsDesc": "Total job positions",
+        "evaluated": "Evaluated",
+        "evaluatedDesc": "Positions with completed evaluations"
+      },
+      "quickActions": {
+        "title": "Quick Actions",
+        "import": {
+          "title": "Import from Excel",
+          "description": "Bulk upload departments and positions using a template"
+        },
+        "departments": {
+          "title": "View Departments",
+          "description": "Browse and manage your organizational departments"
+        },
+        "positions": {
+          "title": "View Positions",
+          "description": "Browse and manage job positions"
+        }
+      },
+      "emptyState": {
+        "title": "Get Started with Your Organization Structure",
+        "description": "Import your departments and positions to begin evaluating jobs and building your org chart.",
+        "action": "Import from Excel"
+      }
     },
     "questionnaire": {
       "title": "Questionnaire",
@@ -202,7 +310,7 @@
       "signIn": "Sign in",
       "success": "Account created successfully! Please check your email to verify.",
       "error": "Failed to create account. Please try again.",
-  "emailVerificationNotice": "You'll need to verify your email address before you can log in.",
+      "emailVerificationNotice": "You'll need to verify your email address before you can log in.",
       "strength": {
         "weak": "Weak",
         "medium": "Medium",
@@ -219,7 +327,7 @@
       "title": "Reset your password",
       "emailStep": {
         "title": "Enter your email",
-  "description": "We will send you a link to reset your password",
+        "description": "We will send you a link to reset your password",
         "email": "Email address",
         "submit": "Send reset link",
         "submitting": "Sending...",
@@ -297,17 +405,468 @@
       "expired": "Security check expired. Please try again.",
       "failed": "reCAPTCHA verification failed. Please try again."
     },
-  "a11y": {
+    "a11y": {
       "showPassword": "Show password",
       "hidePassword": "Hide password",
       "show": "Show",
       "hide": "Hide"
-  },
+    },
     "sessionExpired": {
       "title": "Session Expired",
       "defaultMessage": "Your session has expired. Please log in again to continue.",
       "loginButton": "Log In Again",
       "cancelButton": "Cancel"
     }
+  },
+  "import": {
+    "title": "Import Data",
+    "subtitle": "Upload Excel files to bulk import departments and positions",
+    "titleDepartments": "Import Departments",
+    "titlePositions": "Import Positions",
+    "description": "Upload your organizational data quickly and easily",
+    "breadcrumb": {
+      "orgStructure": "Org Structure",
+      "import": "Import",
+      "departments": "Departments",
+      "positions": "Positions"
+    },
+    "hero": {
+      "titleDepartments": "Import Departments from Excel",
+      "titlePositions": "Import Positions from Excel",
+      "descriptionDepartments": "Upload your department structure using our Excel template. Make sure your file follows the exact format shown below.",
+      "descriptionPositions": "Upload your position data using our Excel template. Make sure your file follows the exact format shown below."
+    },
+    "drawer": {
+      "title": "Import from Excel",
+      "description": "Import {type} from an Excel file",
+      "types": {
+        "departments": "departments",
+        "positions": "positions"
+      }
+    },
+    "wizard": {
+      "stepCount": "Step {current} of {total}",
+      "steps": {
+        "step1": {
+          "title": "Template & Upload",
+          "description": "Download our template and upload your prepared Excel file",
+          "label": "Upload"
+        },
+        "step2": {
+          "title": "Data Preview & Validation",
+          "description": "Review your data and confirm to proceed with import",
+          "label": "Preview"
+        },
+        "step3": {
+          "title": "Import Complete",
+          "description": "Your data has been successfully imported",
+          "label": "Complete"
+        }
+      },
+      "step1": {
+        "title": "Template & Upload",
+        "description": "Download our template and upload your prepared Excel file",
+        "instructions": {
+          "title": "How to get started",
+          "step1": "Download the Excel template below",
+          "step2": "Fill in your department and position data",
+          "step3": "Upload the completed file using the button below"
+        },
+        "downloadTemplate": "Download Excel Template",
+        "downloadingTemplate": "Downloading...",
+        "templateInfo": "The template includes example data and helpful comments to guide you through the process.",
+        "uploadTitle": "Upload Your File",
+        "uploadDescription": "Drag and drop your Excel file here or click to browse",
+        "uploadSuccess": "File '{fileName}' uploaded successfully!",
+        "requiredFields": {
+          "title": "Required Fields",
+          "departments": "Departments",
+          "deptCode": "Department Code",
+          "deptName": "Department Name",
+          "positions": "Positions",
+          "posCode": "Position Code",
+          "posTitle": "Position Title",
+          "posDept": "Department Code"
+        },
+        "nextButton": "Continue to Preview"
+      },
+      "step2": {
+        "title": "Data Preview & Validation",
+        "description": "Review your data and fix any validation errors before importing",
+        "stats": {
+          "departments": "Departments",
+          "positions": "Positions",
+          "new": "New",
+          "updates": "Updates"
+        },
+        "validation": {
+          "errorsTitle": "Validation Errors Found",
+          "errorsDescription": "Please fix {count} error(s) before proceeding",
+          "warningsTitle": "Warnings",
+          "warningsDescription": "{count} warning(s) found - you can proceed but review these items",
+          "successTitle": "All Clear!",
+          "successDescription": "No validation errors found. Your data is ready to import."
+        },
+        "tabs": {
+          "departments": "Departments",
+          "positions": "Positions"
+        },
+        "preview": {
+          "departmentsTitle": "Department Data",
+          "departmentsDescription": "Review the departments that will be created or updated",
+          "positionsTitle": "Position Data",
+          "positionsDescription": "Review the positions that will be created or updated",
+          "noDepartments": "No departments found in the uploaded file",
+          "noPositions": "No positions found in the uploaded file"
+        },
+        "errors": {
+          "title": "Validation Errors",
+          "description": "Fix these errors in your Excel file and re-upload"
+        },
+        "warnings": {
+          "title": "Warnings",
+          "description": "These issues won't prevent import but should be reviewed"
+        },
+        "backButton": "Back to Upload",
+        "confirmButton": "Confirm & Import"
+      },
+      "step3": {
+        "title": "Import Complete!",
+        "description": "Final review before importing your data",
+        "noDataError": "No data available for import. Please go back and upload a file.",
+        "summary": {
+          "title": "Import Summary",
+          "description": "Review what will be imported into your organization",
+          "departments": "Departments",
+          "positions": "Positions",
+          "total": "Total Records",
+          "new": "New Records",
+          "updates": "Updates",
+          "totalRecords": "Total Records to Process"
+        },
+        "notes": {
+          "title": "Important Notes",
+          "note1": "New records will be created with the data provided",
+          "note2": "Existing records (matching codes) will be updated with new values",
+          "note3": "This operation cannot be undone"
+        },
+        "confirm": {
+          "title": "Ready to Import",
+          "description": "Once you confirm, the import process will begin. This may take a few moments depending on the amount of data.",
+          "question": "Are you sure you want to proceed?"
+        },
+        "backButton": "Back to Preview",
+        "confirmButton": "Confirm & Import"
+      },
+      "step4": {
+        "title": "Import Complete",
+        "description": "Your data has been successfully imported",
+        "noResultsError": "No import results available",
+        "importing": {
+          "title": "Importing Your Data...",
+          "description": "Please wait while we process your data. This may take a few moments."
+        },
+        "success": {
+          "title": "Import Successful!",
+          "description": "Your departments and positions have been successfully imported into your organization."
+        },
+        "results": {
+          "title": "Import Results",
+          "description": "Here's what was imported",
+          "departments": "Departments",
+          "positions": "Positions",
+          "total": "Total",
+          "created": "Created",
+          "updated": "Updated"
+        },
+        "nextSteps": {
+          "title": "What's Next?",
+          "description": "Choose your next action",
+          "viewData": "View Imported Data",
+          "importMore": "Import More Data"
+        },
+        "tips": {
+          "title": "Next Steps",
+          "tip1": "Review your imported departments and positions to ensure everything looks correct",
+          "tip2": "You can edit or delete any records directly from the departments and positions pages",
+          "tip3": "Start evaluating positions to build your compensation structure"
+        }
+      }
+    },
+    "uploadArea": {
+      "title": "Drop your Excel file here",
+      "subtitle": "or click to browse",
+      "formats": "Supported formats: .xlsx, .xls",
+      "maxSize": "Maximum file size: 5MB",
+      "uploading": "Uploading...",
+      "processing": "Processing file..."
+    },
+    "instructions": {
+      "title": "How to structure your Excel file",
+      "downloadTemplate": "Download Template",
+      "requiredColumns": "Required Columns",
+      "optionalColumns": "Optional Columns",
+      "departments": {
+        "title": "Departments Sheet",
+        "required": "dept_code, name",
+        "optional": "parent_dept_code, metadata",
+        "description": "Create organizational units with hierarchical relationships"
+      },
+      "positions": {
+        "title": "Positions Sheet",
+        "required": "pos_code, title, dept_code",
+        "optional": "reports_to_pos_code, is_manager, is_active, incumbents_count",
+        "description": "Define job positions with department associations and reporting lines"
+      },
+      "tips": {
+        "title": "Tips",
+        "codes": "Use clear, unique codes (e.g., IT, IT-DEV, MGR-001)",
+        "hierarchy": "Reference parent codes to create hierarchies",
+        "blanks": "Empty rows will be skipped automatically",
+        "upsert": "Existing records will be updated, new ones will be created"
+      }
+    },
+    "preview": {
+      "title": "Preview Import",
+      "summary": "Import Summary",
+      "departments": "Departments",
+      "positions": "Positions",
+      "total": "Total",
+      "creates": "New Records",
+      "updates": "Updates",
+      "noData": "No data to preview",
+      "validationPassed": "All validation checks passed",
+      "validationFailed": "Validation errors found"
+    },
+    "validation": {
+      "title": "Validation Errors",
+      "errorCount": "{count} error(s) found",
+      "fixErrors": "Please fix the following errors and try again:",
+      "downloadOriginal": "Download Original File",
+      "row": "Row",
+      "column": "Column",
+      "message": "Error",
+      "suggestion": "Suggestion"
+    },
+    "confirmation": {
+      "title": "Confirm Import",
+      "message": "Are you sure you want to import this data?",
+      "summary": "This will create {creates} and update {updates} records.",
+      "warning": "This action cannot be undone.",
+      "confirm": "Import Data",
+      "cancel": "Cancel"
+    },
+    "success": {
+      "title": "Import Successful!",
+      "description": "Your data has been imported successfully",
+      "whatsNext": "What would you like to do next?",
+      "departmentsImported": "{count} departments imported",
+      "positionsImported": "{count} positions imported",
+      "actions": {
+        "viewDepartments": "View Departments",
+        "viewPositions": "View Positions",
+        "backToDashboard": "Back to Dashboard"
+      }
+    },
+    "errors": {
+      "uploadFailed": "File upload failed. Please try again.",
+      "fileTooLarge": "File size exceeds 5MB limit.",
+      "invalidFormat": "Invalid file format. Please upload an Excel file (.xlsx or .xls).",
+      "parseError": "Error parsing Excel file. Please check the file format.",
+      "validationError": "Validation failed. Please fix the errors and try again.",
+      "importError": "Import failed. Please try again.",
+      "permissionDenied": "You don't have permission to import data.",
+      "networkError": "Network error. Please check your connection and try again."
+    },
+    "operationType": {
+      "create": "Create",
+      "update": "Update"
+    },
+    "filters": {
+      "all": "All",
+      "createsOnly": "New Records Only",
+      "updatesOnly": "Updates Only"
+    },
+    "format": {
+      "title": "Excel Format Guide",
+      "description": "Your Excel file must match this exact format",
+      "viewFormat": "View Format",
+      "columnHeaders": "Column Headers (Row 1)",
+      "exampleData": "Example Data (Rows 2-4)",
+      "tips": "Important Tips",
+      "tip1": "Do not modify column headers - they must match exactly",
+      "tip2": "Include exactly 3 rows of data (no more, no less)",
+      "tip3": "Required fields cannot be empty",
+      "tip4": "Use the correct data types for each column",
+      "departments": {
+        "tab": "Departments",
+        "tip": "Use unique codes for each department. Parent codes must reference existing departments to create hierarchy.",
+        "columns": {
+          "code": {
+            "description": "Unique identifier for the department"
+          },
+          "name": {
+            "description": "Full name of the department"
+          },
+          "parent_code": {
+            "description": "Code of parent department (optional)"
+          }
+        },
+        "example1": {
+          "code": "IT",
+          "name": "Information Technology",
+          "parentCode": ""
+        },
+        "example2": {
+          "code": "IT-DEV",
+          "name": "Software Development",
+          "parentCode": "IT"
+        },
+        "example3": {
+          "code": "HR",
+          "name": "Human Resources",
+          "parentCode": ""
+        }
+      },
+      "positions": {
+        "tab": "Positions",
+        "tip": "All positions must have a valid department code. Use unique position codes to avoid conflicts.",
+        "columns": {
+          "code": "Unique identifier for the position",
+          "title": "Job title or position name",
+          "department_code": "Department code (must match existing department)",
+          "description": "Brief job description (optional)",
+          "employment_type": "Employment type (Full-time, Part-time, etc.)",
+          "location": "Work location (optional)",
+          "salary_min": "Minimum salary (optional)",
+          "salary_max": "Maximum salary (optional)",
+          "salary_currency": "Salary currency (USD, EUR, TRY, etc.)"
+        },
+        "example1": {
+          "code": "SWE-001",
+          "title": "Senior Software Engineer",
+          "departmentCode": "IT-DEV",
+          "description": "Lead development projects",
+          "employmentType": "Full-time",
+          "location": "Remote",
+          "salaryMin": "80000",
+          "salaryMax": "120000",
+          "salaryCurrency": "USD"
+        },
+        "example2": {
+          "code": "SWE-002",
+          "title": "Junior Software Engineer",
+          "departmentCode": "IT-DEV",
+          "description": "Support development tasks",
+          "employmentType": "Full-time",
+          "location": "Office",
+          "salaryMin": "50000",
+          "salaryMax": "70000",
+          "salaryCurrency": "USD"
+        },
+        "example3": {
+          "code": "MGR-HR",
+          "title": "HR Manager",
+          "departmentCode": "HR",
+          "description": "Manage HR operations",
+          "employmentType": "Full-time",
+          "location": "Office",
+          "salaryMin": "70000",
+          "salaryMax": "90000",
+          "salaryCurrency": "USD"
+        }
+      }
+    },
+    "upload": {
+      "title": "Upload Your File",
+      "description": "Drag and drop your Excel file here, or click to browse",
+      "dropzone": "Drop your Excel file here",
+      "orClick": "or click to browse",
+      "fileTypes": "Accepts .xlsx or .xls files",
+      "maxSize": "Maximum file size: 10MB",
+      "uploading": "Uploading...",
+      "processing": "Processing your file...",
+      "success": "File uploaded successfully!",
+      "fileName": "Selected file:",
+      "changeFile": "Change file",
+      "downloadTemplate": "Download Template",
+      "errors": {
+        "invalidType": "Invalid file type. Please upload an Excel file (.xlsx or .xls)",
+        "tooLarge": "File is too large. Maximum size is 10MB",
+        "uploadFailed": "Failed to upload file. Please try again.",
+        "genericError": "An error occurred. Please try again."
+      }
+    }
+  },
+  "progress": {
+    "stages": {
+      "idle": "Ready",
+      "uploading": "Uploading",
+      "parsing": "Reading File",
+      "validating": "Validating",
+      "processing": "Processing",
+      "importing": "Importing",
+      "complete": "Complete",
+      "error": "Error"
+    },
+    "items": "items",
+    "errors": "errors",
+    "warnings": "warnings",
+    "successMessage": "Import completed successfully!",
+    "errorMessage": "An error occurred during import"
+  },
+  "errorDisplay": {
+    "title": "Import Issues",
+    "errorCount": "{count, plural, =1 {error} other {errors}}",
+    "warningCount": "{count, plural, =1 {warning} other {warnings}}",
+    "issueCount": "{count, plural, =1 {issue} other {issues}}",
+    "byRow": "By Row",
+    "byCategory": "By Category",
+    "fileLevel": "File Level",
+    "cannotProceed": "⚠️ You must fix all errors before proceeding with the import.",
+    "noIssues": "No Issues"
+  },
+  "duplicates": {
+    "title": "Duplicate Detection",
+    "noDuplicates": "No Duplicates Found",
+    "noDuplicatesDesc": "All entries have unique identifiers",
+    "duplicateCount": "duplicates found",
+    "affectedRows": "affected rows",
+    "autoResolvable": "auto-resolvable",
+    "all": "All",
+    "departments": "Departments",
+    "positions": "Positions",
+    "autoResolve": "Auto-Resolve All",
+    "resolveAll": "Apply Resolutions",
+    "departmentCode": "Department Code",
+    "positionCode": "Position Code",
+    "occurrences": "occurrences",
+    "resolutionStrategy": "Resolution Strategy",
+    "compareEntries": "Compare Entries",
+    "mostComplete": "Most Complete",
+    "complete": "complete",
+    "differentFields": "Different fields",
+    "duplicates": "duplicates"
+  },
+  "batch": {
+    "title": "Batch Import",
+    "importing": "Importing",
+    "importPaused": "Import Paused",
+    "importCancelled": "Import Cancelled",
+    "importComplete": "Import Complete",
+    "items": "items",
+    "pause": "Pause",
+    "resume": "Resume",
+    "cancel": "Cancel",
+    "succeeded": "Succeeded",
+    "failed": "Failed",
+    "elapsed": "Elapsed",
+    "speed": "Speed",
+    "retrying": "Retrying",
+    "paused": "Import is paused",
+    "cancelled": "Import was cancelled",
+    "complete": "Import completed",
+    "errors": "Errors",
+    "moreErrors": "more errors"
   }
 }

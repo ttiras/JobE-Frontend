@@ -32,6 +32,7 @@ export function Sidebar({
   const navRef = useRef<HTMLElement>(null);
   const { user } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set(['orgStructure']));
 
   // Get orgId from URL params
   const orgId = params?.orgId as string | undefined;
@@ -47,9 +48,26 @@ export function Sidebar({
     
     return visibleNavItems.map(item => ({
       ...item,
-      href: `/${locale}/dashboard/${orgId}${item.href}`
+      href: `/${locale}/dashboard/${orgId}${item.href}`,
+      children: item.children?.map(child => ({
+        ...child,
+        href: `/${locale}/dashboard/${orgId}${child.href}`
+      }))
     }));
   }, [visibleNavItems, orgId, locale]);
+
+  // Toggle parent item expansion
+  const toggleExpanded = (itemId: string) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(itemId)) {
+        next.delete(itemId);
+      } else {
+        next.add(itemId);
+      }
+      return next;
+    });
+  };
 
   // Handle arrow key navigation
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -83,20 +101,51 @@ export function Sidebar({
       onKeyDown={handleKeyDown}
     >
       {orgAwareNavItems.map((item) => {
+        // Check if any child is active
+        const isChildActive = item.children?.some(child => 
+          pathname === child.href || pathname.startsWith(`${child.href}/`)
+        );
+        
         // Special handling for dashboard (empty href becomes the org root)
         const isActive = item.href 
-          ? pathname === item.href || pathname.startsWith(`${item.href}/`)
+          ? pathname === item.href || pathname.startsWith(`${item.href}/`) || isChildActive
           : pathname === `/${locale}/dashboard/${orgId}`;
         
+        const isExpanded = expandedItems.has(item.id);
+        
         return (
-          <NavItem
-            key={item.id}
-            item={item}
-            isActive={isActive}
-            label={t(item.label)}
-            isCollapsed={!isHovered && !isMobile}
-            isHovered={isHovered || isMobile}
-          />
+          <div key={item.id}>
+            <NavItem
+              item={item}
+              isActive={isActive ?? false}
+              label={t(item.label)}
+              isCollapsed={!isHovered && !isMobile}
+              isHovered={isHovered || isMobile}
+              hasChildren={!!item.children}
+              isExpanded={isExpanded}
+              onToggle={() => toggleExpanded(item.id)}
+            />
+            
+            {/* Render children when expanded */}
+            {item.children && isExpanded && (isHovered || isMobile) && (
+              <div className="ml-4 mt-1 space-y-1">
+                {item.children.map((child) => {
+                  const isChildItemActive = pathname === child.href || pathname.startsWith(`${child.href}/`);
+                  return (
+                    <NavItem
+                      key={child.id}
+                      item={child}
+                      isActive={isChildItemActive}
+                      label={t(child.label)}
+                      isCollapsed={false}
+                      isHovered={true}
+                      isChild={true}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </div>
         );
       })}
     </nav>

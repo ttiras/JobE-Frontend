@@ -6,6 +6,7 @@ export interface NavigationItem {
   icon: string;
   href: string;
   requiredRoles: UserRole[];
+  children?: NavigationItem[];
 }
 
 /**

@@ -8,6 +8,9 @@
  * @see specs/002-nhost-integration/contracts/schema.graphql.md
  */
 
+// Re-export organized queries
+export * from './queries/org-structure'
+
 /**
  * Get current user profile
  */

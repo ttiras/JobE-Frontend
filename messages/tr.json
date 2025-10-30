@@ -1,7 +1,10 @@
 {
   "navigation": {
     "dashboard": "Dashboard",
+    "orgStructure": "Organizasyon Yapısı",
+    "departments": "Departmanlar",
     "positions": "Pozisyonlar",
+    "import": "Veri İçe Aktar",
     "questionnaire": "Anket",
     "analytics": "Analitik",
     "settings": "Ayarlar"
@@ -46,11 +49,45 @@
     "dashboard": {
       "title": "Gösterge Paneli",
       "description": "JobE İK Yönetim Platformuna Hoş Geldiniz",
+      "welcome": "Hoş Geldiniz",
+      "welcomeDescription": "Organizasyon gösterge paneliniz burada önemli metrikleri ve içgörüleri gösterecek.",
       "welcomeMessage": "JobE - İK Yönetim Platformuna Hoş Geldiniz",
       "noOrg": {
         "title": "İlk organizasyonunuzu oluşturun",
         "description": "Başlamak için bir organizasyon oluşturun. Sonrasında pozisyonlar ekleyebilir ve ekip arkadaşlarınızı davet edebilirsiniz.",
         "createButton": "Organizasyon oluştur"
+      },
+      "onboarding": {
+        "title": "Organizasyonunuza Hoş Geldiniz",
+        "description": "Organizasyon yapınızı kurarak başlayalım. Departmanlarınızı ve pozisyonlarınızı içe aktarmak veya oluşturmak için bu adımları izleyin.",
+        "stepNumber": "Adım {number}",
+        "completed": "Tamamlandı",
+        "helpText": "Başlamak için yardıma mı ihtiyacınız var?",
+        "helpLink": "Dokümantasyonu Görüntüle",
+        "steps": {
+          "import": {
+            "title": "Verilerinizi İçe Aktarın",
+            "description": "Hızlı kurulum için departmanlarınızı ve pozisyonlarınızı içeren bir Excel dosyası yükleyin. Süreç boyunca size rehberlik edeceğiz.",
+            "action": "İçe Aktarmayı Başlat"
+          },
+          "departments": {
+            "title": "Departmanları İnceleyin",
+            "description": "Organizasyonel departmanlarınızı görüntüleyin ve yönetin. Gerektiğinde departmanları düzenleyebilir, ekleyebilir veya kaldırabilirsiniz.",
+            "action": "Departmanları Görüntüle"
+          },
+          "positions": {
+            "title": "Pozisyonları Yönetin",
+            "description": "Organizasyonunuzdaki tüm pozisyonları inceleyin ve ücret yapınızı oluşturmak için değerlendirmeye başlayın.",
+            "action": "Pozisyonları Görüntüle"
+          }
+        },
+        "progress": {
+          "title": "Kurulum İlerlemesi",
+          "complete": "Tamamlandı",
+          "departments": "Departman Eklendi",
+          "positions": "Pozisyon Eklendi",
+          "evaluations": "Pozisyon Değerlendirildi"
+        }
       }
     },
     "organizations": {
@@ -76,7 +113,78 @@
     },
     "positions": {
       "title": "Pozisyonlar",
-      "description": "İş pozisyonlarını yönetin"
+      "description": "İş pozisyonlarını yönetin",
+      "search": {
+        "placeholder": "Pozisyon ara..."
+      },
+      "actions": {
+        "new": "Yeni Pozisyon",
+        "edit": "Düzenle",
+        "import": "Excel'den İçe Aktar",
+        "filter": "Filtrele",
+        "filterDept": "Departmana Göre Filtrele",
+        "filterStatus": "Duruma Göre Filtrele",
+        "evaluate": "Değerlendir",
+        "viewEvaluation": "Değerlendirmeyi Görüntüle"
+      },
+      "emptyState": {
+        "title": "Henüz Pozisyon Yok",
+        "description": "Excel'den içe aktararak veya manuel oluşturarak başlayın.",
+        "import": "Excel'den İçe Aktar",
+        "create": "Pozisyon Oluştur"
+      }
+    },
+    "departments": {
+      "title": "Departmanlar",
+      "description": "Organizasyon departmanlarını yönetin",
+      "search": {
+        "placeholder": "Departman ara..."
+      },
+      "actions": {
+        "new": "Yeni Departman",
+        "edit": "Düzenle",
+        "import": "Excel'den İçe Aktar",
+        "filter": "Filtrele",
+        "viewPositions": "Pozisyonları Görüntüle"
+      },
+      "emptyState": {
+        "title": "Henüz Departman Yok",
+        "description": "Excel'den içe aktararak veya manuel oluşturarak başlayın.",
+        "import": "Excel'den İçe Aktar",
+        "create": "Departman Oluştur"
+      }
+    },
+    "orgStructure": {
+      "title": "Organizasyon Yapısı",
+      "description": "Organizasyonunuzun departmanlarını ve pozisyonlarını yönetin",
+      "stats": {
+        "departments": "Departmanlar",
+        "departmentsDesc": "Toplam organizasyonel departmanlar",
+        "positions": "Pozisyonlar",
+        "positionsDesc": "Toplam iş pozisyonları",
+        "evaluated": "Değerlendirilen",
+        "evaluatedDesc": "Değerlendirmesi tamamlanan pozisyonlar"
+      },
+      "quickActions": {
+        "title": "Hızlı İşlemler",
+        "import": {
+          "title": "Excel'den İçe Aktar",
+          "description": "Şablon kullanarak toplu departman ve pozisyon yükleyin"
+        },
+        "departments": {
+          "title": "Departmanları Görüntüle",
+          "description": "Organizasyon departmanlarınıza göz atın ve yönetin"
+        },
+        "positions": {
+          "title": "Pozisyonları Görüntüle",
+          "description": "İş pozisyonlarına göz atın ve yönetin"
+        }
+      },
+      "emptyState": {
+        "title": "Organizasyon Yapınızı Oluşturmaya Başlayın",
+        "description": "İşleri değerlendirmeye ve org şemasını oluşturmaya başlamak için departmanlarınızı ve pozisyonlarınızı içe aktarın.",
+        "action": "Excel'den İçe Aktar"
+      }
     },
     "questionnaire": {
       "title": "Anket",
@@ -310,5 +418,456 @@
       "loginButton": "Tekrar Giriş Yap",
       "cancelButton": "İptal"
     }
+  },
+  "import": {
+    "title": "Veri İçe Aktar",
+    "subtitle": "Departman ve pozisyonları toplu olarak içe aktarmak için Excel dosyası yükleyin",
+    "titleDepartments": "Departman İçe Aktar",
+    "titlePositions": "Pozisyon İçe Aktar",
+    "description": "Organizasyonel verilerinizi hızlı ve kolay bir şekilde yükleyin",
+    "breadcrumb": {
+      "orgStructure": "Org Yapısı",
+      "import": "İçe Aktar",
+      "departments": "Departmanlar",
+      "positions": "Pozisyonlar"
+    },
+    "hero": {
+      "titleDepartments": "Excel'den Departman İçe Aktar",
+      "titlePositions": "Excel'den Pozisyon İçe Aktar",
+      "descriptionDepartments": "Excel şablonumuzu kullanarak departman yapınızı yükleyin. Dosyanızın aşağıda gösterilen formata tam olarak uyduğundan emin olun.",
+      "descriptionPositions": "Excel şablonumuzu kullanarak pozisyon verilerinizi yükleyin. Dosyanızın aşağıda gösterilen formata tam olarak uyduğundan emin olun."
+    },
+    "drawer": {
+      "title": "Excel'den İçe Aktar",
+      "description": "{type} Excel dosyasından içe aktar",
+      "types": {
+        "departments": "departmanlar",
+        "positions": "pozisyonlar"
+      }
+    },
+    "wizard": {
+      "stepCount": "Adım {current} / {total}",
+      "steps": {
+        "step1": {
+          "title": "Şablon ve Yükleme",
+          "description": "Şablonumuzu indirin ve hazırladığınız Excel dosyasını yükleyin",
+          "label": "Yükle"
+        },
+        "step2": {
+          "title": "Veri Önizleme ve Doğrulama",
+          "description": "Verilerinizi gözden geçirin ve içe aktarmayı onaylayın",
+          "label": "Önizleme"
+        },
+        "step3": {
+          "title": "İçe Aktarma Tamamlandı",
+          "description": "Verileriniz başarıyla içe aktarıldı",
+          "label": "Tamamlandı"
+        }
+      },
+      "step1": {
+        "title": "Şablon ve Yükleme",
+        "description": "Şablonumuzu indirin ve hazırladığınız Excel dosyasını yükleyin",
+        "instructions": {
+          "title": "Nasıl başlanır",
+          "step1": "Aşağıdaki Excel şablonunu indirin",
+          "step2": "Departman ve pozisyon verilerinizi doldurun",
+          "step3": "Tamamlanmış dosyayı aşağıdaki butonu kullanarak yükleyin"
+        },
+        "downloadTemplate": "Excel Şablonunu İndir",
+        "downloadingTemplate": "İndiriliyor...",
+        "templateInfo": "Şablon, süreci size rehberlik edecek örnek veriler ve yardımcı yorumlar içerir.",
+        "uploadTitle": "Dosyanızı Yükleyin",
+        "uploadDescription": "Excel dosyanızı buraya sürükleyip bırakın veya göz atmak için tıklayın",
+        "uploadSuccess": "'{fileName}' dosyası başarıyla yüklendi!",
+        "requiredFields": {
+          "title": "Zorunlu Alanlar",
+          "departments": "Departmanlar",
+          "deptCode": "Departman Kodu",
+          "deptName": "Departman Adı",
+          "positions": "Pozisyonlar",
+          "posCode": "Pozisyon Kodu",
+          "posTitle": "Pozisyon Başlığı",
+          "posDept": "Departman Kodu"
+        },
+        "nextButton": "Önizlemeye Devam Et"
+      },
+      "step2": {
+        "title": "Veri Önizleme ve Doğrulama",
+        "description": "Verilerinizi gözden geçirin ve içe aktarmadan önce doğrulama hatalarını düzeltin",
+        "stats": {
+          "departments": "Departmanlar",
+          "positions": "Pozisyonlar",
+          "new": "Yeni",
+          "updates": "Güncelleme"
+        },
+        "validation": {
+          "errorsTitle": "Doğrulama Hataları Bulundu",
+          "errorsDescription": "Devam etmeden önce lütfen {count} hatayı düzeltin",
+          "warningsTitle": "Uyarılar",
+          "warningsDescription": "{count} uyarı bulundu - devam edebilirsiniz ancak bu öğeleri gözden geçirin",
+          "successTitle": "Hepsi Temiz!",
+          "successDescription": "Doğrulama hatası bulunamadı. Verileriniz içe aktarılmaya hazır."
+        },
+        "tabs": {
+          "departments": "Departmanlar",
+          "positions": "Pozisyonlar"
+        },
+        "preview": {
+          "departmentsTitle": "Departman Verileri",
+          "departmentsDescription": "Oluşturulacak veya güncellenecek departmanları inceleyin",
+          "positionsTitle": "Pozisyon Verileri",
+          "positionsDescription": "Oluşturulacak veya güncellenecek pozisyonları inceleyin",
+          "noDepartments": "Yüklenen dosyada departman bulunamadı",
+          "noPositions": "Yüklenen dosyada pozisyon bulunamadı"
+        },
+        "errors": {
+          "title": "Doğrulama Hataları",
+          "description": "Excel dosyanızdaki bu hataları düzeltin ve yeniden yükleyin"
+        },
+        "warnings": {
+          "title": "Uyarılar",
+          "description": "Bu sorunlar içe aktarmayı engellemez ancak gözden geçirilmelidir"
+        },
+        "backButton": "Yüklemeye Dön",
+        "confirmButton": "Onayla ve İçe Aktar"
+      },
+      "step3": {
+        "title": "İçe Aktarma Tamamlandı!",
+        "description": "Verilerinizi içe aktarmadan önce son inceleme",
+        "noDataError": "İçe aktarılacak veri yok. Lütfen geri dönün ve bir dosya yükleyin.",
+        "summary": {
+          "title": "İçe Aktarma Özeti",
+          "description": "Organizasyonunuza neyin içe aktarılacağını inceleyin",
+          "departments": "Departmanlar",
+          "positions": "Pozisyonlar",
+          "total": "Toplam Kayıt",
+          "new": "Yeni Kayıtlar",
+          "updates": "Güncellemeler",
+          "totalRecords": "İşlenecek Toplam Kayıt"
+        },
+        "notes": {
+          "title": "Önemli Notlar",
+          "note1": "Yeni kayıtlar sağlanan verilerle oluşturulacak",
+          "note2": "Mevcut kayıtlar (eşleşen kodlar) yeni değerlerle güncellenecek",
+          "note3": "Bu işlem geri alınamaz"
+        },
+        "confirm": {
+          "title": "İçe Aktarmaya Hazır",
+          "description": "Onayladığınızda, içe aktarma işlemi başlayacaktır. Veri miktarına bağlı olarak bu birkaç dakika sürebilir.",
+          "question": "Devam etmek istediğinizden emin misiniz?"
+        },
+        "backButton": "Önizlemeye Dön",
+        "confirmButton": "Onayla ve İçe Aktar"
+      },
+      "step4": {
+        "title": "İçe Aktarma Tamamlandı",
+        "description": "Verileriniz başarıyla içe aktarıldı",
+        "noResultsError": "İçe aktarma sonucu mevcut değil",
+        "importing": {
+          "title": "Verileriniz İçe Aktarılıyor...",
+          "description": "Verilerinizi işlerken lütfen bekleyin. Bu birkaç dakika sürebilir."
+        },
+        "success": {
+          "title": "İçe Aktarma Başarılı!",
+          "description": "Departmanlarınız ve pozisyonlarınız organizasyonunuza başarıyla içe aktarıldı."
+        },
+        "results": {
+          "title": "İçe Aktarma Sonuçları",
+          "description": "İşte içe aktarılanlar",
+          "departments": "Departmanlar",
+          "positions": "Pozisyonlar",
+          "total": "Toplam",
+          "created": "Oluşturuldu",
+          "updated": "Güncellendi"
+        },
+        "nextSteps": {
+          "title": "Sırada Ne Var?",
+          "description": "Bir sonraki eyleminizi seçin",
+          "viewData": "İçe Aktarılan Verileri Görüntüle",
+          "importMore": "Daha Fazla Veri İçe Aktar"
+        },
+        "tips": {
+          "title": "Sonraki Adımlar",
+          "tip1": "Her şeyin doğru göründüğünden emin olmak için içe aktarılan departmanlarınızı ve pozisyonlarınızı inceleyin",
+          "tip2": "Departmanlar ve pozisyonlar sayfalarından herhangi bir kaydı doğrudan düzenleyebilir veya silebilirsiniz",
+          "tip3": "Ücret yapınızı oluşturmak için pozisyonları değerlendirmeye başlayın"
+        }
+      }
+    },
+    "uploadArea": {
+      "title": "Excel dosyanızı buraya bırakın",
+      "subtitle": "veya göz atmak için tıklayın",
+      "formats": "Desteklenen formatlar: .xlsx, .xls",
+      "maxSize": "Maksimum dosya boyutu: 5MB",
+      "uploading": "Yükleniyor...",
+      "processing": "Dosya işleniyor..."
+    },
+    "instructions": {
+      "title": "Excel dosyanızı nasıl yapılandırmalısınız",
+      "downloadTemplate": "Şablon İndir",
+      "requiredColumns": "Zorunlu Sütunlar",
+      "optionalColumns": "İsteğe Bağlı Sütunlar",
+      "departments": {
+        "title": "Departmanlar Sayfası",
+        "required": "dept_code, name",
+        "optional": "parent_dept_code, metadata",
+        "description": "Hiyerarşik ilişkilerle organizasyon birimleri oluşturun"
+      },
+      "positions": {
+        "title": "Pozisyonlar Sayfası",
+        "required": "pos_code, title, dept_code",
+        "optional": "reports_to_pos_code, is_manager, is_active, incumbents_count",
+        "description": "Departman ilişkileri ve raporlama hatlarıyla iş pozisyonları tanımlayın"
+      },
+      "tips": {
+        "title": "İpuçları",
+        "codes": "Açık, benzersiz kodlar kullanın (örn. IT, IT-DEV, MGR-001)",
+        "hierarchy": "Hiyerarşiler oluşturmak için üst kodlara referans verin",
+        "blanks": "Boş satırlar otomatik olarak atlanacaktır",
+        "upsert": "Mevcut kayıtlar güncellenecek, yenileri oluşturulacak"
+      }
+    },
+    "preview": {
+      "title": "İçe Aktarmayı Önizle",
+      "summary": "İçe Aktarma Özeti",
+      "departments": "Departmanlar",
+      "positions": "Pozisyonlar",
+      "total": "Toplam",
+      "creates": "Yeni Kayıtlar",
+      "updates": "Güncellemeler",
+      "noData": "Önizlenecek veri yok",
+      "validationPassed": "Tüm doğrulama kontrolleri geçti",
+      "validationFailed": "Doğrulama hataları bulundu"
+    },
+    "validation": {
+      "title": "Doğrulama Hataları",
+      "errorCount": "{count} hata bulundu",
+      "fixErrors": "Lütfen aşağıdaki hataları düzeltin ve tekrar deneyin:",
+      "downloadOriginal": "Orijinal Dosyayı İndir",
+      "row": "Satır",
+      "column": "Sütun",
+      "message": "Hata",
+      "suggestion": "Öneri"
+    },
+    "confirmation": {
+      "title": "İçe Aktarmayı Onayla",
+      "message": "Bu veriyi içe aktarmak istediğinizden emin misiniz?",
+      "summary": "Bu işlem {creates} kayıt oluşturacak ve {updates} kaydı güncelleyecek.",
+      "warning": "Bu işlem geri alınamaz.",
+      "confirm": "Veriyi İçe Aktar",
+      "cancel": "İptal"
+    },
+    "success": {
+      "title": "İçe Aktarma Başarılı!",
+      "description": "Verileriniz başarıyla içe aktarıldı",
+      "whatsNext": "Sonra ne yapmak istersiniz?",
+      "departmentsImported": "{count} departman içe aktarıldı",
+      "positionsImported": "{count} pozisyon içe aktarıldı",
+      "actions": {
+        "viewDepartments": "Departmanları Görüntüle",
+        "viewPositions": "Pozisyonları Görüntüle",
+        "backToDashboard": "Gösterge Paneline Dön"
+      }
+    },
+    "errors": {
+      "uploadFailed": "Dosya yükleme başarısız. Lütfen tekrar deneyin.",
+      "fileTooLarge": "Dosya boyutu 5MB sınırını aşıyor.",
+      "invalidFormat": "Geçersiz dosya formatı. Lütfen Excel dosyası (.xlsx veya .xls) yükleyin.",
+      "parseError": "Excel dosyası ayrıştırma hatası. Lütfen dosya formatını kontrol edin.",
+      "validationError": "Doğrulama başarısız. Lütfen hataları düzeltin ve tekrar deneyin.",
+      "importError": "İçe aktarma başarısız. Lütfen tekrar deneyin.",
+      "permissionDenied": "Veri içe aktarma izniniz yok.",
+      "networkError": "Ağ hatası. Lütfen bağlantınızı kontrol edin ve tekrar deneyin."
+    },
+    "operationType": {
+      "create": "Oluştur",
+      "update": "Güncelle"
+    },
+    "filters": {
+      "all": "Tümü",
+      "createsOnly": "Sadece Yeni Kayıtlar",
+      "updatesOnly": "Sadece Güncellemeler"
+    },
+    "format": {
+      "title": "Excel Format Rehberi",
+      "description": "Excel dosyanız bu formata tam olarak uymalıdır",
+      "viewFormat": "Formatı Görüntüle",
+      "columnHeaders": "Sütun Başlıkları (Satır 1)",
+      "exampleData": "Örnek Veri (Satır 2-4)",
+      "tips": "Önemli İpuçları",
+      "tip1": "Sütun başlıklarını değiştirmeyin - tam olarak eşleşmelidir",
+      "tip2": "Tam olarak 3 satır veri ekleyin (ne daha fazla, ne daha az)",
+      "tip3": "Zorunlu alanlar boş bırakılamaz",
+      "tip4": "Her sütun için doğru veri tiplerini kullanın",
+      "departments": {
+        "tab": "Departmanlar",
+        "tip": "Her departman için benzersiz kod kullanın. Üst departman kodları, hiyerarşi oluşturmak için mevcut departmanlara referans vermelidir.",
+        "columns": {
+          "code": {
+            "description": "Departman için benzersiz tanımlayıcı"
+          },
+          "name": {
+            "description": "Departmanın tam adı"
+          },
+          "parent_code": {
+            "description": "Üst departman kodu (isteğe bağlı)"
+          }
+        },
+        "example1": {
+          "code": "IT",
+          "name": "Bilgi Teknolojileri",
+          "parentCode": ""
+        },
+        "example2": {
+          "code": "IT-DEV",
+          "name": "Yazılım Geliştirme",
+          "parentCode": "IT"
+        },
+        "example3": {
+          "code": "HR",
+          "name": "İnsan Kaynakları",
+          "parentCode": ""
+        }
+      },
+      "positions": {
+        "tab": "Pozisyonlar",
+        "tip": "Tüm pozisyonlar geçerli bir departman koduna sahip olmalıdır. Çakışmaları önlemek için benzersiz pozisyon kodları kullanın.",
+        "columns": {
+          "code": "Pozisyon için benzersiz tanımlayıcı",
+          "title": "İş unvanı veya pozisyon adı",
+          "department_code": "Departman kodu (mevcut departmanla eşleşmeli)",
+          "description": "Kısa iş açıklaması (isteğe bağlı)",
+          "employment_type": "İstihdam türü (Tam zamanlı, Yarı zamanlı, vb.)",
+          "location": "Çalışma konumu (isteğe bağlı)",
+          "salary_min": "Minimum maaş (isteğe bağlı)",
+          "salary_max": "Maksimum maaş (isteğe bağlı)",
+          "salary_currency": "Maaş para birimi (USD, EUR, TRY, vb.)"
+        },
+        "example1": {
+          "code": "SWE-001",
+          "title": "Kıdemli Yazılım Mühendisi",
+          "departmentCode": "IT-DEV",
+          "description": "Geliştirme projelerine liderlik et",
+          "employmentType": "Tam zamanlı",
+          "location": "Uzaktan",
+          "salaryMin": "80000",
+          "salaryMax": "120000",
+          "salaryCurrency": "USD"
+        },
+        "example2": {
+          "code": "SWE-002",
+          "title": "Yazılım Mühendisi",
+          "departmentCode": "IT-DEV",
+          "description": "Geliştirme görevlerini destekle",
+          "employmentType": "Tam zamanlı",
+          "location": "Ofis",
+          "salaryMin": "50000",
+          "salaryMax": "70000",
+          "salaryCurrency": "USD"
+        },
+        "example3": {
+          "code": "MGR-HR",
+          "title": "İK Müdürü",
+          "departmentCode": "HR",
+          "description": "İK operasyonlarını yönet",
+          "employmentType": "Tam zamanlı",
+          "location": "Ofis",
+          "salaryMin": "70000",
+          "salaryMax": "90000",
+          "salaryCurrency": "USD"
+        }
+      }
+    },
+    "upload": {
+      "title": "Dosyanızı Yükleyin",
+      "description": "Excel dosyanızı buraya sürükleyip bırakın veya göz atmak için tıklayın",
+      "dropzone": "Excel dosyanızı buraya bırakın",
+      "orClick": "veya göz atmak için tıklayın",
+      "fileTypes": ".xlsx veya .xls dosyaları kabul edilir",
+      "maxSize": "Maksimum dosya boyutu: 10MB",
+      "uploading": "Yükleniyor...",
+      "processing": "Dosyanız işleniyor...",
+      "success": "Dosya başarıyla yüklendi!",
+      "fileName": "Seçilen dosya:",
+      "changeFile": "Dosyayı değiştir",
+      "downloadTemplate": "Şablon İndir",
+      "errors": {
+        "invalidType": "Geçersiz dosya türü. Lütfen bir Excel dosyası yükleyin (.xlsx veya .xls)",
+        "tooLarge": "Dosya çok büyük. Maksimum boyut 10MB'dır",
+        "uploadFailed": "Dosya yüklenemedi. Lütfen tekrar deneyin.",
+        "genericError": "Bir hata oluştu. Lütfen tekrar deneyin."
+      }
+    }
+  },
+  "progress": {
+    "stages": {
+      "idle": "Hazır",
+      "uploading": "Yükleniyor",
+      "parsing": "Dosya Okunuyor",
+      "validating": "Doğrulanıyor",
+      "processing": "İşleniyor",
+      "importing": "İçe Aktarılıyor",
+      "complete": "Tamamlandı",
+      "error": "Hata"
+    },
+    "items": "öğe",
+    "errors": "hata",
+    "warnings": "uyarı",
+    "successMessage": "İçe aktarma başarıyla tamamlandı!",
+    "errorMessage": "İçe aktarma sırasında bir hata oluştu"
+  },
+  "errorDisplay": {
+    "title": "İçe Aktarma Sorunları",
+    "errorCount": "{count, plural, =1 {hata} other {hata}}",
+    "warningCount": "{count, plural, =1 {uyarı} other {uyarı}}",
+    "issueCount": "{count, plural, =1 {sorun} other {sorun}}",
+    "byRow": "Satıra Göre",
+    "byCategory": "Kategoriye Göre",
+    "fileLevel": "Dosya Seviyesi",
+    "cannotProceed": "⚠️ İçe aktarmaya devam etmeden önce tüm hataları düzeltmelisiniz.",
+    "noIssues": "Sorun Yok"
+  },
+  "duplicates": {
+    "title": "Kopya Tespit",
+    "noDuplicates": "Kopya Bulunamadı",
+    "noDuplicatesDesc": "Tüm kayıtlar benzersiz tanımlayıcılara sahip",
+    "duplicateCount": "kopya bulundu",
+    "affectedRows": "etkilenen satır",
+    "autoResolvable": "otomatik çözülebilir",
+    "all": "Tümü",
+    "departments": "Departmanlar",
+    "positions": "Pozisyonlar",
+    "autoResolve": "Tümünü Otomatik Çöz",
+    "resolveAll": "Çözümleri Uygula",
+    "departmentCode": "Departman Kodu",
+    "positionCode": "Pozisyon Kodu",
+    "occurrences": "tekrar",
+    "resolutionStrategy": "Çözüm Stratejisi",
+    "compareEntries": "Kayıtları Karşılaştır",
+    "mostComplete": "En Eksiksiz",
+    "complete": "tamamlandı",
+    "differentFields": "Farklı alanlar",
+    "duplicates": "kopya"
+  },
+  "batch": {
+    "title": "Toplu İçe Aktarma",
+    "importing": "İçe Aktarılıyor",
+    "importPaused": "İçe Aktarma Duraklatıldı",
+    "importCancelled": "İçe Aktarma İptal Edildi",
+    "importComplete": "İçe Aktarma Tamamlandı",
+    "items": "öğe",
+    "pause": "Duraklat",
+    "resume": "Devam Et",
+    "cancel": "İptal",
+    "succeeded": "Başarılı",
+    "failed": "Başarısız",
+    "elapsed": "Geçen",
+    "speed": "Hız",
+    "retrying": "Yeniden Deneniyor",
+    "paused": "İçe aktarma duraklatıldı",
+    "cancelled": "İçe aktarma iptal edildi",
+    "complete": "İçe aktarma tamamlandı",
+    "errors": "Hatalar",
+    "moreErrors": "daha fazla hata"
   }
 }

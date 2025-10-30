@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body { 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; 
+    padding: 40px;
+    background: #f8f9fa;
+  }
+  .excel-preview {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 800px;
+  }
+  table { 
+    border-collapse: collapse; 
+    width: 100%;
+    background: white;
+  }
+  th, td { 
+    border: 1px solid #d1d5db; 
+    padding: 12px 16px; 
+    text-align: left;
+    font-size: 13px;
+  }
+  th { 
+    background: #f3f4f6; 
+    font-weight: 600; 
+    font-size: 12px;
+    color: #374151;
+  }
+  td { 
+    color: #1f2937;
+  }
+  .col-letter {
+    display: block;
+    font-size: 10px;
+    color: #9ca3af;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+  .instructions {
+    margin-top: 20px;
+    padding: 16px;
+    background: #fef3c7;
+    border-left: 4px solid #fbbf24;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #78350f;
+  }
+</style>
+</head>
+<body>
+<div class="excel-preview">
+  <h2 style="margin-top: 0; color: #111827; font-size: 20px;">Departments Format</h2>
+  <table>
+    <thead>
+      <tr>
+        <th><span class="col-letter">A</span>code</th>
+        <th><span class="col-letter">B</span>name</th>
+        <th><span class="col-letter">C</span>parent_code</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>IT</td>
+        <td>IT Department</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>IT-DEV</td>
+        <td>Development</td>
+        <td>IT</td>
+      </tr>
+      <tr>
+        <td>IT-OPS</td>
+        <td>Operations</td>
+        <td>IT</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="instructions">
+    <strong>💡 Instructions:</strong> Start with row 2 (row 1 is headers). Add as many rows as you need.
+  </div>
+</div>
+
+<script>
+// Instructions to create PNG:
+// 1. Open this file in a browser
+// 2. Zoom to 100%
+// 3. Take screenshot of the .excel-preview div only
+// 4. Crop to approximately 800x200px
+// 5. Save as: /public/templates/preview-departments.png
+</script>
+</body>
+</html>

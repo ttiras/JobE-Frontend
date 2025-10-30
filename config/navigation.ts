@@ -18,11 +18,27 @@ export const navigationConfig: NavigationItem[] = [
     requiredRoles: ['user', 'admin'],
   },
   {
-    id: 'positions',
-    label: 'navigation.positions',
-    icon: 'Briefcase',
-    href: '/positions',
+    id: 'orgStructure',
+    label: 'navigation.orgStructure',
+    icon: 'Building2',
+    href: '/org-structure',
     requiredRoles: ['user', 'admin'],
+    children: [
+      {
+        id: 'departments',
+        label: 'navigation.departments',
+        icon: 'FolderKanban',
+        href: '/org-structure/departments',
+        requiredRoles: ['user', 'admin'],
+      },
+      {
+        id: 'positions',
+        label: 'navigation.positions',
+        icon: 'Briefcase',
+        href: '/org-structure/positions',
+        requiredRoles: ['user', 'admin'],
+      },
+    ],
   },
   {
     id: 'questionnaire',
