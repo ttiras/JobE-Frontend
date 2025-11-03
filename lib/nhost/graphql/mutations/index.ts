@@ -1,7 +1,7 @@
 /**
  * GraphQL Mutations Index
  * 
- * Exports all GraphQL mutations for departments, positions, and import workflow
+ * Exports all GraphQL mutations for departments, positions, evaluations, and import workflow
  */
 
 // Department mutations
@@ -25,6 +25,25 @@ export {
   DELETE_POSITION,
   DELETE_POSITIONS_BULK,
 } from './positions';
+
+// Position Evaluation mutations (client-safe)
+export {
+  CREATE_EVALUATION,
+  UPDATE_EVALUATION,
+  COMPLETE_EVALUATION,
+  DELETE_EVALUATION,
+  createEvaluation,
+  updateEvaluation,
+  completeEvaluation,
+  deleteEvaluation,
+} from './evaluations';
+
+// Position Evaluation mutations (server-side only)
+// NOTE: These functions use 'next/headers' and can only be imported in Server Components
+export {
+  createEvaluationServer,
+  updateEvaluationServer,
+} from './evaluations.server';
 
 // Import workflow (client-side processing utilities)
 // Note: The actual import execution now happens via Server Actions (lib/actions/import.ts)

@@ -135,6 +135,10 @@
         "create": "Pozisyon Oluştur"
       }
     },
+    "evaluation": {
+      "title": "Pozisyon Değerlendirme",
+      "description": "Pozisyon değerlendirmelerini inceleyin ve tamamlayın"
+    },
     "departments": {
       "title": "Departmanlar",
       "description": "Organizasyon departmanlarını yönetin",

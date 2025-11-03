@@ -167,31 +167,15 @@ export async function executeServerImport(
     const posToCreate = positions.filter(p => p.operation === OpType.CREATE);
     const posToUpdate = positions.filter(p => p.operation === OpType.UPDATE);
 
-    // Execute position CREATES in batch
+    // Execute position CREATES in hierarchical order
+    // Positions must be created in order: parents before children
     if (posToCreate.length > 0) {
-      const positionInsertData = posToCreate.map(pos => ({
-        organization_id: organizationId,
-        pos_code: pos.pos_code,
-        title: pos.title,
-        department_id: deptCodeToId.get(pos.dept_code) || null,
-        reports_to_id: pos.reports_to_pos_code ? posCodeToId.get(pos.reports_to_pos_code) || null : null,
-        is_manager: pos.is_manager,
-        incumbents_count: pos.incumbents_count,
-      }));
-
-      const insertPositionsResult = await serverExecuteMutation<{
-        insert_positions: {
-          affected_rows: number;
-          returning: { id: string; pos_code: string }[];
-        };
-      }>(INSERT_POSITIONS, { positions: positionInsertData });
-
-      result.positionsCreated = insertPositionsResult.insert_positions.affected_rows;
-
-      // Update pos_code -> id map with newly created positions
-      insertPositionsResult.insert_positions.returning.forEach((pos) => {
-        posCodeToId.set(pos.pos_code, pos.id);
-      });
+      result.positionsCreated = await createPositionsInHierarchy(
+        organizationId,
+        posToCreate,
+        posCodeToId,
+        deptCodeToId
+      );
     }
 
     // Execute position UPDATES one by one
@@ -310,6 +294,92 @@ async function createDepartmentsInHierarchy(
 
   if (toCreate.length > 0) {
     throw new Error(`Failed to create ${toCreate.length} departments after ${maxPasses} passes`);
+  }
+
+  return totalCreated;
+}
+
+/**
+ * Helper function to create positions in hierarchical order
+ * Positions that are reported to (managers) must be created before their subordinates
+ */
+async function createPositionsInHierarchy(
+  organizationId: string,
+  positions: PositionPreview[],
+  posCodeToId: Map<string, string>,
+  deptCodeToId: Map<string, string>
+): Promise<number> {
+  const toCreate = [...positions];
+  const created: string[] = []; // Track pos_codes we've created
+  let totalCreated = 0;
+  let maxPasses = 10; // Prevent infinite loop
+  let currentPass = 0;
+
+  while (toCreate.length > 0 && currentPass < maxPasses) {
+    currentPass++;
+    console.log(`Position creation pass ${currentPass}, remaining: ${toCreate.length}`);
+
+    // In this pass, create positions whose reports_to position either:
+    // 1. Doesn't exist (top-level position - no manager)
+    // 2. Already exists in database
+    // 3. Was created in previous pass
+    const canCreateNow = toCreate.filter(pos => {
+      if (!pos.reports_to_pos_code) return true; // Top-level position (no manager)
+      if (posCodeToId.has(pos.reports_to_pos_code)) return true; // Manager exists in DB
+      if (created.includes(pos.reports_to_pos_code)) return true; // Manager created in earlier pass
+      return false;
+    });
+
+    if (canCreateNow.length === 0) {
+      // No progress can be made - there's a circular reference or missing parent position
+      const remaining = toCreate.map(p => ({
+        code: p.pos_code,
+        reports_to: p.reports_to_pos_code
+      }));
+      console.error('Cannot create remaining positions due to missing reports_to references:', remaining);
+      throw new Error(`Cannot create ${toCreate.length} positions - missing reports_to_pos_code references`);
+    }
+
+    // Create this batch
+    const positionInsertData = canCreateNow.map(pos => ({
+      organization_id: organizationId,
+      pos_code: pos.pos_code,
+      title: pos.title,
+      department_id: deptCodeToId.get(pos.dept_code) || null,
+      reports_to_id: pos.reports_to_pos_code ? posCodeToId.get(pos.reports_to_pos_code) || null : null,
+      is_manager: pos.is_manager,
+      incumbents_count: pos.incumbents_count,
+    }));
+
+    console.log(`Creating ${canCreateNow.length} positions in pass ${currentPass}`);
+
+    const insertResult = await serverExecuteMutation<{
+      insert_positions: {
+        affected_rows: number;
+        returning: { id: string; pos_code: string }[];
+      };
+    }>(INSERT_POSITIONS, { positions: positionInsertData });
+
+    const createdCount = insertResult.insert_positions.affected_rows;
+    totalCreated += createdCount;
+
+    // Update tracking
+    insertResult.insert_positions.returning.forEach((pos) => {
+      posCodeToId.set(pos.pos_code, pos.id);
+      created.push(pos.pos_code);
+    });
+
+    // Remove created positions from toCreate list
+    canCreateNow.forEach(pos => {
+      const index = toCreate.findIndex(p => p.pos_code === pos.pos_code);
+      if (index !== -1) {
+        toCreate.splice(index, 1);
+      }
+    });
+  }
+
+  if (toCreate.length > 0) {
+    throw new Error(`Failed to create ${toCreate.length} positions after ${maxPasses} passes`);
   }
 
   return totalCreated;

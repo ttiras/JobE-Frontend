@@ -135,6 +135,10 @@
         "create": "Create Position"
       }
     },
+    "evaluation": {
+      "title": "Position Evaluation",
+      "description": "Review and complete position evaluations"
+    },
     "departments": {
       "title": "Departments",
       "description": "Manage organizational departments",

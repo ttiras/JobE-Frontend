@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import "@/lib/dev/patch-react-debug";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { NhostProvider } from "@/components/providers/nhost-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { AuthProvider } from "@/lib/contexts/auth-context";
 import { OrganizationProvider } from "@/lib/contexts/organization-context";
 import { locales } from "@/lib/i18n";
@@ -53,21 +54,23 @@ export default async function RootLayout({
         }>
           {/* Intl provider must wrap the entire tree so client dialogs inside AuthProvider have context */}
           <NextIntlClientProvider messages={messages} locale={locale || "en"}>
-            <NhostProvider>
-              <AuthProvider>
-                <ThemeProvider
-                  attribute="class"
-                  defaultTheme="light"
-                  enableSystem={false}
-                  disableTransitionOnChange
-                >
-                  <OrganizationProvider>
-                    {children}
-                  </OrganizationProvider>
-                  <Toaster position="top-right" richColors />
-                </ThemeProvider>
-              </AuthProvider>
-            </NhostProvider>
+            <QueryProvider>
+              <NhostProvider>
+                <AuthProvider>
+                  <ThemeProvider
+                    attribute="class"
+                    defaultTheme="light"
+                    enableSystem={false}
+                    disableTransitionOnChange
+                  >
+                    <OrganizationProvider>
+                      {children}
+                    </OrganizationProvider>
+                    <Toaster position="top-center" richColors />
+                  </ThemeProvider>
+                </AuthProvider>
+              </NhostProvider>
+            </QueryProvider>
           </NextIntlClientProvider>
         </Suspense>
       </body>

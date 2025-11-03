@@ -13,7 +13,7 @@ const UPDATE_DEPARTMENT_PARENT = `
   mutation UpdateDepartmentParent($id: uuid!, $parent_id: uuid) {
     update_departments_by_pk(
       pk_columns: { id: $id }
-      _set: { parent_id: $parent_id, updated_at: "now()" }
+      _set: { parent_id: $parent_id }
     ) {
       id
       parent_id
