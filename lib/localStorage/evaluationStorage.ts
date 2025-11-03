@@ -102,24 +102,10 @@ export function loadAnswer(
 
     const data: StoredAnswerData = JSON.parse(stored);
 
-    // Validate the stored data structure
-    if (
-      typeof data.resultingLevel !== 'number' ||
-      typeof data.answers !== 'object' ||
-      typeof data.savedAt !== 'string' ||
-      typeof data.savedToDb !== 'boolean'
-    ) {
-      console.warn('Invalid stored answer data:', data);
-      return null;
-    }
-
     return {
       dimensionId,
       evaluationId,
-      resultingLevel: data.resultingLevel,
-      answers: data.answers,
-      savedAt: data.savedAt,
-      savedToDb: data.savedToDb,
+      ...data,
     };
   } catch (e) {
     console.error('Error loading answer from localStorage:', e);
@@ -128,48 +114,30 @@ export function loadAnswer(
 }
 
 /**
- * Load all answers for an evaluation
- * 
- * @param evaluationId - The evaluation ID
- * @param dimensionIds - Array of dimension IDs to load
- * @returns Map of dimensionId to DimensionAnswer
+ * Load all answers for an evaluation from localStorage
  */
 export function loadAllAnswers(
   evaluationId: string,
   dimensionIds: string[]
 ): Map<string, DimensionAnswer> {
   const answers = new Map<string, DimensionAnswer>();
-
   if (!isLocalStorageAvailable()) {
     return answers;
   }
 
   for (const dimensionId of dimensionIds) {
-    try {
-      const answer = loadAnswer(evaluationId, dimensionId);
-      if (answer) {
-        answers.set(dimensionId, answer);
-      }
-    } catch (e) {
-      console.error(`Error loading answer for dimension ${dimensionId}:`, e);
-      // Continue loading other answers even if one fails
+    const answer = loadAnswer(evaluationId, dimensionId);
+    if (answer) {
+      answers.set(dimensionId, answer);
     }
   }
-
   return answers;
 }
 
 /**
- * Mark an answer as saved to database
- * Updates the savedToDb flag to true
- * 
- * @param evaluationId - The evaluation ID
- * @param dimensionId - The dimension ID
+ * Mark an answer as saved to the database
  */
-export function markAnswerSaved(
-  evaluationId: string,
-  dimensionId: string
-): void {
+export function markAnswerSaved(evaluationId: string, dimensionId: string): void {
   if (!isLocalStorageAvailable()) {
     return;
   }
@@ -177,25 +145,57 @@ export function markAnswerSaved(
   try {
     const key = getStorageKey(evaluationId, dimensionId);
     const stored = localStorage.getItem(key);
-
-    if (!stored) {
-      return;
+    if (stored) {
+      const data: StoredAnswerData = JSON.parse(stored);
+      data.savedToDb = true;
+      localStorage.setItem(key, JSON.stringify(data));
     }
-
-    const data: StoredAnswerData = JSON.parse(stored);
-    data.savedToDb = true;
-
-    localStorage.setItem(key, JSON.stringify(data));
   } catch (e) {
     console.error('Error marking answer as saved:', e);
   }
 }
 
 /**
- * Clear all answers for an evaluation
- * Removes all localStorage entries for the specified evaluation
- * 
- * @param evaluationId - The evaluation ID
+ * Get count of unsaved answers for an evaluation
+ */
+export function getUnsavedCount(evaluationId: string, dimensionIds: string[]): number {
+  let count = 0;
+  if (!isLocalStorageAvailable()) {
+    return 0;
+  }
+
+  for (const dimensionId of dimensionIds) {
+    const answer = loadAnswer(evaluationId, dimensionId);
+    if (answer && !answer.savedToDb) {
+      count++;
+    }
+  }
+  return count;
+}
+
+/**
+ * Get all unsaved answers for an evaluation
+ */
+export function getUnsavedAnswers(
+  evaluationId: string,
+  dimensionIds: string[]
+): DimensionAnswer[] {
+  const unsaved: DimensionAnswer[] = [];
+  if (!isLocalStorageAvailable()) {
+    return unsaved;
+  }
+
+  for (const dimensionId of dimensionIds) {
+    const answer = loadAnswer(evaluationId, dimensionId);
+    if (answer && !answer.savedToDb) {
+      unsaved.push(answer);
+    }
+  }
+  return unsaved;
+}
+
+/**
+ * Clear all evaluation data from localStorage for a specific evaluation
  */
 export function clearEvaluation(evaluationId: string): void {
   if (!isLocalStorageAvailable()) {
@@ -203,84 +203,17 @@ export function clearEvaluation(evaluationId: string): void {
   }
 
   try {
-    const prefix = `${STORAGE_PREFIX}${evaluationId}_dim_`;
     const keysToRemove: string[] = [];
-
-    // Find all keys for this evaluation
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith(prefix)) {
+      if (key && key.startsWith(`${STORAGE_PREFIX}${evaluationId}_`)) {
         keysToRemove.push(key);
       }
     }
-
-    // Remove all found keys
     for (const key of keysToRemove) {
       localStorage.removeItem(key);
     }
   } catch (e) {
-    console.error('Error clearing evaluation from localStorage:', e);
+    console.error('Error clearing evaluation data from localStorage:', e);
   }
-}
-
-/**
- * Get all unsaved answers for an evaluation
- * Returns answers that have not been persisted to the database
- * 
- * @param evaluationId - The evaluation ID
- * @param dimensionIds - Array of dimension IDs to check
- * @returns Array of unsaved DimensionAnswers
- */
-export function getUnsavedAnswers(
-  evaluationId: string,
-  dimensionIds: string[]
-): DimensionAnswer[] {
-  const unsavedAnswers: DimensionAnswer[] = [];
-
-  if (!isLocalStorageAvailable()) {
-    return unsavedAnswers;
-  }
-
-  for (const dimensionId of dimensionIds) {
-    try {
-      const answer = loadAnswer(evaluationId, dimensionId);
-      if (answer && !answer.savedToDb) {
-        unsavedAnswers.push(answer);
-      }
-    } catch (e) {
-      console.error(`Error checking unsaved answer for dimension ${dimensionId}:`, e);
-      // Continue checking other answers
-    }
-  }
-
-  return unsavedAnswers;
-}
-
-/**
- * Get count of unsaved answers for an evaluation
- * Useful for showing indicators in the UI
- * 
- * @param evaluationId - The evaluation ID
- * @param dimensionIds - Array of dimension IDs to check
- * @returns Count of unsaved answers
- */
-export function getUnsavedCount(
-  evaluationId: string,
-  dimensionIds: string[]
-): number {
-  return getUnsavedAnswers(evaluationId, dimensionIds).length;
-}
-
-/**
- * Check if an evaluation has any unsaved changes
- * 
- * @param evaluationId - The evaluation ID
- * @param dimensionIds - Array of dimension IDs to check
- * @returns True if there are unsaved changes
- */
-export function hasUnsavedChanges(
-  evaluationId: string,
-  dimensionIds: string[]
-): boolean {
-  return getUnsavedCount(evaluationId, dimensionIds) > 0;
 }

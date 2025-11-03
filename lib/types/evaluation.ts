@@ -135,11 +135,17 @@ export interface EvaluationData {
  */
 export interface EvaluationProgress {
   /** Total number of dimensions to evaluate */
-  totalDimensions: number;
+  total: number;
   /** Number of dimensions with answers */
-  completedDimensions: number;
+  completed: number;
   /** Percentage completed (0-100) */
-  percentComplete: number;
+  percent: number;
   /** Number of unsaved answers */
-  unsavedCount: number;
+  unsaved: number;
+  /** Total number of dimensions in the current factor */
+  factorTotal: number;
+  /** Number of completed dimensions in the current factor */
+  factorCompleted: number;
+  /** The 1-based index of the current dimension being evaluated */
+  current: number;
 }

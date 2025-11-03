@@ -6,9 +6,9 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, AlertCircle, ArrowLeft, ShieldAlert } from 'lucide-react';
+import { AlertCircle, ArrowLeft, ShieldAlert } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -16,13 +16,10 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { executeQuery } from '@/lib/nhost/graphql/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { EvaluationHeader } from '@/components/evaluation/EvaluationHeader';
-import { FactorStepper } from '@/components/evaluation/FactorStepper';
 import { DimensionSidebar } from '@/components/evaluation/DimensionSidebar';
 import { EvaluationSkeleton } from '@/components/evaluation/EvaluationSkeleton';
 import { DimensionQuestionCard } from '@/components/evaluation/DimensionQuestionCard';
 import { NavigationButtons } from '@/components/evaluation/NavigationButtons';
-import { EvaluationContextBar, EvaluationContextBarMobile } from '@/components/evaluation/EvaluationContextBar';
-import { FactorProgressIndicator } from '@/components/evaluation/FactorProgressIndicator';
 import { EvaluationProvider, useEvaluation } from '@/lib/contexts/EvaluationContext';
 import { getUnsavedAnswers, clearEvaluation } from '@/lib/localStorage/evaluationStorage';
 import { useAuth } from '@/lib/hooks/use-auth';
@@ -174,11 +171,7 @@ export function EvaluationPageClient({
   const [error, setError] = useState<string | null>(null);
   const [accessDenied, setAccessDenied] = useState(false);
 
-  useEffect(() => {
-    fetchEvaluationData();
-  }, [evaluationId, locale]);
-
-  const fetchEvaluationData = async () => {
+  const fetchEvaluationData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -224,7 +217,11 @@ export function EvaluationPageClient({
     } finally {
       setLoading(false);
     }
-  };
+  }, [evaluationId, locale, orgId, router, user?.id]);
+
+  useEffect(() => {
+    fetchEvaluationData();
+  }, [fetchEvaluationData]);
 
   if (loading) {
     return <EvaluationSkeleton />;
@@ -313,28 +310,22 @@ function EvaluationContent({
     goToNextDimension,
     goToPreviousDimension,
     saveCurrentAnswer,
+    isFirstDimension,
+    isLastDimension,
   } = useEvaluation();
-
-  if (!evaluationData) {
-    return null;
-  }
 
   // Get current dimension for auto-scroll dependency
   const currentDimension = getCurrentDimension();
-  const currentDimensionId = currentDimension?.id;
 
   // Auto-scroll to top when dimension changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [currentDimensionId]);
+  }, [currentDimension]);
 
   // Warn user about unsaved changes before leaving page
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      const allDimensionIds = getAllDimensionIds();
-      const unsaved = getUnsavedAnswers(evaluationId, allDimensionIds);
-      
-      if (unsaved.length > 0) {
+      if (progress.unsaved > 0) {
         e.preventDefault();
         e.returnValue = ''; // Chrome requires returnValue to be set
         return 'You have unsaved changes. Are you sure you want to leave?';
@@ -346,37 +337,54 @@ function EvaluationContent({
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [evaluationId]);
+  }, [progress.unsaved]);
 
-  // Helper: Get all dimension IDs for unsaved check
-  const getAllDimensionIds = (): string[] => {
-    const dimensionIds: string[] = [];
-    for (const factor of evaluationData.factors) {
-      for (const dimension of factor.dimensions) {
-        dimensionIds.push(dimension.id);
+  // Handler: Exit with unsaved changes check
+  const handleExit = useCallback(() => {
+    if (progress.unsaved > 0) {
+      if (
+        confirm(
+          `You have ${progress.unsaved} unsaved change${progress.unsaved > 1 ? 's' : ''}. Are you sure you want to exit?`
+        )
+      ) {
+        router.push(`/${locale}/dashboard/${orgId}/org-structure/positions`);
       }
+    } else {
+      router.push(`/${locale}/dashboard/${orgId}/org-structure/positions`);
     }
-    return dimensionIds;
-  };
+  }, [progress.unsaved, router, locale, orgId]);
 
-  // Helper: Transform factors for FactorStepper
-  const getFactorSteps = () => {
-    return evaluationData.factors.map((factor) => {
-      const dimensionCount = factor.dimensions.length;
-      const completedDimensions = factor.dimensions.filter((dim) =>
-        answers.has(dim.id)
-      ).length;
+  // Keyboard Navigation
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + Arrow Left: Previous dimension
+      if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goToPreviousDimension();
+      }
 
-      return {
-        id: factor.id,
-        name: factor.factor_translations[0]?.name || factor.code,
-        code: factor.code,
-        orderIndex: factor.order_index,
-        dimensionCount,
-        completedDimensions,
-      };
-    });
-  };
+      // Ctrl/Cmd + Arrow Right: Next dimension (if current is answered)
+      if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (currentDimension && answers.has(currentDimension.id)) {
+          goToNextDimension();
+        }
+      }
+
+      // Escape: Show exit confirmation
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleExit();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [answers, currentDimension, goToNextDimension, goToPreviousDimension, handleExit]);
+
+  if (!evaluationData) {
+    return null;
+  }
 
   // Helper: Transform factors for DimensionSidebar
   const getFactorGroups = () => {
@@ -397,31 +405,6 @@ function EvaluationContent({
         };
       }),
     }));
-  };
-
-  // Handler: Exit with unsaved changes check
-  const handleExit = () => {
-    const allDimensionIds = getAllDimensionIds();
-    const unsavedAnswers = getUnsavedAnswers(evaluationId, allDimensionIds);
-    const unsavedCount = unsavedAnswers.length;
-
-    if (unsavedCount > 0) {
-      if (
-        confirm(
-          `You have ${unsavedCount} unsaved change${unsavedCount > 1 ? 's' : ''}. Are you sure you want to exit?`
-        )
-      ) {
-        router.push(`/${locale}/dashboard/${orgId}/org-structure/positions`);
-      }
-    } else {
-      router.push(`/${locale}/dashboard/${orgId}/org-structure/positions`);
-    }
-  };
-
-  // Handler: Click on a factor in stepper
-  const handleFactorClick = (factorIndex: number) => {
-    // Jump to first dimension of this factor
-    setCurrentDimension(factorIndex, 0);
   };
 
   // Handler: Click on a dimension in sidebar
@@ -450,14 +433,6 @@ function EvaluationContent({
 
       // Save the dimension answer with questionnaire results
       await saveCurrentAnswer(resultingLevel, dimensionAnswers);
-
-      // Check if this was the last dimension
-      const totalFactors = evaluationData.factors.length;
-      const isLastFactor = currentFactorIndex === totalFactors - 1;
-      const currentFactor = evaluationData.factors[currentFactorIndex];
-      const totalDimensionsInCurrentFactor = currentFactor?.dimensions.length || 0;
-      const isLastDimensionInFactor = currentDimensionIndex === totalDimensionsInCurrentFactor - 1;
-      const isLastDimension = isLastFactor && isLastDimensionInFactor;
 
       if (isLastDimension) {
         // This was the last dimension - database will auto-complete evaluation and calculate score
@@ -525,12 +500,6 @@ function EvaluationContent({
     }
   };
 
-  // Handler: Level selection for current dimension (OLD - no longer used directly)
-  const handleLevelSelect = (level: number) => {
-    setValidationError(null);
-    // This is no longer used directly - questionnaire handles it
-  };
-
   // Handler: Navigate to previous dimension
   const handlePrevious = () => {
     setValidationError(null);
@@ -556,168 +525,61 @@ function EvaluationContent({
     goToNextDimension();
   };
 
-  // Keyboard Navigation
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      // Ctrl/Cmd + Arrow Left: Previous dimension
-      if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowLeft') {
-        e.preventDefault();
-        goToPreviousDimension();
-      }
-
-      // Ctrl/Cmd + Arrow Right: Next dimension (if current is answered)
-      if ((e.ctrlKey || e.metaKey) && e.key === 'ArrowRight') {
-        e.preventDefault();
-        const currentDim = getCurrentDimension();
-        if (currentDim && answers.has(currentDim.id)) {
-          goToNextDimension();
-        }
-      }
-
-      // Escape: Show exit confirmation
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        handleExit();
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [answers, getCurrentDimension, goToNextDimension, goToPreviousDimension, handleExit]);
-
-  // Get additional data for rendering
-  const factorSteps = getFactorSteps();
-  const factorGroups = getFactorGroups();
-
-  // Get current answer
-  const currentAnswer = currentDimension ? answers.get(currentDimension.id) : null;
-
-  // Calculate navigation flags
-  const canGoPrevious = currentFactorIndex > 0 || currentDimensionIndex > 0;
-  const canGoNext = currentAnswer !== null;
-  
-  // Check if this is the last dimension
-  const totalFactors = evaluationData.factors.length;
-  const isLastFactor = currentFactorIndex === totalFactors - 1;
-  const totalDimensionsInCurrentFactor = evaluationData.factors[currentFactorIndex]?.dimensions.length || 0;
-  const isLastDimensionInFactor = currentDimensionIndex === totalDimensionsInCurrentFactor - 1;
-  const isLastDimension = isLastFactor && isLastDimensionInFactor;
-
-  // Calculate current dimension number across all factors
-  let currentDimensionNumber = 0;
-  for (let i = 0; i < currentFactorIndex; i++) {
-    currentDimensionNumber += evaluationData.factors[i].dimensions.length;
-  }
-  currentDimensionNumber += currentDimensionIndex + 1;
-
-  // Get current factor info
-  const currentFactor = evaluationData.factors[currentFactorIndex];
-  const currentFactorName = currentFactor?.factor_translations[0]?.name || currentFactor?.code || '';
-  const currentFactorProgress = `${currentFactor?.dimensions.filter(d => answers.has(d.id)).length || 0}/${currentFactor?.dimensions.length || 0} dimensions`;
-  const currentDimensionName = currentDimension?.translations[0]?.name || currentDimension?.code || '';
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/20">
-      {/* Enhanced Header */}
+    <>
       <EvaluationHeader
         positionTitle={evaluationData.evaluation.position.title}
         positionCode={evaluationData.evaluation.position.pos_code}
         departmentName={evaluationData.evaluation.position.department?.name || null}
-        completedDimensions={progress.completedDimensions}
-        totalDimensions={progress.totalDimensions}
+        completedDimensions={progress.completed}
+        totalDimensions={progress.total}
         onExit={handleExit}
       />
-
-      {/* Context Bar - Desktop */}
-      <div className="hidden md:block">
-        <EvaluationContextBar
-          positionTitle={evaluationData.evaluation.position.title}
-          positionCode={evaluationData.evaluation.position.pos_code}
-          departmentName={evaluationData.evaluation.position.department?.name}
-          currentFactorName={currentFactorName}
-          factorProgress={currentFactorProgress}
-          currentDimensionName={currentDimensionName}
-          currentDimensionNumber={currentDimensionNumber}
-          totalDimensions={progress.totalDimensions}
-          completionPercentage={Math.round((progress.completedDimensions / progress.totalDimensions) * 100)}
-        />
-      </div>
-
-      {/* Context Bar - Mobile */}
-      <div className="md:hidden">
-        <EvaluationContextBarMobile
-          positionTitle={evaluationData.evaluation.position.title}
-          positionCode={evaluationData.evaluation.position.pos_code}
-          currentFactorName={currentFactorName}
-          currentDimensionName={currentDimensionName}
-          currentDimensionNumber={currentDimensionNumber}
-          totalDimensions={progress.totalDimensions}
-          completionPercentage={Math.round((progress.completedDimensions / progress.totalDimensions) * 100)}
-        />
-      </div>
-
-      {/* Factor Progress Indicator */}
-      <FactorProgressIndicator
-        factors={factorSteps}
-        currentFactorIndex={currentFactorIndex}
-        onFactorClick={handleFactorClick}
-        allowNavigation={true}
-      />
-
-      {/* Main Content */}
-      <div className="container mx-auto px-4 lg:px-8 py-8 lg:py-12">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentDimension?.id || 'no-dimension'}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            {currentDimension ? (
-              <DimensionQuestionCard
-                dimension={currentDimension}
-                language={locale}
-                onComplete={handleDimensionComplete}
-                initialAnswers={currentAnswer?.answers}
-                dimensionNumber={currentDimensionNumber}
-                totalDimensions={progress.totalDimensions}
-              />
-            ) : (
-              <div className="max-w-3xl mx-auto">
+            <div className="container mx-auto flex max-w-full flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-3">
+            <DimensionSidebar
+              factors={getFactorGroups()}
+              currentDimensionId={currentDimension?.id || ''}
+              onDimensionClick={handleDimensionClick}
+              totalCompleted={progress.completed}
+              totalDimensions={progress.total}
+            />
+          </div>
+          <main className="lg:col-span-9">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentDimension?.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.2 }}
+                className="min-h-[600px]"
+              >
                 <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-center text-muted-foreground">
-                      No dimension data available
-                    </p>
+                  <CardContent className="p-6">
+                    {currentDimension && (
+                      <DimensionQuestionCard
+                        dimension={currentDimension}
+                        onComplete={handleDimensionComplete}
+                        isSaving={isSaving}
+                        initialAnswers={answers.get(currentDimension.id)?.answers}
+                      />
+                    )}
                   </CardContent>
                 </Card>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+                <NavigationButtons
+                  onPrevious={goToPreviousDimension}
+                  onNext={goToNextDimension}
+                  isSaving={isSaving}
+                  isFirst={isFirstDimension}
+                  isLast={isLastDimension}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </main>
+        </div>
       </div>
-
-      {/* Dimension Sidebar */}
-      <DimensionSidebar
-        factors={factorGroups}
-        currentDimensionId={currentDimension?.id || ''}
-        onDimensionClick={handleDimensionClick}
-        totalCompleted={progress.completedDimensions}
-        totalDimensions={progress.totalDimensions}
-      />
-
-      {/* Navigation Buttons */}
-      <NavigationButtons
-        onPrevious={handlePrevious}
-        onNext={handleNext}
-        canGoPrevious={canGoPrevious}
-        canGoNext={canGoNext}
-        isNextLoading={isSaving}
-        showSaveAndExit={true}
-        onSaveAndExit={handleExit}
-        isLastDimension={isLastDimension}
-      />
-    </div>
+    </>
   );
 }

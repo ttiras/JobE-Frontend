@@ -137,7 +137,8 @@
     },
     "evaluation": {
       "title": "Position Evaluation",
-      "description": "Review and complete position evaluations"
+      "description": "Review and complete position evaluations",
+      "sidebarTitle": "Factors"
     },
     "departments": {
       "title": "Departments",
@@ -873,5 +874,8 @@
     "complete": "Import completed",
     "errors": "Errors",
     "moreErrors": "more errors"
+  },
+  "EvaluationStepper": {
+    "step": "Step {current} of {total}"
   }
 }

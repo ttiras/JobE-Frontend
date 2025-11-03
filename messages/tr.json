@@ -137,7 +137,8 @@
     },
     "evaluation": {
       "title": "Pozisyon Değerlendirme",
-      "description": "Pozisyon değerlendirmelerini inceleyin ve tamamlayın"
+      "description": "Pozisyon değerlendirmelerini inceleyin ve tamamlayın",
+      "sidebarTitle": "Faktörler"
     },
     "departments": {
       "title": "Departmanlar",
@@ -874,5 +875,8 @@
     "complete": "İçe aktarma tamamlandı",
     "errors": "Hatalar",
     "moreErrors": "daha fazla hata"
+  },
+  "EvaluationStepper": {
+    "step": "Adım {current} / {total}"
   }
 }

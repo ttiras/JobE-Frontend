@@ -22,9 +22,9 @@ import { cn } from '@/lib/utils';
 
 interface QuestionnaireCardProps {
   dimensionId: string;
-  language: string;
   onComplete: (resultingLevel: number, answers: DimensionAnswers) => void;
   initialAnswers?: DimensionAnswers;
+  isSaving: boolean;
 }
 
 interface GetDimensionQuestionsResponse {
@@ -33,9 +33,9 @@ interface GetDimensionQuestionsResponse {
 
 export function QuestionnaireCard({
   dimensionId,
-  language,
   onComplete,
   initialAnswers = {},
+  isSaving,
 }: QuestionnaireCardProps) {
   const [currentQuestionKey, setCurrentQuestionKey] = useState('q1');
   const [answers, setAnswers] = useState<DimensionAnswers>(initialAnswers);
@@ -52,7 +52,7 @@ export function QuestionnaireCard({
         
         const data = await executeQuery<GetDimensionQuestionsResponse>(
           GET_DIMENSION_QUESTIONS,
-          { dimensionId, language }
+          { dimensionId, language: 'en' } // FIXME: Hardcoded language
         );
 
         if (!data.questions || data.questions.length === 0) {
@@ -75,7 +75,7 @@ export function QuestionnaireCard({
     };
 
     fetchQuestions();
-  }, [dimensionId, language]);
+  }, [dimensionId]);
 
   // Restore state from initialAnswers
   useEffect(() => {
@@ -105,6 +105,17 @@ export function QuestionnaireCard({
     } else if (option.next_question_key) {
       // Navigate to next question
       setCurrentQuestionKey(option.next_question_key);
+    }
+  };
+
+  const handleBack = () => {
+    const questionKeys = Object.keys(answers).sort();
+    if (questionKeys.length > 0) {
+      const lastQuestionKey = questionKeys.pop() as string;
+      const newAnswers = { ...answers };
+      delete newAnswers[lastQuestionKey];
+      setAnswers(newAnswers);
+      setCurrentQuestionKey(lastQuestionKey);
     }
   };
 
@@ -151,135 +162,116 @@ export function QuestionnaireCard({
     );
   }
 
-  const questionText = currentQuestion.translations[0]?.text || 'Question text missing';
-  const helpText = currentQuestion.translations[0]?.help_text;
-  const answeredCount = Object.keys(answers).length;
+  const isFirstQuestion = currentQuestionKey === 'q1';
 
   return (
-    <div className="w-full">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentQuestionKey}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-        >
-          <Card className="border border-border/50 shadow-lg bg-card/50 backdrop-blur-sm">
-            {/* Question Header */}
-            <CardHeader className="space-y-4 pb-6 bg-gradient-to-b from-muted/30 to-transparent">
-              {/* Progress Badge */}
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.1, duration: 0.3 }}
-                className="flex items-center justify-between"
-              >
-                <Badge variant="outline" className="text-sm gap-2 px-3 py-1">
-                  <Circle className="h-3.5 w-3.5 fill-current text-primary" />
-                  Question {currentQuestion.order_index}
-                </Badge>
-                
-                {answeredCount > 0 && (
-                  <Badge variant="secondary" className="text-xs gap-1.5 bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">
-                    <CheckCircle2 className="h-3 w-3" />
-                    {answeredCount} answered
-                  </Badge>
-                )}
-              </motion.div>
-
-              {/* Question Text */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15, duration: 0.3 }}
-                className="space-y-3"
-              >
-                <h3 className="text-2xl md:text-3xl font-bold leading-tight text-foreground">
-                  {questionText}
-                </h3>
-                
-                {/* Help Text */}
-                {helpText && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.25, duration: 0.3 }}
-                    className="flex gap-2.5 p-3 bg-muted/50 border border-border/30 rounded-lg"
-                  >
-                    <HelpCircle className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {helpText}
-                    </p>
-                  </motion.div>
-                )}
-              </motion.div>
-            </CardHeader>
-
-            {/* Answer Options */}
-            <CardContent className="space-y-3 pb-6">
-              {currentQuestion.options.map((option, index) => {
-                const optionText = option.translations[0]?.label || option.option_key;
-                const isSelected = answers[currentQuestionKey] === option.option_key;
-
-                return (
-                  <motion.div
-                    key={option.id}
-                    initial={{ opacity: 0, x: -15 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3 + index * 0.05, duration: 0.3 }}
-                  >
-                    <Button
-                      variant={isSelected ? 'default' : 'outline'}
-                      className={cn(
-                        'group w-full h-auto min-h-[72px] flex items-center justify-between gap-4 p-5 text-left',
-                        'relative overflow-hidden transition-all duration-200',
-                        'hover:scale-[1.01] hover:shadow-md active:scale-[0.99]',
-                        isSelected && 'ring-2 ring-primary/50 shadow-md bg-primary hover:bg-primary'
-                      )}
-                      onClick={() => handleAnswer(option.option_key, option)}
-                    >
-                      {/* Subtle background effect */}
-                      {!isSelected && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                      )}
-
-                      {/* Option Text */}
-                      <span className={cn(
-                        'text-base font-medium relative z-10 flex-1',
-                        isSelected ? 'text-primary-foreground' : 'text-foreground'
-                      )}>
-                        {optionText}
-                      </span>
-
-                      {/* Selection Indicator */}
-                      <motion.div
-                        initial={false}
-                        animate={{ 
-                          scale: isSelected ? [1, 1.2, 1] : 1,
-                          rotate: isSelected ? [0, 10, 0] : 0
-                        }}
-                        transition={{ duration: 0.3 }}
-                        className="relative z-10 shrink-0"
-                      >
-                        {isSelected ? (
-                          <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary-foreground/20">
-                            <Check className="h-4 w-4 text-primary-foreground" />
-                          </div>
-                        ) : (
-                          <div className="flex items-center justify-center w-6 h-6 rounded-full border-2 border-muted-foreground/30 group-hover:border-primary/50 transition-colors">
-                            <Circle className="h-3 w-3 text-transparent" />
-                          </div>
-                        )}
-                      </motion.div>
-                    </Button>
-                  </motion.div>
-                );
-              })}
-            </CardContent>
-          </Card>
-        </motion.div>
-      </AnimatePresence>
+    <div className="max-w-3xl mx-auto">
+      <Card className="overflow-hidden border-border/60 bg-card/80 shadow-lg backdrop-blur-sm">
+        <CardHeader className="border-b border-border/60 bg-muted/30 p-6">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold">
+              {currentQuestion.translations[0]?.text || 'Question'}
+            </CardTitle>
+            <Badge variant="secondary" className="font-mono text-xs">
+              {currentQuestion.question_key.toUpperCase()}
+            </Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="p-6">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentQuestionKey}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="space-y-4"
+            >
+              {Object.entries(currentQuestion.options).map(([optionKey, option]) => (
+                <OptionButton
+                  key={optionKey}
+                  optionKey={optionKey}
+                  option={option}
+                  onSelect={handleAnswer}
+                  isSelected={answers[currentQuestionKey] === optionKey}
+                  isSaving={isSaving && option.resulting_level !== null}
+                />
+              ))}
+            </motion.div>
+          </AnimatePresence>
+        </CardContent>
+        <div className="flex items-center justify-end gap-3 border-t border-border/60 bg-muted/30 p-4">
+          {!isFirstQuestion && (
+            <Button variant="ghost" size="sm" onClick={handleBack} disabled={isSaving}>
+              Back
+            </Button>
+          )}
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <HelpCircle className="h-4 w-4" />
+            <span>Your progress is saved automatically.</span>
+          </div>
+        </div>
+      </Card>
     </div>
+  );
+}
+
+interface OptionButtonProps {
+  optionKey: string;
+  option: QuestionOption;
+  onSelect: (optionKey: string, option: QuestionOption) => void;
+  isSelected: boolean;
+  isSaving: boolean;
+}
+
+function OptionButton({ optionKey, option, onSelect, isSelected, isSaving }: OptionButtonProps) {
+  const isTerminal = option.resulting_level !== null;
+  const optionText = option.translations[0]?.label || option.option_key;
+
+  return (
+    <motion.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={() => onSelect(optionKey, option)}
+      disabled={isSaving}
+      className={cn(
+        'w-full rounded-lg border p-5 text-left transition-all duration-200',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        isSelected
+          ? 'border-primary/80 bg-primary/10 ring-2 ring-primary/60'
+          : 'border-border/70 bg-background/50 hover:border-primary/60 hover:bg-muted/50',
+        isSaving && isSelected ? 'cursor-wait' : ''
+      )}
+    >
+      <div className="flex items-start gap-4">
+        <div className="mt-1">
+          {isSelected ? (
+            <CheckCircle2 className="h-5 w-5 text-primary" />
+          ) : (
+            <Circle className="h-5 w-5 text-muted-foreground/60" />
+          )}
+        </div>
+        <div className="flex-1">
+          <p className="font-semibold text-foreground">{optionText}</p>
+        </div>
+        {isTerminal && (
+          <div className="flex items-center gap-2">
+            {isSaving && isSelected ? (
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                className="h-5 w-5"
+              >
+                <Check className="h-5 w-5 animate-spin" />
+              </motion.div>
+            ) : (
+              <Badge variant={isSelected ? 'default' : 'secondary'}>
+                Level {option.resulting_level}
+              </Badge>
+            )}
+          </div>
+        )}
+      </div>
+    </motion.button>
   );
 }

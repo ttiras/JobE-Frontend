@@ -1,32 +1,9 @@
-/**
- * Dimension Sidebar Navigator
- * 
- * Elegant, minimalist sidebar that's collapsed by default.
- * Features smooth animations and a floating button for quick access.
- * 
- * Features:
- * - Hidden by default for distraction-free experience
- * - Floating button with progress indicator
- * - Smooth slide-in animations
- * - Responsive design
- */
-
 'use client';
 
-import { useState, useEffect } from 'react';
-import {
-  ChevronDown,
-  ChevronRight,
-  Check,
-  Circle,
-  ArrowRight,
-  Menu,
-  List,
-  X,
-} from 'lucide-react';
+import { useState } from 'react';
+import { List } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   Sheet,
   SheetContent,
@@ -35,7 +12,9 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
+import { FactorComponent } from '@/components/evaluation/Factor';
+import { useTranslations } from 'next-intl';
 
 interface DimensionItem {
   /** Dimension unique identifier */
@@ -103,32 +82,9 @@ export function DimensionSidebar({
   totalCompleted = 0,
   totalDimensions = 0,
 }: DimensionSidebarProps) {
-  // Track which factors are expanded
-  const [expandedFactors, setExpandedFactors] = useState<Set<string>>(new Set());
-  
+  const t = useTranslations('pages.evaluation');
   // Mobile sheet open state
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  // Auto-expand factor containing current dimension
-  useEffect(() => {
-    const currentFactorId = getFactorIdForDimension(factors, currentDimensionId);
-    if (currentFactorId) {
-      setExpandedFactors((prev) => new Set(prev).add(currentFactorId));
-    }
-  }, [currentDimensionId, factors]);
-
-  // Toggle factor expansion
-  const toggleFactor = (factorId: string) => {
-    setExpandedFactors((prev) => {
-      const newExpanded = new Set(prev);
-      if (newExpanded.has(factorId)) {
-        newExpanded.delete(factorId);
-      } else {
-        newExpanded.add(factorId);
-      }
-      return newExpanded;
-    });
-  };
 
   // Handle dimension click (close mobile sheet)
   const handleDimensionClick = (dimensionId: string) => {
@@ -136,100 +92,29 @@ export function DimensionSidebar({
     setMobileOpen(false);
   };
 
-  // Sidebar content (shared between desktop and mobile)
+  const currentFactorId = getFactorIdForDimension(factors, currentDimensionId);
+
   const sidebarContent = (
     <ScrollArea className="h-full">
-      <div className="space-y-1 p-4">
+      <div className="p-2 space-y-2">
         {factors.map((factor) => {
-          const isExpanded = expandedFactors.has(factor.id);
-          const completedCount = factor.dimensions.filter((d) => d.completed).length;
+          const completedCount = factor.dimensions.filter(d => d.completed).length;
           const totalCount = factor.dimensions.length;
+          const isCurrentFactor = factor.id === currentFactorId;
 
           return (
-            <div key={factor.id} className="space-y-1">
-              {/* Factor Header */}
-              <button
-                onClick={() => toggleFactor(factor.id)}
-                className={cn(
-                  'w-full flex items-center justify-between gap-2 px-3 py-2',
-                  'rounded-md hover:bg-accent transition-colors',
-                  'text-sm font-medium'
-                )}
-              >
-                <div className="flex items-center gap-2 flex-1 min-w-0">
-                  {isExpanded ? (
-                    <ChevronDown className="h-4 w-4 shrink-0" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 shrink-0" />
-                  )}
-                  <span className="truncate">{factor.name}</span>
-                </div>
-                <Badge variant="secondary" className="shrink-0 text-xs">
-                  {completedCount}/{totalCount}
-                </Badge>
-              </button>
-
-              {/* Dimensions List */}
-              {isExpanded && (
-                <div className="ml-6 space-y-1 animate-in slide-in-from-top-2 duration-200">
-                  {factor.dimensions.map((dimension) => {
-                    const isCurrent = dimension.id === currentDimensionId;
-
-                    return (
-                      <button
-                        key={dimension.id}
-                        onClick={() => handleDimensionClick(dimension.id)}
-                        className={cn(
-                          'w-full flex items-center gap-2 px-3 py-2',
-                          'rounded-md transition-all duration-150',
-                          'text-sm group',
-                          {
-                            // Current dimension
-                            'bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800':
-                              isCurrent,
-                            'font-semibold text-blue-700 dark:text-blue-300': isCurrent,
-
-                            // Completed dimension
-                            'hover:bg-green-50 dark:hover:bg-green-950/50':
-                              dimension.completed && !isCurrent,
-                            'text-green-700 dark:text-green-400':
-                              dimension.completed && !isCurrent,
-
-                            // Not started dimension
-                            'hover:bg-accent': !dimension.completed && !isCurrent,
-                            'text-muted-foreground': !dimension.completed && !isCurrent,
-                          }
-                        )}
-                      >
-                        {/* Status Icon */}
-                        <div className="shrink-0">
-                          {isCurrent ? (
-                            <ArrowRight className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                          ) : dimension.completed ? (
-                            <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
-                          ) : (
-                            <Circle className="h-4 w-4" />
-                          )}
-                        </div>
-
-                        {/* Dimension Name */}
-                        <span className="flex-1 truncate text-left">{dimension.name}</span>
-
-                        {/* Level Badge */}
-                        {dimension.selectedLevel !== null && (
-                          <Badge
-                            variant={isCurrent ? 'default' : 'secondary'}
-                            className="shrink-0 text-xs font-mono"
-                          >
-                            L{dimension.selectedLevel}
-                          </Badge>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            <FactorComponent
+              key={factor.id}
+              factor={factor}
+              isCurrent={isCurrentFactor}
+              onClick={() => {
+                if (factor.dimensions.length > 0) {
+                  handleDimensionClick(factor.dimensions[0].id);
+                }
+              }}
+              completedCount={completedCount}
+              totalCount={totalCount}
+            />
           );
         })}
       </div>
@@ -238,78 +123,32 @@ export function DimensionSidebar({
 
   return (
     <>
-      {/* Desktop - Floating Button (Bottom Left) */}
-      <motion.div 
-        initial={{ scale: 0, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
-        className="hidden lg:block fixed bottom-8 left-8 z-50"
-      >
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger asChild>
-            <Button 
-              size="lg" 
-              className="shadow-2xl hover:shadow-3xl transition-all duration-300 h-14 px-6 group hover:scale-105"
-            >
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <List className="h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
-                  {totalCompleted < totalDimensions && (
-                    <motion.div
-                      className="absolute -top-1 -right-1 h-3 w-3 bg-primary rounded-full"
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                    />
-                  )}
-                </div>
-                <div className="flex flex-col items-start">
-                  <span className="text-xs font-medium opacity-90">Progress</span>
-                  <span className="text-sm font-bold">
-                    {totalCompleted}/{totalDimensions}
-                  </span>
-                </div>
-              </div>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-[320px] p-0">
-            <SheetHeader className="px-6 py-4 border-b bg-muted/30">
-              <div className="flex items-center justify-between">
-                <div>
-                  <SheetTitle className="text-lg">All Dimensions</SheetTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {totalCompleted} of {totalDimensions} completed
-                  </p>
-                </div>
-              </div>
-            </SheetHeader>
-            {sidebarContent}
-          </SheetContent>
-        </Sheet>
-      </motion.div>
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:block">
+        <div className="sticky top-24">
+          <h3 className="px-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            {t('sidebarTitle')}
+          </h3>
+          <div className="mt-4">{sidebarContent}</div>
+        </div>
+      </aside>
 
-      {/* Mobile - Floating Button (Bottom Right) */}
-      <motion.div 
+      {/* Mobile - Floating Button */}
+      <motion.div
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+        transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
         className="lg:hidden fixed bottom-6 right-6 z-50"
       >
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger asChild>
-            <Button 
-              size="lg" 
-              className="shadow-2xl hover:shadow-3xl transition-all duration-300 h-14 w-14 rounded-full p-0 group hover:scale-105"
+            <Button
+              variant="outline"
+              size="lg"
+              className="h-14 w-14 rounded-full border-border/60 bg-background/90 p-0 text-muted-foreground shadow-lg transition hover:shadow-xl"
             >
-              <div className="relative">
-                <List className="h-6 w-6 group-hover:rotate-12 transition-transform duration-300" />
-                {totalCompleted < totalDimensions && (
-                  <motion.div
-                    className="absolute -top-1 -right-1 h-3 w-3 bg-background rounded-full border-2 border-primary"
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                  />
-                )}
-              </div>
+              <span className="sr-only">Open navigator</span>
+              <List className="h-6 w-6" />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-[300px] sm:w-[360px] p-0">
