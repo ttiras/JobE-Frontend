@@ -1,10 +1,11 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Save, X } from 'lucide-react';
+import { Save, X, MapPin, Building2, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { KeyboardShortcutsHelp } from './KeyboardShortcutsHelp';
+import { Badge } from '@/components/ui/badge';
 
 interface EvaluationHeaderProps {
   positionTitle: string;
@@ -13,6 +14,8 @@ interface EvaluationHeaderProps {
   completedDimensions: number;
   totalDimensions: number;
   onExit: () => void;
+  grade?: string | null;
+  location?: string | null;
 }
 
 export function EvaluationHeader({
@@ -22,6 +25,8 @@ export function EvaluationHeader({
   completedDimensions,
   totalDimensions,
   onExit,
+  grade,
+  location,
 }: EvaluationHeaderProps) {
   const t = useTranslations();
   const progressPercentage =
@@ -36,8 +41,8 @@ export function EvaluationHeader({
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-4">
               <div>
-                <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Position Evaluation
+                <p className="text-xs font-medium text-muted-foreground">
+                  Position evaluation
                 </p>
                 <h1 className="truncate text-lg font-semibold text-foreground sm:text-xl">
                   {positionTitle}
@@ -49,33 +54,34 @@ export function EvaluationHeader({
             <KeyboardShortcutsHelp />
             <Button variant="outline" size="sm" onClick={onExit}>
               <X className="mr-2 h-4 w-4" />
-              Save & Exit
+              Save & exit
             </Button>
           </div>
         </div>
-        <div className="pb-2">
-          <div className="flex w-full h-2 rounded-full overflow-hidden gap-1">
-            {Array.from({ length: totalDimensions > 0 ? totalDimensions : 12 }).map((_, i) => (
-              <div
-                key={i}
-                className={`flex-1 h-full rounded-sm ${
-                  i < completedDimensions ? 'bg-primary' : 'bg-muted'
-                }`}
-              />
-            ))}
+
+        {/* Position Context Chips */}
+        {(departmentName || grade || location) && (
+          <div className="flex flex-wrap items-center gap-2 pb-3">
+            {departmentName && (
+              <Badge variant="secondary" className="text-xs font-normal">
+                <Building2 className="mr-1.5 h-3 w-3" />
+                {departmentName}
+              </Badge>
+            )}
+            {grade && (
+              <Badge variant="secondary" className="text-xs font-normal">
+                <Award className="mr-1.5 h-3 w-3" />
+                Grade {grade}
+              </Badge>
+            )}
+            {location && (
+              <Badge variant="secondary" className="text-xs font-normal">
+                <MapPin className="mr-1.5 h-3 w-3" />
+                {location}
+              </Badge>
+            )}
           </div>
-          <div className="mt-1 flex justify-between">
-            <p className="text-xs text-muted-foreground">
-              {t('EvaluationStepper.step', {
-                current: completedDimensions,
-                total: totalDimensions,
-              })}
-            </p>
-            <p className="text-xs font-medium text-muted-foreground">
-              {progressPercentage}%
-            </p>
-          </div>
-        </div>
+        )}
       </div>
     </header>
   );

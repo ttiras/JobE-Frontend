@@ -14,12 +14,10 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { executeQuery } from '@/lib/nhost/graphql/client';
-import { Card, CardContent } from '@/components/ui/card';
 import { EvaluationHeader } from '@/components/evaluation/EvaluationHeader';
-import { DimensionSidebar } from '@/components/evaluation/DimensionSidebar';
+import { EvaluationNavigationLayout } from '@/components/evaluation/EvaluationNavigationLayout';
 import { EvaluationSkeleton } from '@/components/evaluation/EvaluationSkeleton';
 import { DimensionQuestionCard } from '@/components/evaluation/DimensionQuestionCard';
-import { NavigationButtons } from '@/components/evaluation/NavigationButtons';
 import { EvaluationProvider, useEvaluation } from '@/lib/contexts/EvaluationContext';
 import { getUnsavedAnswers, clearEvaluation } from '@/lib/localStorage/evaluationStorage';
 import { useAuth } from '@/lib/hooks/use-auth';
@@ -535,51 +533,41 @@ function EvaluationContent({
         totalDimensions={progress.total}
         onExit={handleExit}
       />
-            <div className="container mx-auto flex max-w-full flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-3">
-            <DimensionSidebar
-              factors={getFactorGroups()}
-              currentDimensionId={currentDimension?.id || ''}
-              onDimensionClick={handleDimensionClick}
-              totalCompleted={progress.completed}
-              totalDimensions={progress.total}
-            />
-          </div>
-          <main className="lg:col-span-9">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentDimension?.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.2 }}
-                className="min-h-[600px]"
-              >
-                <Card>
-                  <CardContent className="p-6">
-                    {currentDimension && (
-                      <DimensionQuestionCard
-                        dimension={currentDimension}
-                        onComplete={handleDimensionComplete}
-                        isSaving={isSaving}
-                        initialAnswers={answers.get(currentDimension.id)?.answers}
-                      />
-                    )}
-                  </CardContent>
-                </Card>
-                <NavigationButtons
-                  onPrevious={goToPreviousDimension}
-                  onNext={goToNextDimension}
-                  isSaving={isSaving}
-                  isFirst={isFirstDimension}
-                  isLast={isLastDimension}
-                />
-              </motion.div>
-            </AnimatePresence>
-          </main>
-        </div>
-      </div>
+      
+      {/* Unified Navigation Layout */}
+      {currentDimension && (
+        <EvaluationNavigationLayout
+          factors={getFactorGroups()}
+          currentDimensionId={currentDimension.id}
+          currentDimensionName={currentDimension.translations[0]?.name || currentDimension.code}
+          currentStep={currentDimensionIndex + 1}
+          totalSteps={evaluationData.factors[currentFactorIndex]?.dimensions.length || 0}
+          onDimensionClick={handleDimensionClick}
+          totalCompleted={progress.completed}
+          totalDimensions={progress.total}
+        >
+          {/* Question Card - Animates independently */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentDimension.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+            >
+              <DimensionQuestionCard
+                dimension={currentDimension}
+                onComplete={handleDimensionComplete}
+                isSaving={isSaving}
+                initialAnswers={answers.get(currentDimension.id)?.answers}
+                locale={locale}
+                totalQuestionsAcrossAllDimensions={progress.total * 6}
+                currentQuestionIndexAcrossAllDimensions={currentDimensionIndex * 6}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </EvaluationNavigationLayout>
+      )}
     </>
   );
 }

@@ -138,7 +138,8 @@
     "evaluation": {
       "title": "Pozisyon Değerlendirme",
       "description": "Pozisyon değerlendirmelerini inceleyin ve tamamlayın",
-      "sidebarTitle": "Faktörler"
+      "sidebarTitle": "Faktörler",
+      "navigation": "Navigasyon"
     },
     "departments": {
       "title": "Departmanlar",
@@ -878,5 +879,11 @@
   },
   "EvaluationStepper": {
     "step": "Adım {current} / {total}"
+  },
+  "Questionnaire": {
+    "helperText": "Mevcut görevli değil, tipik gereksinimler temelinde yanıt verin.",
+    "questionCounter": "Soru {current} / {total}",
+    "dimensionLabel": "Boyut",
+    "dimensions": "Boyutlar"
   }
 }

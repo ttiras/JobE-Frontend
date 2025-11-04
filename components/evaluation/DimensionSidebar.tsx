@@ -114,6 +114,8 @@ export function DimensionSidebar({
               }}
               completedCount={completedCount}
               totalCount={totalCount}
+              currentDimensionId={currentDimensionId}
+              onDimensionClick={handleDimensionClick}
             />
           );
         })}
@@ -125,12 +127,22 @@ export function DimensionSidebar({
     <>
       {/* Desktop Sidebar */}
       <aside className="hidden lg:block">
-        <div className="sticky top-24">
-          <h3 className="px-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            {t('sidebarTitle')}
-          </h3>
-          <div className="mt-4">{sidebarContent}</div>
-        </div>
+        <motion.div 
+          className="sticky top-24 space-y-3"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+        >
+          {/* Sidebar Header Label - Matches DimensionHeader "Dimensions" Label */}
+          <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-2.5">
+            <h3 className="text-[10px] font-bold text-primary uppercase tracking-widest">
+              {t('sidebarTitle', { defaultValue: 'Factors' })}
+            </h3>
+          </div>
+          
+          {/* Factor List */}
+          <div>{sidebarContent}</div>
+        </motion.div>
       </aside>
 
       {/* Mobile - Floating Button */}
@@ -145,22 +157,15 @@ export function DimensionSidebar({
             <Button
               variant="outline"
               size="lg"
-              className="h-14 w-14 rounded-full border-border/60 bg-background/90 p-0 text-muted-foreground shadow-lg transition hover:shadow-xl"
+              className="h-14 w-14 rounded-full border-primary/30 bg-primary/10 p-0 shadow-lg shadow-primary/20 transition hover:shadow-xl hover:shadow-primary/30 hover:bg-primary/15"
             >
               <span className="sr-only">Open navigator</span>
-              <List className="h-6 w-6" />
+              <List className="h-6 w-6 text-primary" />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-[300px] sm:w-[360px] p-0">
-            <SheetHeader className="px-6 py-4 border-b bg-muted/30">
-              <div className="flex items-center justify-between">
-                <div>
-                  <SheetTitle className="text-lg">All Dimensions</SheetTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {totalCompleted} of {totalDimensions} completed
-                  </p>
-                </div>
-              </div>
+            <SheetHeader className="px-6 py-4 border-b">
+              <SheetTitle className="text-lg text-foreground">{t('navigation', { defaultValue: 'Navigation' })}</SheetTitle>
             </SheetHeader>
             {sidebarContent}
           </SheetContent>

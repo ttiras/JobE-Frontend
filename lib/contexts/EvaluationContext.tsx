@@ -72,9 +72,7 @@ const saveDimensionScore = async (variables: SaveDimensionScoreVariables) => {
         }
       }
     `,
-    {
-      variables,
-    }
+    variables
   );
 
   return response;

@@ -187,11 +187,6 @@ function HorizontalStepper({
                   >
                     {factor.name}
                   </p>
-
-                  {/* Progress Fraction */}
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {factor.completedDimensions}/{factor.dimensionCount} dimensions
-                  </p>
                 </div>
               </div>
 
@@ -324,9 +319,6 @@ function VerticalStepper({
                   )}
                 >
                   {factor.name}
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {factor.completedDimensions}/{factor.dimensionCount} dimensions
                 </p>
               </div>
             </div>

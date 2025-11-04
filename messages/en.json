@@ -138,7 +138,8 @@
     "evaluation": {
       "title": "Position Evaluation",
       "description": "Review and complete position evaluations",
-      "sidebarTitle": "Factors"
+      "sidebarTitle": "Factors",
+      "navigation": "Navigation"
     },
     "departments": {
       "title": "Departments",
@@ -877,5 +878,11 @@
   },
   "EvaluationStepper": {
     "step": "Step {current} of {total}"
+  },
+  "Questionnaire": {
+    "helperText": "Answer based on typical requirements, not the current occupant.",
+    "questionCounter": "Question {current} of {total}",
+    "dimensionLabel": "Dimension",
+    "dimensions": "Dimensions"
   }
 }

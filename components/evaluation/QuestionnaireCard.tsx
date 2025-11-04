@@ -19,12 +19,16 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface QuestionnaireCardProps {
   dimensionId: string;
   onComplete: (resultingLevel: number, answers: DimensionAnswers) => void;
   initialAnswers?: DimensionAnswers;
   isSaving: boolean;
+  locale?: string;
+  totalQuestionsAcrossAllDimensions?: number;
+  currentQuestionIndexAcrossAllDimensions?: number;
 }
 
 interface GetDimensionQuestionsResponse {
@@ -36,7 +40,11 @@ export function QuestionnaireCard({
   onComplete,
   initialAnswers = {},
   isSaving,
+  locale = 'en',
+  totalQuestionsAcrossAllDimensions,
+  currentQuestionIndexAcrossAllDimensions,
 }: QuestionnaireCardProps) {
+  const t = useTranslations('Questionnaire');
   const [currentQuestionKey, setCurrentQuestionKey] = useState('q1');
   const [answers, setAnswers] = useState<DimensionAnswers>(initialAnswers);
   const [questionsMap, setQuestionsMap] = useState<Map<string, Question>>(new Map());
@@ -52,7 +60,7 @@ export function QuestionnaireCard({
         
         const data = await executeQuery<GetDimensionQuestionsResponse>(
           GET_DIMENSION_QUESTIONS,
-          { dimensionId, language: 'en' } // FIXME: Hardcoded language
+          { dimensionId, language: locale }
         );
 
         if (!data.questions || data.questions.length === 0) {
@@ -75,7 +83,7 @@ export function QuestionnaireCard({
     };
 
     fetchQuestions();
-  }, [dimensionId]);
+  }, [dimensionId, locale]);
 
   // Restore state from initialAnswers
   useEffect(() => {
@@ -164,54 +172,80 @@ export function QuestionnaireCard({
 
   const isFirstQuestion = currentQuestionKey === 'q1';
 
+  // Calculate current question number
+  const questionNumber = currentQuestion.order_index + 1;
+  const totalQuestions = questionsMap.size;
+
+  // Use global question numbers if provided, otherwise fall back to dimension-specific
+  const displayQuestionNumber = currentQuestionIndexAcrossAllDimensions !== undefined
+    ? currentQuestionIndexAcrossAllDimensions + questionNumber
+    : questionNumber;
+  const displayTotalQuestions = totalQuestionsAcrossAllDimensions || totalQuestions;
+
+  // Get next question for preview
+  const getNextQuestionKey = (currentKey: string): string | null => {
+    const currentQ = questionsMap.get(currentKey);
+    if (!currentQ) return null;
+    
+    // Get the first option's next question key (for preview purposes)
+    const firstOption = Object.values(currentQ.options)[0];
+    return firstOption?.next_question_key || null;
+  };
+
+  const nextQuestionKey = getNextQuestionKey(currentQuestionKey);
+  const nextQuestion = nextQuestionKey ? questionsMap.get(nextQuestionKey) : null;
+
+  // Calculate next question display numbers
+  const nextQuestionNumber = nextQuestion ? nextQuestion.order_index + 1 : 0;
+  const displayNextQuestionNumber = currentQuestionIndexAcrossAllDimensions !== undefined
+    ? currentQuestionIndexAcrossAllDimensions + nextQuestionNumber
+    : nextQuestionNumber;
+
   return (
     <div className="max-w-3xl mx-auto">
-      <Card className="overflow-hidden border-border/60 bg-card/80 shadow-lg backdrop-blur-sm">
-        <CardHeader className="border-b border-border/60 bg-muted/30 p-6">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold">
-              {currentQuestion.translations[0]?.text || 'Question'}
-            </CardTitle>
-            <Badge variant="secondary" className="font-mono text-xs">
-              {currentQuestion.question_key.toUpperCase()}
-            </Badge>
+      {/* Current Question Card with Carousel Effect */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentQuestionKey}
+          initial={{ opacity: 0, x: 620 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -620 }}
+          transition={{ duration: 0.6, ease: [0.4, 0.0, 0.2, 1] }}
+        >
+          <div className="rounded-2xl border-2 border-border bg-card p-8 shadow-lg">
+            <div className="space-y-8">
+              {/* Question Header */}
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
+                    {t('questionCounter', { current: displayQuestionNumber, total: displayTotalQuestions })}
+                  </p>
+                </div>
+                <h3 className="text-2xl font-semibold leading-relaxed text-foreground sm:text-3xl">
+                  {currentQuestion.translations[0]?.text || 'Question'}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {t('helperText')}
+                </p>
+              </div>
+
+              {/* Options */}
+              <div className="space-y-3">
+                {Object.entries(currentQuestion.options).map(([optionKey, option]) => (
+                  <OptionButton
+                    key={optionKey}
+                    optionKey={optionKey}
+                    option={option}
+                    onSelect={handleAnswer}
+                    isSelected={answers[currentQuestionKey] === optionKey}
+                    isSaving={isSaving && option.resulting_level !== null}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
-        </CardHeader>
-        <CardContent className="p-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentQuestionKey}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="space-y-4"
-            >
-              {Object.entries(currentQuestion.options).map(([optionKey, option]) => (
-                <OptionButton
-                  key={optionKey}
-                  optionKey={optionKey}
-                  option={option}
-                  onSelect={handleAnswer}
-                  isSelected={answers[currentQuestionKey] === optionKey}
-                  isSaving={isSaving && option.resulting_level !== null}
-                />
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        </CardContent>
-        <div className="flex items-center justify-end gap-3 border-t border-border/60 bg-muted/30 p-4">
-          {!isFirstQuestion && (
-            <Button variant="ghost" size="sm" onClick={handleBack} disabled={isSaving}>
-              Back
-            </Button>
-          )}
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <HelpCircle className="h-4 w-4" />
-            <span>Your progress is saved automatically.</span>
-          </div>
-        </div>
-      </Card>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
@@ -230,47 +264,43 @@ function OptionButton({ optionKey, option, onSelect, isSelected, isSaving }: Opt
 
   return (
     <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
       onClick={() => onSelect(optionKey, option)}
       disabled={isSaving}
       className={cn(
-        'w-full rounded-lg border p-5 text-left transition-all duration-200',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        'group relative w-full rounded-xl border-2 px-6 py-4 text-left transition-all duration-200',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
         isSelected
-          ? 'border-primary/80 bg-primary/10 ring-2 ring-primary/60'
-          : 'border-border/70 bg-background/50 hover:border-primary/60 hover:bg-muted/50',
-        isSaving && isSelected ? 'cursor-wait' : ''
+          ? 'border-primary bg-primary/5 shadow-md'
+          : 'border-border bg-background hover:border-primary/50 hover:shadow-sm',
+        isSaving && isSelected ? 'cursor-wait opacity-70' : 'cursor-pointer'
       )}
     >
-      <div className="flex items-start gap-4">
-        <div className="mt-1">
+      <div className="flex items-center gap-4">
+        <div className="flex-shrink-0">
           {isSelected ? (
-            <CheckCircle2 className="h-5 w-5 text-primary" />
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            >
+              <div className="h-5 w-5 rounded-full bg-primary flex items-center justify-center">
+                <Check className="h-3 w-3 text-primary-foreground" />
+              </div>
+            </motion.div>
           ) : (
-            <Circle className="h-5 w-5 text-muted-foreground/60" />
+            <div className="h-5 w-5 rounded-full border-2 border-muted-foreground/40 transition-colors group-hover:border-primary/60" />
           )}
         </div>
         <div className="flex-1">
-          <p className="font-semibold text-foreground">{optionText}</p>
+          <p className={cn(
+            "text-[15px] font-medium leading-relaxed transition-colors",
+            isSelected ? "text-foreground" : "text-foreground/80 group-hover:text-foreground"
+          )}>
+            {optionText}
+          </p>
         </div>
-        {isTerminal && (
-          <div className="flex items-center gap-2">
-            {isSaving && isSelected ? (
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                className="h-5 w-5"
-              >
-                <Check className="h-5 w-5 animate-spin" />
-              </motion.div>
-            ) : (
-              <Badge variant={isSelected ? 'default' : 'secondary'}>
-                Level {option.resulting_level}
-              </Badge>
-            )}
-          </div>
-        )}
       </div>
     </motion.button>
   );
