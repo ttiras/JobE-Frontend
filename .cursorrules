@@ -1,0 +1,134 @@
+# JobE Frontend - Cursor AI Agent Rules
+
+## Project Overview
+JobE is a Next.js 16 application for HR professionals to manage organizational structures, evaluate positions, and analyze compensation. It uses Nhost as the backend (GraphQL, Auth, Storage), TypeScript, Tailwind CSS, and follows strict TDD principles.
+
+## Core Principles (NON-NEGOTIABLE)
+1. **Component-First Architecture**: Every feature built with reusable, self-contained components
+2. **Test-Driven Development**: Tests MUST be written before implementation. No exceptions.
+3. **Clean Code**: YAGNI principle, minimal dependencies, simplicity over cleverness
+4. **Progressive Disclosure UX**: Clean interface, reveal complexity gradually
+5. **Accessibility**: WCAG 2.1 AA minimum compliance required
+6. **Branch Strategy**: `develop` for staging, `main` for production
+
+## Technology Stack
+- **Framework**: Next.js 16 (App Router)
+- **Backend**: Nhost (GraphQL, Auth with HTTP-only cookies, Storage)
+- **Language**: TypeScript (strict mode)
+- **Styling**: Tailwind CSS
+- **UI**: shadcn/ui components
+- **i18n**: next-intl (EN default, TR with /tr prefix - default locale omitted from URLs)
+- **Testing**: Jest, React Testing Library, Playwright
+- **Package Manager**: pnpm
+
+## Key Architectural Patterns
+
+### File Structure
+- `app/[locale]/` - Next.js App Router with internationalization
+- `components/` - Reusable components organized by feature
+- `lib/` - Utilities, hooks, contexts, GraphQL clients
+- `hooks/` - Custom React hooks
+- `tests/` - Test files mirror source structure
+- `docs/` - Comprehensive documentation
+
+### Import/Export Pattern
+- Departments and positions are imported **separately** on different pages
+- Excel parser expects **single-sheet files** (first sheet only)
+- `parseExcelImport(buffer, importType)` requires explicit `importType` parameter
+
+### Authentication & Session
+- Uses Nhost with HTTP-only cookies (secure, SSR-compatible)
+- Session refresh happens automatically with exponential backoff
+- Default locale ('en') is **omitted** from URLs (e.g., `/dashboard` not `/en/dashboard`)
+- Turkish locale uses `/tr` prefix (e.g., `/tr/dashboard`)
+
+### Component Patterns
+- All components must be self-contained and independently testable
+- Use TypeScript interfaces for props
+- Follow composition over configuration
+- Export components from `index.ts` files for clean imports
+
+### Testing Requirements
+- **TDD is mandatory**: Write tests first, then implement
+- Unit tests: `tests/unit/`
+- Integration tests: `tests/integration/`
+- E2E tests: `tests/e2e/`
+- All tests must pass before committing
+- Use `pnpm test` to run full suite
+
+### Code Quality
+- TypeScript strict mode enabled
+- ESLint configured with React/Next.js rules
+- Prettier for code formatting
+- All code must pass type-check: `pnpm type-check`
+
+## Common Patterns to Follow
+
+### Creating Components
+1. Write test first (TDD)
+2. Create component in appropriate `components/` subdirectory
+3. Export from `index.ts` if part of a feature module
+4. Add TypeScript interfaces for props
+5. Ensure accessibility (ARIA labels, keyboard nav, focus management)
+
+### Adding Features
+1. Check `.specify/memory/constitution.md` for principles
+2. Review existing similar features for patterns
+3. Write tests first
+4. Implement following existing patterns
+5. Update documentation if needed
+
+### Error Handling
+- Use error boundaries for React components
+- Log errors using `lib/utils/error-logger.ts`
+- Show user-friendly error messages (translated)
+- Handle network errors gracefully
+
+### Internationalization
+- All user-facing text must use `useTranslations()` from next-intl
+- Translation keys in `messages/en.json` and `messages/tr.json`
+- Default locale ('en') omitted from URLs
+- Use `usePathname()` and `useParams()` from `next/navigation`
+
+## Important Notes
+
+### Excel Import
+- Departments and positions imported on separate pages
+- Parser only reads first sheet of Excel file
+- `importType` parameter is required: 'departments' or 'positions'
+- See `docs/parser-import-type-fix.md` for details
+
+### Session Management
+- Sessions stored in HTTP-only cookies (secure)
+- Auto-refresh with exponential backoff
+- SSR-compatible session handling
+- See `docs/security-audit-session-control.md` for details
+
+### RBAC (Role-Based Access Control)
+- Roles defined in database
+- Middleware protects routes
+- Navigation filtered by role
+- See `docs/rbac.md` for details
+
+## Documentation Files
+- `README.md` - Project overview and setup
+- `.specify/memory/constitution.md` - Core principles (MUST READ)
+- `docs/` - Comprehensive feature documentation
+- `IMPLEMENTATION_SUMMARY.md` - Current implementation status
+- `CURSOR_AGENT_GUIDE.md` - Detailed AI agent guide (this file's companion)
+
+## When Making Changes
+1. **Always** check if tests exist - if not, write them first (TDD)
+2. **Always** run `pnpm test` before committing
+3. **Always** run `pnpm type-check` to ensure no TypeScript errors
+4. **Always** follow existing patterns - consistency is key
+5. **Always** update documentation if adding new patterns or features
+
+## Questions to Ask Before Coding
+- Does this follow the Component-First principle?
+- Are there tests for this? (If not, write them first)
+- Does this maintain accessibility standards?
+- Is this consistent with existing patterns?
+- Does this need translation keys?
+- Will this work with SSR?
+

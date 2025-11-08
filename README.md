@@ -2,6 +2,8 @@
 
 A modern job evaluation application for HR professionals to manage organizational structures, evaluate positions, and gain insights into compensation strategies.
 
+> **For AI Agents (Cursor, etc.)**: See [`.cursorrules`](./.cursorrules) and [`CURSOR_AGENT_GUIDE.md`](./CURSOR_AGENT_GUIDE.md) for comprehensive architecture and pattern documentation.
+
 ## Overview
 
 JobE enables HR professionals to:
