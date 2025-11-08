@@ -32,7 +32,7 @@ export function Sidebar({
   const navRef = useRef<HTMLElement>(null);
   const { user } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set(['orgStructure']));
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   // Get orgId from URL params
   const orgId = params?.orgId as string | undefined;
@@ -42,16 +42,29 @@ export function Sidebar({
   const userRole = user?.defaultRole || 'user';
   const visibleNavItems = filterNavigationByRole(navigationConfig, userRole);
 
+  // Normalize pathname for comparison (remove locale prefix if it exists)
+  const normalizedPathname = useMemo(() => {
+    // Remove leading locale if present (e.g., /tr/dashboard/... -> /dashboard/...)
+    // But keep /dashboard/... as is if no locale
+    const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}(\/|$)/, '/');
+    return pathWithoutLocale;
+  }, [pathname]);
+
   // Make nav items org-aware
   const orgAwareNavItems = useMemo(() => {
-    if (!orgId || !locale) return visibleNavItems;
+    if (!orgId) return visibleNavItems;
+    
+    const localePrefix = locale && locale !== 'en' ? `/${locale}` : '';
     
     return visibleNavItems.map(item => ({
       ...item,
-      href: `/${locale}/dashboard/${orgId}${item.href}`,
+      href: `${localePrefix}/dashboard/${orgId}${item.href}`,
+      // Store normalized href for comparison (without locale)
+      normalizedHref: `/dashboard/${orgId}${item.href}`,
       children: item.children?.map(child => ({
         ...child,
-        href: `/${locale}/dashboard/${orgId}${child.href}`
+        href: `${localePrefix}/dashboard/${orgId}${child.href}`,
+        normalizedHref: `/dashboard/${orgId}${child.href}`
       }))
     }));
   }, [visibleNavItems, orgId, locale]);
@@ -101,17 +114,32 @@ export function Sidebar({
       onKeyDown={handleKeyDown}
     >
       {orgAwareNavItems.map((item) => {
-        // Check if any child is active
-        const isChildActive = item.children?.some(child => 
-          pathname === child.href || pathname.startsWith(`${child.href}/`)
-        );
+        // Check if any child is active using normalized paths
+        const hasActiveChild = item.children?.some(child => {
+          const childNormalized = (child as any).normalizedHref || child.href;
+          return normalizedPathname === childNormalized || normalizedPathname.startsWith(`${childNormalized}/`);
+        });
         
-        // Special handling for dashboard (empty href becomes the org root)
-        const isActive = item.href 
-          ? pathname === item.href || pathname.startsWith(`${item.href}/`) || isChildActive
-          : pathname === `/${locale}/dashboard/${orgId}`;
+        // Check if current item is active using normalized paths
+        // Parent items should NOT be active if a child is active
+        const itemNormalized = (item as any).normalizedHref || item.href;
         
-        const isExpanded = expandedItems.has(item.id);
+        let isActive = false;
+        if (itemNormalized) {
+          // For items with children, only exact match (no startsWith to avoid matching children routes)
+          if (item.children && item.children.length > 0) {
+            isActive = !hasActiveChild && normalizedPathname === itemNormalized;
+          } else {
+            // For items without children, allow startsWith for sub-routes
+            isActive = normalizedPathname === itemNormalized || normalizedPathname.startsWith(`${itemNormalized}/`);
+          }
+        } else {
+          // Dashboard (empty href) - only exact match
+          isActive = !hasActiveChild && (normalizedPathname === `/dashboard/${orgId}` || normalizedPathname === `/dashboard/${orgId}/`);
+        }
+        
+        // Auto-expand parent if a child is active
+        const isExpanded = expandedItems.has(item.id) || hasActiveChild;
         
         return (
           <div key={item.id}>
@@ -126,11 +154,17 @@ export function Sidebar({
               onToggle={() => toggleExpanded(item.id)}
             />
             
-            {/* Render children when expanded */}
-            {item.children && isExpanded && (isHovered || isMobile) && (
+            {/* Render children with sliding animation */}
+            <div className={cn(
+              "overflow-hidden transition-all duration-300 ease-out",
+              item.children && isExpanded && (isHovered || isMobile) 
+                ? "max-h-96 opacity-100" 
+                : "max-h-0 opacity-0"
+            )}>
               <div className="ml-4 mt-1 space-y-1">
-                {item.children.map((child) => {
-                  const isChildItemActive = pathname === child.href || pathname.startsWith(`${child.href}/`);
+                {item.children?.map((child) => {
+                  const childNormalized = (child as any).normalizedHref || child.href;
+                  const isChildItemActive = normalizedPathname === childNormalized || normalizedPathname.startsWith(`${childNormalized}/`);
                   return (
                     <NavItem
                       key={child.id}
@@ -138,13 +172,13 @@ export function Sidebar({
                       isActive={isChildItemActive}
                       label={t(child.label)}
                       isCollapsed={false}
-                      isHovered={true}
+                      isHovered={isHovered || isMobile}
                       isChild={true}
                     />
                   );
                 })}
               </div>
-            )}
+            </div>
           </div>
         );
       })}
@@ -180,9 +214,9 @@ export function Sidebar({
       className={cn(
         'fixed left-0 top-14 z-50 h-[calc(100vh-3.5rem)] flex flex-col',
         'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
-        'transition-all duration-300 ease-out',
+        'transition-[width] duration-250 ease-out',
         isHovered ? 'w-60' : 'w-16',
-        'shadow-sm'
+        'shadow-sm overflow-hidden' // Add overflow-hidden to clip content
       )}
     >
       {/* Border that moves with the width */}
