@@ -11,102 +11,22 @@ import { Badge } from '@/components/ui/badge'
 import { Lightbulb } from 'lucide-react'
 import { useMediaQuery } from '@/lib/hooks/use-media-query'
 
-interface ExcelFormatPreviewProps {
-  /** Which format to show by default */
-  defaultType?: 'departments' | 'positions'
-  /** Show both types or just one */
-  showBoth?: boolean
+interface ColumnDefinition {
+  letter: string
+  name: string
+  description: string
+  required: boolean
 }
 
-export function ExcelFormatPreview({ 
-  defaultType = 'departments',
-  showBoth = true 
-}: ExcelFormatPreviewProps) {
-  const t = useTranslations('import.format')
-  const isMobile = useMediaQuery('(max-width: 768px)')
+interface FormatContentProps {
+  type: 'departments' | 'positions'
+  departmentColumns: ColumnDefinition[]
+  positionColumns: ColumnDefinition[]
+}
 
-  // Department column definitions (matching database schema)
-  const departmentColumns = [
-    {
-      letter: 'A',
-      name: 'dept_code',
-      description: t('departments.columns.code.description'),
-      required: true
-    },
-    {
-      letter: 'B',
-      name: 'name',
-      description: t('departments.columns.name.description'),
-      required: true
-    },
-    {
-      letter: 'C',
-      name: 'parent_dept_code',
-      description: t('departments.columns.parent_code.description'),
-      required: false
-    }
-  ]
-
-  // Position column definitions (matching database schema)
-  const positionColumns = [
-    {
-      letter: 'A',
-      name: 'pos_code',
-      description: t('positions.columns.code'),
-      required: true
-    },
-    {
-      letter: 'B',
-      name: 'title',
-      description: t('positions.columns.title'),
-      required: true
-    },
-    {
-      letter: 'C',
-      name: 'dept_code',
-      description: t('positions.columns.department_code'),
-      required: true
-    },
-    {
-      letter: 'D',
-      name: 'description',
-      description: t('positions.columns.description'),
-      required: false
-    },
-    {
-      letter: 'E',
-      name: 'employment_type',
-      description: t('positions.columns.employment_type'),
-      required: false
-    },
-    {
-      letter: 'F',
-      name: 'location',
-      description: t('positions.columns.location'),
-      required: false
-    },
-    {
-      letter: 'G',
-      name: 'salary_min',
-      description: t('positions.columns.salary_min'),
-      required: false
-    },
-    {
-      letter: 'H',
-      name: 'salary_max',
-      description: t('positions.columns.salary_max'),
-      required: false
-    },
-    {
-      letter: 'I',
-      name: 'salary_currency',
-      description: t('positions.columns.salary_currency'),
-      required: false
-    }
-  ]
-
-  const FormatContent = ({ type }: { type: 'departments' | 'positions' }) => {
-    const columns = type === 'departments' ? departmentColumns : positionColumns
+// Move FormatContent outside component to avoid recreating on every render
+function FormatContent({ type, departmentColumns, positionColumns }: FormatContentProps) {
+  const columns = type === 'departments' ? departmentColumns : positionColumns
     
     // Show only first 3-4 columns for compactness
     const displayColumns = type === 'departments' ? columns : columns.slice(0, 4)
@@ -246,7 +166,101 @@ export function ExcelFormatPreview({
         </div>
       </div>
     )
-  }
+}
+
+interface ExcelFormatPreviewProps {
+  /** Which format to show by default */
+  defaultType?: 'departments' | 'positions'
+  /** Show both types or just one */
+  showBoth?: boolean
+}
+
+export function ExcelFormatPreview({ 
+  defaultType = 'departments',
+  showBoth = true 
+}: ExcelFormatPreviewProps) {
+  const t = useTranslations('import.format')
+  const isMobile = useMediaQuery('(max-width: 768px)')
+
+  // Department column definitions (matching database schema)
+  const departmentColumns: ColumnDefinition[] = [
+    {
+      letter: 'A',
+      name: 'dept_code',
+      description: t('departments.columns.code.description'),
+      required: true
+    },
+    {
+      letter: 'B',
+      name: 'name',
+      description: t('departments.columns.name.description'),
+      required: true
+    },
+    {
+      letter: 'C',
+      name: 'parent_dept_code',
+      description: t('departments.columns.parent_code.description'),
+      required: false
+    }
+  ]
+
+  // Position column definitions (matching database schema)
+  const positionColumns: ColumnDefinition[] = [
+    {
+      letter: 'A',
+      name: 'pos_code',
+      description: t('positions.columns.code'),
+      required: true
+    },
+    {
+      letter: 'B',
+      name: 'title',
+      description: t('positions.columns.title'),
+      required: true
+    },
+    {
+      letter: 'C',
+      name: 'dept_code',
+      description: t('positions.columns.department_code'),
+      required: true
+    },
+    {
+      letter: 'D',
+      name: 'description',
+      description: t('positions.columns.description'),
+      required: false
+    },
+    {
+      letter: 'E',
+      name: 'employment_type',
+      description: t('positions.columns.employment_type'),
+      required: false
+    },
+    {
+      letter: 'F',
+      name: 'location',
+      description: t('positions.columns.location'),
+      required: false
+    },
+    {
+      letter: 'G',
+      name: 'salary_min',
+      description: t('positions.columns.salary_min'),
+      required: false
+    },
+    {
+      letter: 'H',
+      name: 'salary_max',
+      description: t('positions.columns.salary_max'),
+      required: false
+    },
+    {
+      letter: 'I',
+      name: 'salary_currency',
+      description: t('positions.columns.salary_currency'),
+      required: false
+    }
+  ]
 
   // Mobile: Use Accordion
   if (isMobile && showBoth) {
@@ -259,7 +273,7 @@ export function ExcelFormatPreview({
             </span>
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
-            <FormatContent type="departments" />
+            <FormatContent type="departments" departmentColumns={departmentColumns} positionColumns={positionColumns} />
           </AccordionContent>
         </AccordionItem>
 
@@ -270,7 +284,7 @@ export function ExcelFormatPreview({
             </span>
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
-            <FormatContent type="positions" />
+            <FormatContent type="positions" departmentColumns={departmentColumns} positionColumns={positionColumns} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -279,7 +293,7 @@ export function ExcelFormatPreview({
 
   // Single view if showBoth is false
   if (!showBoth) {
-    return <FormatContent type={defaultType} />
+    return <FormatContent type={defaultType} departmentColumns={departmentColumns} positionColumns={positionColumns} />
   }
 
   // Desktop: Use Tabs
@@ -295,11 +309,11 @@ export function ExcelFormatPreview({
       </TabsList>
 
       <TabsContent value="departments" className="mt-0">
-        <FormatContent type="departments" />
+        <FormatContent type="departments" departmentColumns={departmentColumns} positionColumns={positionColumns} />
       </TabsContent>
 
       <TabsContent value="positions" className="mt-0">
-        <FormatContent type="positions" />
+        <FormatContent type="positions" departmentColumns={departmentColumns} positionColumns={positionColumns} />
       </TabsContent>
     </Tabs>
   )

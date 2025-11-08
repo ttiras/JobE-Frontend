@@ -23,6 +23,7 @@ import {
  */
 export function useImportProgress() {
   const trackerRef = useRef<ImportProgressTracker | null>(null)
+  const [tracker, setTracker] = useState<ImportProgressTracker | null>(null)
   const [progressState, setProgressState] = useState<ProgressState>({
     stage: 'idle',
     progress: 0,
@@ -30,23 +31,31 @@ export function useImportProgress() {
 
   // Initialize tracker on mount
   useEffect(() => {
-    trackerRef.current = new ImportProgressTracker()
+    const newTracker = new ImportProgressTracker()
+    trackerRef.current = newTracker
+    
+    // Defer setState to avoid synchronous setState in effect
+    const timeoutId = setTimeout(() => {
+      setTracker(newTracker)
+    }, 0)
     
     // Subscribe to progress updates
-    const unsubscribe = trackerRef.current.subscribe((state) => {
+    const unsubscribe = newTracker.subscribe((state) => {
       setProgressState(state)
     })
 
     // Cleanup on unmount
     return () => {
+      clearTimeout(timeoutId)
       unsubscribe()
       trackerRef.current?.dispose()
       trackerRef.current = null
+      setTracker(null)
     }
   }, [])
 
   return {
-    tracker: trackerRef.current!,
+    tracker: tracker!,
     progressState,
   }
 }

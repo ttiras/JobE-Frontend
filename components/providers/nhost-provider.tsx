@@ -55,8 +55,12 @@ export function NhostProvider({ children }: NhostProviderProps) {
       }
     }
     
-    // Mark as initialized
-    setIsInitialized(true)
+    // Mark as initialized (defer to avoid synchronous setState)
+    const timeoutId = setTimeout(() => {
+      setIsInitialized(true)
+    }, 0)
+    
+    return () => clearTimeout(timeoutId)
   }, [])
   
   // Show loading state during initial client setup

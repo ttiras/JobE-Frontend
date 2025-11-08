@@ -9,20 +9,22 @@ export default function SessionDebugPage() {
   const [session, setSession] = useState<unknown>(null)
   
   useEffect(() => {
-    // Get all cookies
-    setCookies(document.cookie)
-    
-    // Get Nhost session
-    const currentSession = nhost.getUserSession()
-    setSession(currentSession)
-    
-    // Re-check every second
-    const interval = setInterval(() => {
+    // Update state asynchronously to avoid synchronous setState in effect
+    const updateState = () => {
       setCookies(document.cookie)
       setSession(nhost.getUserSession())
-    }, 1000)
+    }
     
-    return () => clearInterval(interval)
+    // Initial update deferred
+    const timeoutId = setTimeout(updateState, 0)
+    
+    // Re-check every second
+    const interval = setInterval(updateState, 1000)
+    
+    return () => {
+      clearTimeout(timeoutId)
+      clearInterval(interval)
+    }
   }, [nhost])
   
   return (

@@ -34,6 +34,7 @@ export function useBatchImport({ config, onComplete, onError }: UseBatchImportOp
   })
 
   const managerRef = useRef<BatchImportManager | null>(null)
+  const [manager, setManager] = useState<BatchImportManager | null>(null)
 
   /**
    * Initialize the batch import
@@ -54,6 +55,7 @@ export function useBatchImport({ config, onComplete, onError }: UseBatchImportOp
       // Create new manager
       const manager = new BatchImportManager(config)
       managerRef.current = manager
+      setManager(manager)
 
       // Subscribe to status updates
       manager.subscribe((newStatus) => {
@@ -148,6 +150,6 @@ export function useBatchImport({ config, onComplete, onError }: UseBatchImportOp
     resume,
     cancel,
     reset,
-    manager: managerRef.current,
+    manager,
   }
 }

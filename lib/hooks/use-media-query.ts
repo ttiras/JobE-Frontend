@@ -6,19 +6,28 @@ import { useEffect, useState } from 'react'
  * @returns boolean indicating if the media query matches
  */
 export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false)
+  // Initialize state with the initial media query match value
+  // Use function initializer to avoid calling matchMedia during SSR
+  const [matches, setMatches] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.matchMedia(query).matches
+  })
 
   useEffect(() => {
     const media = window.matchMedia(query)
     
-    // Set initial value
-    if (media.matches !== matches) {
-      setMatches(media.matches)
-    }
-
-    // Create event listener
+    // Create event listener (this is the proper way - setState in callback)
     const listener = (event: MediaQueryListEvent) => {
       setMatches(event.matches)
+    }
+
+    // Update state if query changed (defer to avoid synchronous setState)
+    let timeoutId: NodeJS.Timeout | null = null
+    if (media.matches !== matches) {
+      // Defer the state update to avoid synchronous setState in effect
+      timeoutId = setTimeout(() => {
+        setMatches(media.matches)
+      }, 0)
     }
 
     // Add listener (modern browsers)
@@ -31,13 +40,16 @@ export function useMediaQuery(query: string): boolean {
 
     // Cleanup
     return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
       if (media.removeEventListener) {
         media.removeEventListener('change', listener)
       } else {
         media.removeListener(listener)
       }
     }
-  }, [matches, query])
+  }, [query, matches])
 
   return matches
 }

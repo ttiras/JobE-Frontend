@@ -22,10 +22,15 @@ export function OrganizationProvider({ children }: { children: React.ReactNode }
   // Load persisted organization on mount
   useEffect(() => {
     const stored = getStoredOrganization();
-    if (stored) {
-      setCurrentOrganization(stored);
-    }
-    setIsLoading(false);
+    // Defer setState to avoid synchronous setState in effect
+    const timeoutId = setTimeout(() => {
+      if (stored) {
+        setCurrentOrganization(stored);
+      }
+      setIsLoading(false);
+    }, 0);
+    
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const switchOrganization = (org: Organization) => {

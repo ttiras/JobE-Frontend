@@ -111,13 +111,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       })
     }
     
-    setAuthState({
-      user,
-      session,
-      isLoading: false,
-      isAuthenticated: !!user,
-      error: null,
-    })
+    // Defer setState to avoid synchronous setState in effect
+    const timeoutId = setTimeout(() => {
+      setAuthState({
+        user,
+        session,
+        isLoading: false,
+        isAuthenticated: !!user,
+        error: null,
+      })
+    }, 0)
 
     // Poll for session changes (Nhost v4 doesn't have direct auth state subscription)
     // Session is automatically refreshed by Nhost SDK middleware
@@ -148,8 +151,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       })
     }, SESSION_POLLING.INTERVAL_MS)
 
-    // Cleanup interval
+    // Cleanup interval and timeout
     return () => {
+      clearTimeout(timeoutId)
       clearInterval(intervalId)
     }
   }, [nhost])
