@@ -83,7 +83,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="container max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
       {/* No organization case */}
       {!currentOrganization && organizations.length === 0 && (
         <>

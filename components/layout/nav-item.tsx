@@ -52,23 +52,26 @@ export function NavItem({
       className={cn(
         'group relative flex items-center transition-all duration-200',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-        'text-muted-foreground hover:text-foreground',
-        'justify-start py-2.5',
-        // When expanded, the background spans the full width
-        isHovered ? 'px-2 rounded-lg hover:bg-accent/50' : 'px-2 w-16 rounded-lg',
-        isActive && isHovered && 'bg-accent text-foreground',
+        'py-2.5 px-2 rounded-lg',
+        'overflow-hidden', // Important for clipping the sliding content
+        isActive 
+          ? 'bg-primary/90 text-primary-foreground font-semibold shadow-sm border-l-4 border-primary-foreground/30' 
+          : 'text-muted-foreground hover:text-foreground hover:bg-accent/50',
         isChild && 'text-sm py-2'
       )}
       aria-label={isCollapsed ? label : undefined}
       aria-current={isActive ? 'page' : undefined}
       aria-expanded={hasChildren ? isExpanded : undefined}
     >
-      {/* Icon container - stays in fixed position */}
+      {/* Active indicator bar */}
+      {isActive && (
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-foreground rounded-r-full" />
+      )}
+      
+      {/* Icon container - fixed position */}
       <div className={cn(
         'flex items-center justify-center transition-all duration-200 flex-shrink-0',
-        'w-8 h-8 rounded-md relative z-10',
-        isActive && !isHovered && 'bg-accent text-foreground',
-        !isActive && !isHovered && 'group-hover:bg-accent/50',
+        'w-8 h-8 rounded-md',
         isChild && 'w-6 h-6'
       )}>
         {IconComponent && (
@@ -84,26 +87,30 @@ export function NavItem({
         )}
       </div>
       
-      {/* Label that slides in from the right with beautiful animation */}
-      <span className={cn(
-        "absolute left-14 text-sm font-medium whitespace-nowrap px-3 py-2",
-        "transition-all duration-300 ease-out flex items-center gap-2",
-        isActive && 'text-foreground',
-        isHovered 
-          ? 'opacity-100 translate-x-0 visible pointer-events-auto' 
-          : 'opacity-0 -translate-x-4 invisible pointer-events-none',
-        isChild && 'text-xs left-12'
-      )}>
-        {label}
+      {/* Label container with sliding animation */}
+      <div
+        className={cn(
+          "flex items-center gap-2 ml-3 whitespace-nowrap",
+          "transition-all duration-300 ease-out",
+          // Use width and opacity for smooth slide effect
+          isHovered 
+            ? 'w-40 opacity-100' 
+            : 'w-0 opacity-0 ml-0',
+          isChild && 'text-xs'
+        )}
+      >
+        <span className="font-medium">
+          {label}
+        </span>
         {hasChildren && isHovered && (
           <ChevronDown 
             className={cn(
-              "h-3 w-3 transition-transform duration-200",
+              "h-3 w-3 transition-transform duration-200 ml-auto",
               isExpanded && "rotate-180"
             )}
           />
         )}
-      </span>
+      </div>
     </Link>
   );
 

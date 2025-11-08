@@ -363,7 +363,7 @@ export function HierarchyPageClient({ locale, orgId }: HierarchyPageClientProps)
 
   if (loading) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="w-full px-4 md:px-6 lg:px-8 xl:px-12 py-6">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
           <Link
@@ -396,7 +396,7 @@ export function HierarchyPageClient({ locale, orgId }: HierarchyPageClientProps)
 
   if (error) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="w-full px-4 md:px-6 lg:px-8 xl:px-12 py-6">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
           <Link
@@ -432,7 +432,7 @@ export function HierarchyPageClient({ locale, orgId }: HierarchyPageClientProps)
 
   if (departments.length === 0) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="w-full px-4 md:px-6 lg:px-8 xl:px-12 py-6">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
           <Link
@@ -489,7 +489,7 @@ export function HierarchyPageClient({ locale, orgId }: HierarchyPageClientProps)
   }
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div className="w-full px-4 md:px-6 lg:px-8 xl:px-12 py-6 space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Link

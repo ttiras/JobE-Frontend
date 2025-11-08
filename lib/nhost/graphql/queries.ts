@@ -51,7 +51,7 @@ export const GET_USER_ORGANIZATIONS = `
       updatedAt
       members(where: { userId: { _eq: $userId } }) {
         role
-        isActive
+        is_active
       }
     }
   }
@@ -79,7 +79,7 @@ export const GET_ORGANIZATION = `
         id
         userId
         role
-        isActive
+        is_active
         joinedAt
         user {
           id
@@ -97,7 +97,7 @@ export const GET_ORGANIZATION = `
  */
 export const GET_ORGANIZATION_POSITIONS = `
   query GetOrganizationPositions($organizationId: uuid!) {
-    positions(where: { organizationId: { _eq: $organizationId } }) {
+    positions(where: { organization_id: { _eq: $organizationId } }) {
       id
       organizationId
       departmentId
@@ -114,7 +114,7 @@ export const GET_ORGANIZATION_POSITIONS = `
       requiredSkills
       responsibilities
       benefits
-      isActive
+      is_active
       createdAt
       updatedAt
       department {
@@ -147,7 +147,7 @@ export const GET_POSITION = `
       requiredSkills
       responsibilities
       benefits
-      isActive
+      is_active
       createdAt
       updatedAt
       department {
@@ -170,7 +170,7 @@ export const GET_POSITION = `
  */
 export const GET_ORGANIZATION_DEPARTMENTS = `
   query GetOrganizationDepartments($organizationId: uuid!) {
-    departments(where: { organizationId: { _eq: $organizationId } }) {
+    departments(where: { organization_id: { _eq: $organizationId } }) {
       id
       organizationId
       name
@@ -178,7 +178,7 @@ export const GET_ORGANIZATION_DEPARTMENTS = `
       parentDepartmentId
       managerId
       description
-      isActive
+      is_active
       createdAt
       updatedAt
       positions_aggregate {

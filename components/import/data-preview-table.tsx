@@ -81,45 +81,9 @@ export function DataPreviewTable({
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Summary statistics */}
-      {showOperations && (
-        <div className="grid grid-cols-2 gap-4 p-4 bg-secondary/50 rounded-lg">
-          <div className="flex items-start gap-3">
-            <Building2 className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-            <div>
-              <div className="font-semibold">{t('departments')}</div>
-              <div className="text-sm text-muted-foreground space-x-2 mt-1">
-                <span>{stats.departments.total} total</span>
-                <span>•</span>
-                <span className="text-green-600 dark:text-green-400">{stats.departments.creates} new</span>
-                <span>•</span>
-                <span className="text-blue-600 dark:text-blue-400">{stats.departments.updates} updates</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-start gap-3">
-            <Briefcase className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-            <div>
-              <div className="font-semibold">{t('positions')}</div>
-              <div className="text-sm text-muted-foreground space-x-2 mt-1">
-                <span>{stats.positions.total} total</span>
-                <span>•</span>
-                <span className="text-green-600 dark:text-green-400">{stats.positions.creates} new</span>
-                <span>•</span>
-                <span className="text-blue-600 dark:text-blue-400">{stats.positions.updates} updates</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Departments table */}
       {departments.length > 0 && (
         <div className="border rounded-lg overflow-hidden">
-          <div className="bg-secondary/50 px-4 py-3 font-semibold flex items-center gap-2">
-            <Building2 className="h-4 w-4" />
-            {t('departments')} ({departments.length})
-          </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-secondary/30 border-y sticky top-0 z-10">
@@ -191,10 +155,6 @@ export function DataPreviewTable({
       {/* Positions table */}
       {positions.length > 0 && (
         <div className="border rounded-lg overflow-hidden">
-          <div className="bg-secondary/50 px-4 py-3 font-semibold flex items-center gap-2">
-            <Briefcase className="h-4 w-4" />
-            {t('positions')} ({positions.length})
-          </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-secondary/30 border-y sticky top-0 z-10">

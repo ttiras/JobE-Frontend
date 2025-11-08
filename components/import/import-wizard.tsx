@@ -1,32 +1,33 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'next/navigation'
-import { Card, CardContent } from '@/components/ui/card'
 import { ImportWizardStep1 } from './import-wizard-step1'
 import { ImportWizardStep2 } from './import-wizard-step2'
-import { ImportWizardStep4 } from './import-wizard-step4'
-import { Progress } from '@/components/ui/progress'
-import { Badge } from '@/components/ui/badge'
-import { CheckCircle2 } from 'lucide-react'
 import { useImportWorkflow } from '@/hooks/useImportWorkflow'
 import { ImportWorkflowState } from '@/lib/types/import'
 import { animations } from '@/lib/utils/animations'
 
 interface ImportWizardProps {
-  onSuccess?: () => void
+  onSuccess?: (stats?: { departments?: number; positions?: number }) => void
+  onBackToUpload?: () => void
   importType?: 'departments' | 'positions'
   initialFile?: File | null  // Allow passing file directly from main page
 }
 
-export function ImportWizard({ onSuccess, importType = 'positions', initialFile = null }: ImportWizardProps) {
-  const t = useTranslations('import.wizard')
+export function ImportWizard({ onSuccess, onBackToUpload, importType = 'positions', initialFile = null }: ImportWizardProps) {
   const params = useParams()
   const orgId = params.orgId as string
   const locale = params.locale as string
 
   const [currentStep, setCurrentStep] = useState(initialFile ? 2 : 1)  // Skip step 1 if file provided
+  const [hasCalledSuccess, setHasCalledSuccess] = useState(false)
+  
+  // Use ref to avoid onSuccess being a dependency
+  const onSuccessRef = useRef(onSuccess)
+  useEffect(() => {
+    onSuccessRef.current = onSuccess
+  }, [onSuccess])
   
   const {
     context,
@@ -78,16 +79,21 @@ export function ImportWizard({ onSuccess, importType = 'positions', initialFile 
       if (currentStep !== 2) {
         setCurrentStep(2)
       }
-    } else if (context.state === ImportWorkflowState.SUCCESS && currentStep === 2) {
-      console.log('Import SUCCESS detected, advancing to step 3')
-      setCurrentStep(3)
-      // Trigger success callback if provided
-      if (onSuccess) {
+    } else if (context.state === ImportWorkflowState.SUCCESS && currentStep === 2 && !hasCalledSuccess) {
+      console.log('Import SUCCESS detected, redirecting...')
+      setHasCalledSuccess(true)
+      // Trigger success callback if provided with statistics
+      // This will show toast and redirect to list page
+      if (onSuccessRef.current && context.result) {
         console.log('Calling onSuccess callback')
-        onSuccess()
+        const stats = {
+          departments: context.result.totalDepartments || 0,
+          positions: context.result.totalPositions || 0,
+        }
+        onSuccessRef.current(stats)
       }
     }
-  }, [context.state, currentStep, onSuccess])
+  }, [context.state, context.result, currentStep, hasCalledSuccess])
 
   /**
    * Handle Step 1: File upload
@@ -145,7 +151,11 @@ export function ImportWizard({ onSuccess, importType = 'positions', initialFile 
    * Go back to previous step
    */
   const goBack = () => {
-    if (currentStep > 1) {
+    if (currentStep === 2 && initialFile && onBackToUpload) {
+      // If we have an initialFile and are on step 2, go back to upload page
+      onBackToUpload()
+    } else if (currentStep > 1) {
+      // Otherwise just go to previous step
       setCurrentStep(currentStep - 1)
     }
   }
@@ -156,6 +166,7 @@ export function ImportWizard({ onSuccess, importType = 'positions', initialFile 
   const resetWizard = () => {
     reset()
     setCurrentStep(1)
+    setHasCalledSuccess(false)
   }
 
   /**
@@ -175,181 +186,27 @@ export function ImportWizard({ onSuccess, importType = 'positions', initialFile 
     }
   }
 
-  const totalSteps = 3
-  const progress = ((currentStep - 1) / (totalSteps - 1)) * 100
-  const [isTransitioning, setIsTransitioning] = useState(false)
-
-  // Handle step transition animations
-  const handleStepChange = (newStep: number) => {
-    setIsTransitioning(true)
-    setTimeout(() => {
-      setCurrentStep(newStep)
-      setIsTransitioning(false)
-    }, 150)
-  }
-
   return (
-    <div className={`h-full flex flex-col ${animations.pageEnter}`}>
-      {/* Modern Progress Header */}
-      <div className="flex-shrink-0 pb-6 border-b">
-        {/* Step Counter Badge */}
-        <div className="flex items-center justify-between mb-4">
-          <Badge 
-            variant="outline" 
-            className="text-xs font-medium px-3 py-1 bg-primary/5 border-primary/20 text-primary"
-          >
-            {t('stepCount', { current: currentStep, total: totalSteps })}
-          </Badge>
-        </div>
+    <div className={`h-full ${animations.pageEnter}`}>
+      {/* Step content without stepper */}
+      <div className="space-y-6">
+        {currentStep === 1 && (
+          <ImportWizardStep1
+            onFileUploaded={handleFileUploaded}
+            onNext={handleStep1Next}
+            isLoading={isLoading}
+          />
+        )}
 
-        {/* Step Title & Description */}
-        <div className="mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-2 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text">
-            {t(`steps.step${currentStep}.title`)}
-          </h2>
-          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
-            {t(`steps.step${currentStep}.description`)}
-          </p>
-        </div>
-
-        {/* Modern Step Indicator - Desktop */}
-        <div className="hidden md:block">
-          <div className="relative">
-            {/* Progress Background Line */}
-            <div className="absolute top-5 left-0 right-0 h-0.5 bg-muted" />
-            
-            {/* Active Progress Line */}
-            <div 
-              className="absolute top-5 left-0 h-0.5 bg-gradient-to-r from-primary to-primary/60 transition-all duration-500 ease-out"
-              style={{ width: `${(((currentStep - 1) / (totalSteps - 1)) * 100)}%` }}
-            />
-
-            {/* Step Dots */}
-            <div className="relative flex justify-between">
-              {[1, 2, 3].map((step) => (
-                <div key={step} className="flex flex-col items-center gap-2">
-                  <div
-                    className={`
-                      relative z-10 flex items-center justify-center 
-                      w-10 h-10 rounded-full transition-all duration-300
-                      ${step < currentStep
-                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-100'
-                        : step === currentStep
-                        ? 'bg-primary text-primary-foreground shadow-xl shadow-primary/40 scale-110 ring-4 ring-primary/10'
-                        : 'bg-background border-2 border-muted text-muted-foreground scale-90'
-                      }
-                    `}
-                  >
-                    {step < currentStep ? (
-                      <CheckCircle2 className="h-5 w-5" />
-                    ) : (
-                      <span className="text-sm font-bold">{step}</span>
-                    )}
-                  </div>
-                  <span
-                    className={`
-                      text-xs font-medium transition-all duration-200 whitespace-nowrap
-                      ${step === currentStep 
-                        ? 'text-foreground scale-105' 
-                        : step < currentStep
-                        ? 'text-foreground/70'
-                        : 'text-muted-foreground'
-                      }
-                    `}
-                  >
-                    {t(`steps.step${step}.label`)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Step Indicator */}
-        <div className="md:hidden">
-          {/* Mini Step Dots */}
-          <div className="flex items-center justify-center gap-2 mb-3">
-            {[1, 2, 3].map((step) => (
-              <div
-                key={step}
-                className={`
-                  transition-all duration-300
-                  ${step === currentStep 
-                    ? 'w-8 h-2 bg-primary rounded-full' 
-                    : step < currentStep
-                    ? 'w-2 h-2 bg-primary rounded-full'
-                    : 'w-2 h-2 bg-muted rounded-full'
-                  }
-                `}
-              />
-            ))}
-          </div>
-          
-          {/* Progress Bar */}
-          <Progress value={progress} className="h-1.5 bg-muted" />
-          
-          {/* Step Labels */}
-          <div className="flex justify-between mt-3 px-1">
-            {[1, 2, 3].map((step) => (
-              <span
-                key={step}
-                className={`
-                  text-[10px] transition-all duration-200
-                  ${step === currentStep 
-                    ? 'text-foreground font-semibold' 
-                    : step < currentStep
-                    ? 'text-foreground/60 font-medium'
-                    : 'text-muted-foreground'
-                  }
-                `}
-              >
-                {t(`steps.step${step}.label`)}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Step content with smooth transitions and modern styling */}
-      <div className="flex-1 overflow-y-auto pt-6">
-        <div 
-          className={`
-            transition-all duration-300 ease-out
-            ${isTransitioning 
-              ? 'opacity-0 translate-y-4 scale-[0.98]' 
-              : 'opacity-100 translate-y-0 scale-100'
-            }
-          `}
-        >
-          {/* Removed Card wrapper - content flows naturally */}
-          <div className="space-y-6">
-            {currentStep === 1 && (
-              <ImportWizardStep1
-                onFileUploaded={handleFileUploaded}
-                onNext={handleStep1Next}
-                isLoading={isLoading}
-              />
-            )}
-
-            {currentStep === 2 && (
-              <ImportWizardStep2
-                context={context}
-                onBack={goBack}
-                onConfirm={handleStep2Confirm}
-                isLoading={isLoading || context.state === ImportWorkflowState.CONFIRMING}
-                importType={importType}
-              />
-            )}
-
-            {currentStep === 3 && (
-              <ImportWizardStep4
-                context={context}
-                onImportMore={resetWizard}
-                onViewData={handleViewData}
-              />
-            )}
-          </div>
-        </div>
+        {currentStep === 2 && (
+          <ImportWizardStep2
+            context={context}
+            onBack={goBack}
+            onConfirm={handleStep2Confirm}
+            isLoading={isLoading || context.state === ImportWorkflowState.CONFIRMING}
+            importType={importType}
+          />
+        )}
       </div>
     </div>
   )

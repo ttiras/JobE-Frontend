@@ -184,27 +184,31 @@ export function EvaluationResultsClient({
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <p className="ml-3 text-muted-foreground">Loading results...</p>
+      <div className="container max-w-6xl mx-auto p-4 md:p-6 lg:p-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <Loader2 className="h-8 w-8 animate-spin" />
+          <p className="ml-3 text-muted-foreground">Loading results...</p>
+        </div>
       </div>
     );
   }
 
   if (error || !results.evaluation) {
     return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error || 'Failed to load results'}</AlertDescription>
-        <Button 
-          variant="outline" 
-          className="mt-4"
-          onClick={() => router.push(`/${locale}/dashboard/${orgId}/org-structure/positions`)}
-        >
-          Back to Positions
-        </Button>
-      </Alert>
+      <div className="container max-w-6xl mx-auto p-4 md:p-6 lg:p-8">
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error || 'Failed to load results'}</AlertDescription>
+          <Button 
+            variant="outline" 
+            className="mt-4"
+            onClick={() => router.push(`/${locale}/dashboard/${orgId}/org-structure/positions`)}
+          >
+            Back to Positions
+          </Button>
+        </Alert>
+      </div>
     );
   }
 
@@ -248,7 +252,7 @@ export function EvaluationResultsClient({
   };
   
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl space-y-6">
+    <div className="container max-w-6xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

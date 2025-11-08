@@ -68,7 +68,7 @@ export function EvaluationNavigationLayout({
   const currentDimensionIndex = allDimensions.findIndex(d => d.id === currentDimensionId);
 
   return (
-    <div className="container mx-auto flex max-w-full flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
+    <div className="container max-w-7xl mx-auto flex flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8">
       {/* Ultra-Compact Horizontal Progress Tracker */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}

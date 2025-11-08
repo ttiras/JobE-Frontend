@@ -36,7 +36,7 @@ export function EvaluationHeader({
 
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur-sm">
-      <div className="container mx-auto max-w-full px-4 sm:px-6 lg:px-8">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-4">

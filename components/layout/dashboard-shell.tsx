@@ -75,9 +75,7 @@ export function DashboardShell({ children }: DashboardShellProps) {
 
           {/* Main content with left padding to account for sidebar */}
           <main id="main-content" className="flex-1 overflow-auto custom-scrollbar md:pl-16">
-            <div className="container mx-auto p-4 md:p-6 lg:p-8">
-              {children}
-            </div>
+            {children}
           </main>
         </div>
       </div>

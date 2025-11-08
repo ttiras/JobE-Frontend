@@ -172,7 +172,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-8">
+    <div className="container max-w-4xl mx-auto p-4 md:p-6 lg:p-8 space-y-8">
       <div>
         <h1 className="text-3xl font-bold">{t('title')}</h1>
         <p className="text-muted-foreground mt-2">

@@ -4,12 +4,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { toast } from 'sonner'
 import { 
   FileSpreadsheet, 
   ChevronRight,
   HelpCircle,
   FileCheck,
-  AlertCircle
+  AlertCircle,
+  CheckCircle2
 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -45,8 +47,23 @@ export function ImportPageClient({ locale, orgId, type }: ImportPageClientProps)
     }
   }
 
-  const handleImportSuccess = () => {
-    router.push(`/${locale}/dashboard/${orgId}/org-structure/${type}/import/success`)
+  const handleImportSuccess = (stats?: { departments?: number; positions?: number }) => {
+    // Show success toast
+    const count = stats?.departments || 0
+    toast.success('Import Successful!', {
+      description: `${count} department${count !== 1 ? 's' : ''} imported successfully`,
+      icon: <CheckCircle2 className="h-5 w-5" />,
+      duration: 5000,
+    })
+    
+    // Redirect to departments list page
+    router.push(`/${locale}/dashboard/${orgId}/org-structure/departments`)
+  }
+
+  // Handle going back to file selection
+  const handleBackToUpload = () => {
+    setSelectedFile(null)
+    setIsImporting(false)
   }
 
   const pageTitle = type === 'departments' 
@@ -209,6 +226,7 @@ export function ImportPageClient({ locale, orgId, type }: ImportPageClientProps)
           <div className="max-w-4xl mx-auto">
             <ImportWizard
               onSuccess={handleImportSuccess}
+              onBackToUpload={handleBackToUpload}
               importType={type}
               initialFile={selectedFile}
             />

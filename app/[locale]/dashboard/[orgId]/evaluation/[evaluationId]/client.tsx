@@ -227,7 +227,7 @@ export function EvaluationPageClient({
 
   if (accessDenied) {
     return (
-      <div className="p-8 max-w-2xl mx-auto">
+      <div className="container max-w-2xl mx-auto p-4 md:p-6 lg:p-8">
         <Alert variant="destructive">
           <ShieldAlert className="h-4 w-4" />
           <AlertTitle>Access Denied</AlertTitle>
@@ -249,7 +249,7 @@ export function EvaluationPageClient({
 
   if (error || !evaluation) {
     return (
-      <div className="p-8">
+      <div className="container max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Error</AlertTitle>

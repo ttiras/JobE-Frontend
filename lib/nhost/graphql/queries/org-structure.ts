@@ -10,21 +10,21 @@
  */
 export const GET_ORG_STRUCTURE_STATS = `
   query GetOrgStructureStats($organizationId: uuid!) {
-    departments_aggregate(where: { organizationId: { _eq: $organizationId }, isActive: { _eq: true } }) {
+    departments_aggregate(where: { organization_id: { _eq: $organizationId }, is_active: { _eq: true } }) {
       aggregate {
         count
       }
     }
-    positions_aggregate(where: { organizationId: { _eq: $organizationId }, isActive: { _eq: true } }) {
+    positions_aggregate(where: { organization_id: { _eq: $organizationId }, is_active: { _eq: true } }) {
       aggregate {
         count
       }
     }
     evaluated_positions: positions_aggregate(
       where: { 
-        organizationId: { _eq: $organizationId }, 
-        isActive: { _eq: true },
-        evaluations: { completedAt: { _is_null: false } }
+        organization_id: { _eq: $organizationId }, 
+        is_active: { _eq: true },
+        position_evaluations: { completed_at: { _is_null: false } }
       }
     ) {
       aggregate {

@@ -376,7 +376,7 @@ export function PositionsPageClient({ locale, orgId }: PositionsPageClientProps)
   }
 
   return (
-    <div className="space-y-6">
+    <div className="container max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -392,7 +392,7 @@ export function PositionsPageClient({ locale, orgId }: PositionsPageClientProps)
           <Button asChild variant="outline">
             <Link href={`/${locale}/dashboard/${orgId}/org-structure/positions/import`}>
               <FileSpreadsheet className="mr-2 h-4 w-4" />
-              Import
+              Import from Excel
             </Link>
           </Button>
           <Button asChild>

@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataPreviewTable } from '@/components/import/data-preview-table'
 import { ValidationErrorList } from '@/components/import/validation-error-list'
 import { ImportWorkflowContext } from '@/lib/types/import'
@@ -60,56 +59,83 @@ export function ImportWizardStep2({
       {/* Header with Statistics */}
       <Card className="border-0 md:border">
         <CardHeader className="p-4 md:p-6">
-          <CardTitle className="text-lg md:text-xl">{t('title')}</CardTitle>
-          <CardDescription className="text-sm">{t('description')}</CardDescription>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex-1">
+              <CardTitle className="text-lg md:text-xl">{t('title')}</CardTitle>
+              <CardDescription className="text-sm">{t('description')}</CardDescription>
+            </div>
+            {/* Primary Action Buttons - Top Right */}
+            <div className="flex gap-2 shrink-0">
+              <Button
+                onClick={onBack}
+                variant="outline"
+                disabled={isLoading}
+                size="sm"
+              >
+                {t('backButton')}
+              </Button>
+              <Button
+                onClick={onConfirm}
+                disabled={hasErrors || isLoading}
+                size="sm"
+                className="min-w-[140px]"
+              >
+                {isLoading ? tCommon('loading') : t('confirmButton')}
+              </Button>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="p-4 md:p-6 pt-0 md:pt-0">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-            {/* Departments Stats */}
-            <div className="flex items-start gap-3 md:gap-4 p-3 md:p-4 border rounded-lg">
-              <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg shrink-0">
-                <Building2 className="h-5 w-5 md:h-6 md:w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-sm md:text-base">{t('stats.departments')}</h4>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2">
-                  <span className="text-xl md:text-2xl font-bold">{departmentStats.total}</span>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary" className="text-xs">
-                      {departmentStats.creates} {t('stats.new')}
-                    </Badge>
-                    {departmentStats.updates > 0 && (
-                      <Badge variant="outline" className="text-xs">
-                        {departmentStats.updates} {t('stats.updates')}
+            {/* Departments Stats - Only show when importing departments */}
+            {importType === 'departments' && (
+              <div className="flex items-start gap-3 md:gap-4 p-3 md:p-4 border rounded-lg sm:col-span-2">
+                <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg shrink-0">
+                  <Building2 className="h-5 w-5 md:h-6 md:w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-semibold text-sm md:text-base">{t('stats.departments')}</h4>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2">
+                    <span className="text-xl md:text-2xl font-bold">{departmentStats.total}</span>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary" className="text-xs">
+                        {departmentStats.creates} {t('stats.new')}
                       </Badge>
-                    )}
+                      {departmentStats.updates > 0 && (
+                        <Badge variant="outline" className="text-xs">
+                          {departmentStats.updates} {t('stats.updates')}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            {/* Positions Stats */}
-            <div className="flex items-start gap-3 md:gap-4 p-3 md:p-4 border rounded-lg">
-              <div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg shrink-0">
-                <Users className="h-5 w-5 md:h-6 md:w-6 text-green-600 dark:text-green-400" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-semibold text-sm md:text-base">{t('stats.positions')}</h4>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2">
-                  <span className="text-xl md:text-2xl font-bold">{positionStats.total}</span>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary" className="text-xs">
-                      {positionStats.creates} {t('stats.new')}
-                    </Badge>
-                    {positionStats.updates > 0 && (
-                      <Badge variant="outline" className="text-xs">
-                        {positionStats.updates} {t('stats.updates')}
+            {/* Positions Stats - Only show when importing positions */}
+            {importType === 'positions' && (
+              <div className="flex items-start gap-3 md:gap-4 p-3 md:p-4 border rounded-lg sm:col-span-2">
+                <div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg shrink-0">
+                  <Users className="h-5 w-5 md:h-6 md:w-6 text-green-600 dark:text-green-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-semibold text-sm md:text-base">{t('stats.positions')}</h4>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2">
+                    <span className="text-xl md:text-2xl font-bold">{positionStats.total}</span>
+                    <div className="flex flex-wrap gap-2">
+                      <Badge variant="secondary" className="text-xs">
+                        {positionStats.creates} {t('stats.new')}
                       </Badge>
-                    )}
+                      {positionStats.updates > 0 && (
+                        <Badge variant="outline" className="text-xs">
+                          {positionStats.updates} {t('stats.updates')}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -148,70 +174,53 @@ export function ImportWizardStep2({
       )}
 
       {/* Data Tables */}
-      <Tabs defaultValue={importType} className="w-full">
-        {(departmentStats.total > 0 || positionStats.total > 0) && (
-          <TabsList className="grid w-full grid-cols-2">
-            {departmentStats.total > 0 && (
-              <TabsTrigger value="departments">
-                <Building2 className="mr-2 h-4 w-4" />
-                {t('tabs.departments')} ({departmentStats.total})
-              </TabsTrigger>
+      {importType === 'departments' && departmentStats.total > 0 && (
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Building2 className="h-5 w-5" />
+              {t('preview.departmentsTitle')}
+            </CardTitle>
+            <CardDescription>{t('preview.departmentsDescription')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {context.preview?.departments && context.preview.departments.length > 0 ? (
+              <DataPreviewTable
+                departments={context.preview.departments}
+                positions={[]}
+              />
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                {t('preview.noDepartments')}
+              </p>
             )}
-            {positionStats.total > 0 && (
-              <TabsTrigger value="positions">
-                <Users className="mr-2 h-4 w-4" />
-                {t('tabs.positions')} ({positionStats.total})
-              </TabsTrigger>
+          </CardContent>
+        </Card>
+      )}
+
+      {importType === 'positions' && positionStats.total > 0 && (
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              {t('preview.positionsTitle')}
+            </CardTitle>
+            <CardDescription>{t('preview.positionsDescription')}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {context.preview?.positions && context.preview.positions.length > 0 ? (
+              <DataPreviewTable
+                departments={[]}
+                positions={context.preview.positions}
+              />
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-8">
+                {t('preview.noPositions')}
+              </p>
             )}
-          </TabsList>
-        )}
-
-        {departmentStats.total > 0 && (
-          <TabsContent value="departments" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">{t('preview.departmentsTitle')}</CardTitle>
-              <CardDescription>{t('preview.departmentsDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {context.preview?.departments && context.preview.departments.length > 0 ? (
-                <DataPreviewTable
-                  departments={context.preview.departments}
-                  positions={[]}
-                />
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  {t('preview.noDepartments')}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        )}
-
-        {positionStats.total > 0 && (
-          <TabsContent value="positions" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">{t('preview.positionsTitle')}</CardTitle>
-              <CardDescription>{t('preview.positionsDescription')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {context.preview?.positions && context.preview.positions.length > 0 ? (
-                <DataPreviewTable
-                  departments={[]}
-                  positions={context.preview.positions}
-                />
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-8">
-                  {t('preview.noPositions')}
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-        )}
-      </Tabs>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Validation Errors */}
       {hasErrors && (
@@ -243,11 +252,11 @@ export function ImportWizardStep2({
         </Card>
       )}
 
-      {/* Navigation Buttons */}
-      <div className="flex justify-between">
+      {/* Navigation Buttons - Bottom (Secondary) */}
+      <div className="flex justify-between pt-4 border-t">
         <Button
           onClick={onBack}
-          variant="outline"
+          variant="ghost"
           disabled={isLoading}
         >
           {t('backButton')}
@@ -255,7 +264,7 @@ export function ImportWizardStep2({
         <Button
           onClick={onConfirm}
           disabled={hasErrors || isLoading}
-          size="lg"
+          variant="outline"
           className="min-w-[160px]"
         >
           {isLoading ? tCommon('loading') : t('confirmButton')}

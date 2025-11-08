@@ -211,7 +211,7 @@ export function DepartmentsPageClient({ locale, orgId }: DepartmentsPageClientPr
   }
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="container max-w-7xl mx-auto p-4 md:p-6 lg:p-8 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -233,7 +233,7 @@ export function DepartmentsPageClient({ locale, orgId }: DepartmentsPageClientPr
           <Button variant="outline" asChild>
             <Link href={`/${locale}/dashboard/${orgId}/org-structure/departments/import`}>
               <FileSpreadsheet className="h-4 w-4 mr-2" />
-              Import
+              Import from Excel
             </Link>
           </Button>
           <Button asChild>

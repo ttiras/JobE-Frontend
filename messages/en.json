@@ -53,6 +53,13 @@
       "welcome": "Welcome",
       "welcomeDescription": "Your organization dashboard will show key metrics and insights here.",
       "welcomeMessage": "Welcome to JobE - HR Management Platform",
+      "progress": {
+        "title": "Setup Progress",
+        "complete": "Complete",
+        "departments": "Departments Added",
+        "positions": "Positions Added",
+        "evaluations": "Positions Evaluated"
+      },
       "noOrg": {
         "title": "Create your first organization",
         "description": "To get started, create an organization. You can add positions and invite teammates afterwards.",
@@ -643,7 +650,19 @@
       "updates": "Updates",
       "noData": "No data to preview",
       "validationPassed": "All validation checks passed",
-      "validationFailed": "Validation errors found"
+      "validationFailed": "Validation errors found",
+      "operation": "Operation",
+      "create": "Create",
+      "update": "Update",
+      "code": "Code",
+      "nameEn": "Name (EN)",
+      "nameTr": "Name (TR)",
+      "parentCode": "Parent Code",
+      "departmentCode": "Department",
+      "reportingToCode": "Reports To",
+      "isManager": "Manager",
+      "incumbents": "Incumbents",
+      "showingRows": "Showing {shown} of {total} rows"
     },
     "validation": {
       "title": "Validation Errors",
@@ -669,6 +688,16 @@
       "whatsNext": "What would you like to do next?",
       "departmentsImported": "{count} departments imported",
       "positionsImported": "{count} positions imported",
+      "importedDepartments": "{count} departments",
+      "importedPositions": "{count} positions",
+      "viewDepartments": "View Departments",
+      "viewDepartmentsDescription": "Review and manage your department hierarchy",
+      "viewPositions": "View Positions",
+      "viewPositionsDescription": "Browse and edit your position listings",
+      "backToDashboard": "Back to Dashboard",
+      "backToDashboardDescription": "Return to your main dashboard",
+      "needHelp": "Need to import more data?",
+      "importMore": "Import More",
       "actions": {
         "viewDepartments": "View Departments",
         "viewPositions": "View Positions",

@@ -125,7 +125,7 @@ export const CREATE_POSITION = `
       requiredSkills
       responsibilities
       benefits
-      isActive
+      is_active
       createdAt
     }
   }
@@ -151,7 +151,7 @@ export const UPDATE_POSITION = `
       requiredSkills
       responsibilities
       benefits
-      isActive
+      is_active
       updatedAt
     }
   }

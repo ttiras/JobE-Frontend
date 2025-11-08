@@ -53,6 +53,13 @@
       "welcome": "Hoş Geldiniz",
       "welcomeDescription": "Organizasyon gösterge paneliniz burada önemli metrikleri ve içgörüleri gösterecek.",
       "welcomeMessage": "JobE - İK Yönetim Platformuna Hoş Geldiniz",
+      "progress": {
+        "title": "Kurulum İlerlemesi",
+        "complete": "Tamamlandı",
+        "departments": "Departman Eklendi",
+        "positions": "Pozisyon Eklendi",
+        "evaluations": "Pozisyon Değerlendirildi"
+      },
       "noOrg": {
         "title": "İlk organizasyonunuzu oluşturun",
         "description": "Başlamak için bir organizasyon oluşturun. Sonrasında pozisyonlar ekleyebilir ve ekip arkadaşlarınızı davet edebilirsiniz.",
@@ -644,7 +651,19 @@
       "updates": "Güncellemeler",
       "noData": "Önizlenecek veri yok",
       "validationPassed": "Tüm doğrulama kontrolleri geçti",
-      "validationFailed": "Doğrulama hataları bulundu"
+      "validationFailed": "Doğrulama hataları bulundu",
+      "operation": "İşlem",
+      "create": "Oluştur",
+      "update": "Güncelle",
+      "code": "Kod",
+      "nameEn": "Ad (EN)",
+      "nameTr": "Ad (TR)",
+      "parentCode": "Üst Kod",
+      "departmentCode": "Departman",
+      "reportingToCode": "Bağlı Olduğu",
+      "isManager": "Yönetici",
+      "incumbents": "Görevli Sayısı",
+      "showingRows": "{total} satırdan {shown} tanesi gösteriliyor"
     },
     "validation": {
       "title": "Doğrulama Hataları",
@@ -670,6 +689,16 @@
       "whatsNext": "Sonra ne yapmak istersiniz?",
       "departmentsImported": "{count} departman içe aktarıldı",
       "positionsImported": "{count} pozisyon içe aktarıldı",
+      "importedDepartments": "{count} departman",
+      "importedPositions": "{count} pozisyon",
+      "viewDepartments": "Departmanları Görüntüle",
+      "viewDepartmentsDescription": "Departman hiyerarşinizi inceleyin ve yönetin",
+      "viewPositions": "Pozisyonları Görüntüle",
+      "viewPositionsDescription": "Pozisyon listelerinize göz atın ve düzenleyin",
+      "backToDashboard": "Gösterge Paneline Dön",
+      "backToDashboardDescription": "Ana gösterge panelinize dönün",
+      "needHelp": "Daha fazla veri içe aktarmanız mı gerekiyor?",
+      "importMore": "Daha Fazla İçe Aktar",
       "actions": {
         "viewDepartments": "Departmanları Görüntüle",
         "viewPositions": "Pozisyonları Görüntüle",
