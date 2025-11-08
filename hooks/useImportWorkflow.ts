@@ -192,7 +192,7 @@ export function useImportWorkflow(importType: 'departments' | 'positions' = 'dep
         errorMessage: error instanceof Error ? error.message : 'Failed to parse file',
       }));
     }
-  }, [context.fileBuffer]); // organizationId is from params, not needed in deps
+  }, [context.fileBuffer, importType, organizationId]);
 
   /**
    * Step 3: Confirm and execute import

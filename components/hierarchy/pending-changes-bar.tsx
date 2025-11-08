@@ -128,7 +128,7 @@ export function PendingChangesBar({
           <DialogHeader>
             <DialogTitle>Review Changes</DialogTitle>
             <DialogDescription>
-              You're about to save {moveCount} department {moveCount === 1 ? 'move' : 'moves'}.
+              You&apos;re about to save {moveCount} department {moveCount === 1 ? 'move' : 'moves'}.
               Review the changes below.
             </DialogDescription>
           </DialogHeader>

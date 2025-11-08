@@ -220,7 +220,7 @@ export function DepartmentsPageClient({ locale, orgId }: DepartmentsPageClientPr
             Departments
           </h1>
           <p className="text-muted-foreground">
-            Manage your organization's department structure
+            Manage your organization&apos;s department structure
           </p>
         </div>
         <div className="flex gap-2">

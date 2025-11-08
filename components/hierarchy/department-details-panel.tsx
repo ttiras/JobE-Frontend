@@ -57,7 +57,7 @@ export function DepartmentDetailsPanel({
       setEditedIsActive(department.is_active);
       setIsEditing(false);
     }
-  }, [department?.id]);
+  }, [department]);
 
   if (!department) return null;
 
