@@ -60,30 +60,45 @@ describe('useSessionRefresh Hook', () => {
 
       const { result } = renderHook(() => useSessionRefresh())
 
+      let refreshPromise: Promise<RefreshResult>
       act(() => {
-        result.current.refreshWithRetry()
+        refreshPromise = result.current.refreshWithRetry()
       })
 
-      // Wait for first attempt + 1s delay
+      // First attempt (attempt 0) - no delay, immediate
+      await act(async () => {
+        await Promise.resolve() // Let first attempt complete
+      })
+      expect(mockRefreshSession).toHaveBeenCalledTimes(1)
+      expect(result.current.retryCount).toBe(0)
+
+      // Second attempt (attempt 1) - after 1s delay
       await act(async () => {
         jest.advanceTimersByTime(1000)
+        await Promise.resolve() // Let second attempt complete
       })
+      expect(mockRefreshSession).toHaveBeenCalledTimes(2)
+      expect(result.current.retryCount).toBe(1)
 
-      // Wait for second attempt + 2s delay
+      // Third attempt (attempt 2) - after 2s delay (from attempt 1)
       await act(async () => {
         jest.advanceTimersByTime(2000)
+        await Promise.resolve() // Let third attempt complete
       })
-
-      // Wait for third attempt
-      await act(async () => {
-        jest.advanceTimersByTime(100)
-      })
-
+      
       await waitFor(() => {
-        expect(result.current.retryCount).toBe(2) // 0-indexed: 0, 1, 2
+        expect(mockRefreshSession).toHaveBeenCalledTimes(3)
+      })
+      
+      // After third attempt succeeds, retryCount should be reset to 0
+      await waitFor(() => {
+        expect(result.current.retryCount).toBe(0)
       })
 
-      expect(mockRefreshSession).toHaveBeenCalledTimes(3)
+      // Verify final result
+      const finalResult = await refreshPromise!
+      expect(finalResult.success).toBe(true)
+      expect(finalResult.attempts).toBe(3)
     })
 
     it('should stop after maxAttempts and return failure', async () => {
@@ -92,26 +107,40 @@ describe('useSessionRefresh Hook', () => {
 
       const { result } = renderHook(() => useSessionRefresh())
 
-      let refreshResult: Promise<RefreshResult> | undefined
+      let refreshResult: Promise<RefreshResult>
       act(() => {
         refreshResult = result.current.refreshWithRetry()
       })
 
-      // Advance through all retry attempts
-      for (let i = 0; i < 3; i++) {
-        await act(async () => {
-          jest.advanceTimersByTime(5000)
-        })
-      }
+      // First attempt (attempt 0) - no delay
+      await act(async () => {
+        await Promise.resolve() // Let first attempt complete
+      })
+      expect(mockRefreshSession).toHaveBeenCalledTimes(1)
 
-      await waitFor(async () => {
-        const res = await refreshResult
-        expect(res).toBeDefined()
-        expect(res!.success).toBe(false)
+      // Second attempt (attempt 1) - after 1s delay
+      await act(async () => {
+        jest.advanceTimersByTime(1000)
+        await Promise.resolve() // Let second attempt complete
+      })
+      expect(mockRefreshSession).toHaveBeenCalledTimes(2)
+
+      // Third attempt (attempt 2) - after 2s delay
+      await act(async () => {
+        jest.advanceTimersByTime(2000)
+        await Promise.resolve() // Let third attempt complete
+      })
+      
+      await waitFor(() => {
+        expect(mockRefreshSession).toHaveBeenCalledTimes(3)
       })
 
-      // Should have tried 3 times total (initial + 2 retries based on maxAttempts: 3)
-      expect(mockRefreshSession).toHaveBeenCalledTimes(3)
+      // Wait for the promise to resolve
+      const res = await refreshResult
+      expect(res).toBeDefined()
+      expect(res.success).toBe(false)
+      expect(res.attempts).toBe(3)
+      expect(res.error).toBeDefined()
     })
   })
 
