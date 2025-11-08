@@ -184,6 +184,10 @@ describe('Import Confirmation Flow Integration', () => {
     });
 
     it('should rollback on failure and return error', async () => {
+      // Reset mocks to ensure clean state
+      createDepartments.mockResolvedValue({ data: { insertDepartments: { affected_rows: 0 } } });
+      createPositions.mockResolvedValue({ data: { insertPositions: { affected_rows: 0 } } });
+      
       executeImport.mockImplementation(async () => {
         try {
           await createDepartments({});
