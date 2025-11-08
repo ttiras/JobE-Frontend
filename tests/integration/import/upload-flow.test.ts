@@ -76,7 +76,7 @@ describe('Import Upload Flow Integration', () => {
       ];
 
       const positionsData = [
-        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count'],
+        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
         ['CEO', 'Chief Executive Officer', 'HR', '', 'TRUE', 'TRUE', '1'],
         ['CTO', 'Chief Technology Officer', 'ENG', 'CEO', 'TRUE', 'TRUE', '1'],
         ['HR-MGR', 'HR Manager', 'HR-REC', 'CEO', 'TRUE', 'TRUE', '1'],
@@ -180,7 +180,7 @@ describe('Import Upload Flow Integration', () => {
 
     it('should handle file with only positions', async () => {
       const positionsData = [
-        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count'],
+        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
         ['DEV-1', 'Senior Developer', 'ENG', 'CTO', 'FALSE', 'TRUE', '3'],
         ['DEV-2', 'Junior Developer', 'ENG', 'DEV-1', 'FALSE', 'TRUE', '5'],
       ];
@@ -301,7 +301,7 @@ describe('Import Upload Flow Integration', () => {
       ];
 
       const positionsData = [
-        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count'],
+        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
         ['POS1', 'Position 1', 'INVALID_DEPT', '', 'FALSE', 'TRUE', '1'], // Invalid dept reference
         ['POS2', 'Position 2', 'CHILD', 'INVALID_POS', 'FALSE', 'TRUE', '1'], // Invalid reports_to reference
       ];
@@ -337,7 +337,7 @@ describe('Import Upload Flow Integration', () => {
   describe('Data Type Handling', () => {
     it('should correctly parse boolean fields', async () => {
       const positionsData = [
-        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count'],
+        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
         ['P1', 'Position 1', 'HR', '', 'TRUE', 'TRUE', '1'],
         ['P2', 'Position 2', 'HR', 'P1', 'FALSE', 'FALSE', '2'],
         ['P3', 'Position 3', 'HR', 'P1', 'true', 'false', '3'], // lowercase
@@ -353,18 +353,14 @@ describe('Import Upload Flow Integration', () => {
       const parseResult = await parseExcelImport(buffer);
 
       expect(parseResult.positions[0].is_manager).toBe(true);
-      expect(parseResult.positions[0].is_active).toBe(true);
       expect(parseResult.positions[1].is_manager).toBe(false);
-      expect(parseResult.positions[1].is_active).toBe(false);
       expect(parseResult.positions[2].is_manager).toBe(true);
-      expect(parseResult.positions[2].is_active).toBe(false);
       expect(parseResult.positions[3].is_manager).toBe(true);
-      expect(parseResult.positions[3].is_active).toBe(false);
     });
 
     it('should correctly parse numeric fields', async () => {
       const positionsData = [
-        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count'],
+        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
         ['P1', 'Position 1', 'HR', '', 'TRUE', 'TRUE', '5'],
         ['P2', 'Position 2', 'HR', 'P1', 'FALSE', 'TRUE', '10'],
         ['P3', 'Position 3', 'HR', 'P1', 'FALSE', 'TRUE', 0], // numeric 0
@@ -410,7 +406,7 @@ describe('Import Upload Flow Integration', () => {
       ];
 
       const positionsData = [
-        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count'],
+        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
         ['TOP', 'Top Position', 'ROOT', '', 'TRUE', 'TRUE', '1'], // Empty reports_to
         ['TOP2', 'Top Position 2', 'ROOT2', null, 'TRUE', 'TRUE', '1'], // Null reports_to
       ];

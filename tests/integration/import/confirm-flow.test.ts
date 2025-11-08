@@ -61,7 +61,6 @@ describe('Import Confirmation Flow Integration', () => {
           dept_code: 'ENG',
           reports_to_pos_code: null,
           is_manager: true,
-          is_active: true,
           incumbents_count: 1
         },
       ];
@@ -73,7 +72,6 @@ describe('Import Confirmation Flow Integration', () => {
           dept_code: 'EXEC',
           reports_to_pos_code: null,
           is_manager: true,
-          is_active: true,
           incumbents_count: 1
         },
       ];

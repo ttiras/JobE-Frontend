@@ -133,7 +133,7 @@ describe('Excel Parser', () => {
       
       // Positions sheet
       const posData = [
-        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count'],
+        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
         ['CTO', 'Chief Technology Officer', 'ENG', null, true, true, 1],
         ['FE-LEAD', 'Frontend Lead', 'ENG-FE', 'CTO', true, true, 1],
         ['FE-DEV', 'Frontend Developer', 'ENG-FE', 'FE-LEAD', false, true, 5],
@@ -149,7 +149,6 @@ describe('Excel Parser', () => {
         dept_code: 'ENG',
         reports_to_pos_code: null,
         is_manager: true,
-        is_active: true,
         incumbents_count: 1,
         excelRow: 2,
       });
@@ -167,21 +166,18 @@ describe('Excel Parser', () => {
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptData), 'Departments');
       
       const posData = [
-        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count'],
-        ['P1', 'Position 1', 'D1', null, 'true', 'yes', 1],
-        ['P2', 'Position 2', 'D1', null, 'false', 'no', 0],
-        ['P3', 'Position 3', 'D1', null, '1', '0', 1],
+        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
+        ['P1', 'Position 1', 'D1', null, 'true', 1],
+        ['P2', 'Position 2', 'D1', null, 'false', 0],
+        ['P3', 'Position 3', 'D1', null, '1', 1],
       ];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(posData), 'Positions');
       
       const result = parseSheetData(wb);
       
       expect(result.positions[0].is_manager).toBe(true);
-      expect(result.positions[0].is_active).toBe(true);
       expect(result.positions[1].is_manager).toBe(false);
-      expect(result.positions[1].is_active).toBe(false);
       expect(result.positions[2].is_manager).toBe(true);
-      expect(result.positions[2].is_active).toBe(false);
     });
 
     it('should throw error for missing required columns in Departments', () => {
@@ -241,7 +237,7 @@ describe('Excel Parser', () => {
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptData), 'Departments');
       
       const posData = [
-        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count'],
+        ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
         ['P1', 'Position 1', 'D1', null, true, true, 1],
       ];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(posData), 'Positions');

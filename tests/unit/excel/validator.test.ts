@@ -102,8 +102,8 @@ describe('Excel Validator', () => {
 
     it('should detect circular reference in positions reporting structure', () => {
       const positions: PositionRow[] = [
-        { pos_code: 'P1', title: 'Pos 1', dept_code: 'D1', reports_to_pos_code: 'P2', is_manager: true, is_active: true, incumbents_count: 1, excelRow: 2 },
-        { pos_code: 'P2', title: 'Pos 2', dept_code: 'D1', reports_to_pos_code: 'P1', is_manager: true, is_active: true, incumbents_count: 1, excelRow: 3 },
+        { pos_code: 'P1', title: 'Pos 1', dept_code: 'D1', reports_to_pos_code: 'P2', is_manager: true, incumbents_count: 1, excelRow: 2 },
+        { pos_code: 'P2', title: 'Pos 2', dept_code: 'D1', reports_to_pos_code: 'P1', is_manager: true, incumbents_count: 1, excelRow: 3 },
       ];
 
       const errors = validateCircularReferences(
@@ -192,7 +192,7 @@ describe('Excel Validator', () => {
   describe('validatePositionRequiredFields', () => {
     it('should detect missing pos_code', () => {
       const positions: PositionRow[] = [
-        { pos_code: '', title: 'Valid Title', dept_code: 'D1', is_manager: false, is_active: true, incumbents_count: 1, excelRow: 2 },
+        { pos_code: '', title: 'Valid Title', dept_code: 'D1', is_manager: false, incumbents_count: 1, excelRow: 2 },
       ];
 
       const errors = validatePositionRequiredFields(positions);
@@ -203,7 +203,7 @@ describe('Excel Validator', () => {
 
     it('should detect missing title', () => {
       const positions: PositionRow[] = [
-        { pos_code: 'P1', title: '', dept_code: 'D1', is_manager: false, is_active: true, incumbents_count: 1, excelRow: 2 },
+        { pos_code: 'P1', title: '', dept_code: 'D1', is_manager: false, incumbents_count: 1, excelRow: 2 },
       ];
 
       const errors = validatePositionRequiredFields(positions);
@@ -214,7 +214,7 @@ describe('Excel Validator', () => {
 
     it('should detect missing dept_code', () => {
       const positions: PositionRow[] = [
-        { pos_code: 'P1', title: 'Title', dept_code: '', is_manager: false, is_active: true, incumbents_count: 1, excelRow: 2 },
+        { pos_code: 'P1', title: 'Title', dept_code: '', is_manager: false, incumbents_count: 1, excelRow: 2 },
       ];
 
       const errors = validatePositionRequiredFields(positions);
@@ -253,8 +253,8 @@ describe('Excel Validator', () => {
   describe('validateDuplicatePositionCodes', () => {
     it('should detect duplicate codes', () => {
       const positions: PositionRow[] = [
-        { pos_code: 'P1', title: 'Pos 1', dept_code: 'D1', is_manager: false, is_active: true, incumbents_count: 1, excelRow: 2 },
-        { pos_code: 'P1', title: 'Pos 1 Duplicate', dept_code: 'D1', is_manager: false, is_active: true, incumbents_count: 1, excelRow: 5 },
+        { pos_code: 'P1', title: 'Pos 1', dept_code: 'D1', is_manager: false, incumbents_count: 1, excelRow: 2 },
+        { pos_code: 'P1', title: 'Pos 1 Duplicate', dept_code: 'D1', is_manager: false, incumbents_count: 1, excelRow: 5 },
       ];
 
       const errors = validateDuplicatePositionCodes(positions);
@@ -294,7 +294,7 @@ describe('Excel Validator', () => {
   describe('validatePositionReferences', () => {
     it('should detect invalid department reference', () => {
       const positions: PositionRow[] = [
-        { pos_code: 'P1', title: 'Pos 1', dept_code: 'NON_EXISTENT', is_manager: false, is_active: true, incumbents_count: 1, excelRow: 2 },
+        { pos_code: 'P1', title: 'Pos 1', dept_code: 'NON_EXISTENT', is_manager: false, incumbents_count: 1, excelRow: 2 },
       ];
       const validDeptCodes = new Set<string>();
       const validPosCodes = new Set(['P1']);
@@ -308,7 +308,7 @@ describe('Excel Validator', () => {
 
     it('should detect invalid reporting_to reference', () => {
       const positions: PositionRow[] = [
-        { pos_code: 'P1', title: 'Pos 1', dept_code: 'D1', reports_to_pos_code: 'NON_EXISTENT', is_manager: false, is_active: true, incumbents_count: 1, excelRow: 2 },
+        { pos_code: 'P1', title: 'Pos 1', dept_code: 'D1', reports_to_pos_code: 'NON_EXISTENT', is_manager: false, incumbents_count: 1, excelRow: 2 },
       ];
       const validDeptCodes = new Set(['D1']);
       const validPosCodes = new Set(['P1']);
@@ -348,7 +348,7 @@ describe('Excel Validator', () => {
       const context: ValidationContext = {
         departments: [],
         positions: [
-          { pos_code: '', title: 'Missing Code', dept_code: 'D1', is_manager: false, is_active: true, incumbents_count: 1, excelRow: 2 },
+          { pos_code: '', title: 'Missing Code', dept_code: 'D1', is_manager: false, incumbents_count: 1, excelRow: 2 },
         ],
         validDepartmentCodes: new Set(['D1']),
         validPositionCodes: new Set(),
