@@ -191,10 +191,10 @@ describe('Import Confirmation Flow Integration', () => {
           await createDepartments({});
           await createPositions({});
           throw new Error('Position creation failed');
-        } catch {
+        } catch (err) {
           return {
             success: false,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: err instanceof Error ? err.message : 'Unknown error',
             rolledBack: true,
           };
         }
@@ -255,18 +255,30 @@ describe('Import Confirmation Flow Integration', () => {
     it('should emit progress events during execution', async () => {
       const progressEvents: Array<Record<string, unknown>> = [];
 
-      executeImport.mockImplementation(async (onProgress: Record<string, unknown>) => {
-        onProgress({ step: 'departments', progress: 0, total: 5 });
+      executeImport.mockImplementation(async (onProgress?: (event: Record<string, unknown>) => void) => {
+        if (onProgress) {
+          onProgress({ step: 'departments', progress: 0, total: 5 });
+        }
         await createDepartments({});
-        onProgress({ step: 'departments', progress: 3, total: 5 });
+        if (onProgress) {
+          onProgress({ step: 'departments', progress: 3, total: 5 });
+        }
         await updateDepartments({});
-        onProgress({ step: 'departments', progress: 5, total: 5 });
+        if (onProgress) {
+          onProgress({ step: 'departments', progress: 5, total: 5 });
+        }
         
-        onProgress({ step: 'positions', progress: 0, total: 5 });
+        if (onProgress) {
+          onProgress({ step: 'positions', progress: 0, total: 5 });
+        }
         await createPositions({});
-        onProgress({ step: 'positions', progress: 4, total: 5 });
+        if (onProgress) {
+          onProgress({ step: 'positions', progress: 4, total: 5 });
+        }
         await updatePositions({});
-        onProgress({ step: 'positions', progress: 5, total: 5 });
+        if (onProgress) {
+          onProgress({ step: 'positions', progress: 5, total: 5 });
+        }
 
         return { success: true };
       });
@@ -282,12 +294,14 @@ describe('Import Confirmation Flow Integration', () => {
     it('should calculate percentage progress correctly', async () => {
       const progressPercentages: number[] = [];
 
-      executeImport.mockImplementation(async (onProgress: Record<string, unknown>) => {
+      executeImport.mockImplementation(async (onProgress?: (event: Record<string, unknown>) => void) => {
         const totalSteps = 10;
         for (let i = 0; i <= totalSteps; i++) {
           const percentage = Math.round((i / totalSteps) * 100);
           progressPercentages.push(percentage);
-          onProgress({ percentage });
+          if (onProgress) {
+            onProgress({ percentage });
+          }
         }
         return { success: true };
       });
@@ -309,9 +323,9 @@ describe('Import Confirmation Flow Integration', () => {
         parent_dept_code: null,
       }));
 
-      const batches: Array<Record<string, unknown>> = [];
+      const batches: Array<unknown> = [];
 
-      createDepartments.mockImplementation(async (params: Record<string, unknown>) => {
+      createDepartments.mockImplementation(async (params: { departments: unknown[] }) => {
         batches.push(params.departments);
         return { data: { insertDepartments: { affected_rows: params.departments.length } } };
       });
@@ -352,9 +366,9 @@ describe('Import Confirmation Flow Integration', () => {
           try {
             await createDepartments({});
             success = true;
-          } catch {
+          } catch (err) {
             retries++;
-            if (retries >= maxRetries) throw error;
+            if (retries >= maxRetries) throw err;
           }
         }
 
@@ -484,20 +498,24 @@ describe('Import Confirmation Flow Integration', () => {
     it('should clear loading state after success', async () => {
       const stateChanges: string[] = [];
 
-      executeImport.mockImplementation(async (setState: Record<string, unknown>) => {
-        setState('loading');
-        stateChanges.push('loading');
+      executeImport.mockImplementation(async (setState?: (state: string) => void) => {
+        if (setState) {
+          setState('loading');
+          stateChanges.push('loading');
+        }
         
         await createDepartments({});
         await createPositions({});
         
-        setState('success');
-        stateChanges.push('success');
+        if (setState) {
+          setState('success');
+          stateChanges.push('success');
+        }
         
         return { success: true };
       });
 
-      await executeImport(_state => {});
+      await executeImport((_state: string) => {});
 
       expect(stateChanges).toEqual(['loading', 'success']);
     });
@@ -505,21 +523,25 @@ describe('Import Confirmation Flow Integration', () => {
     it('should clear loading state after error', async () => {
       const stateChanges: string[] = [];
 
-      executeImport.mockImplementation(async (setState: Record<string, unknown>) => {
-        setState('loading');
-        stateChanges.push('loading');
+      executeImport.mockImplementation(async (setState?: (state: string) => void) => {
+        if (setState) {
+          setState('loading');
+          stateChanges.push('loading');
+        }
         
         try {
           throw new Error('Failed');
         } catch {
-          setState('error');
-          stateChanges.push('error');
+          if (setState) {
+            setState('error');
+            stateChanges.push('error');
+          }
         }
         
         return { success: false };
       });
 
-      await executeImport(_state => {});
+      await executeImport((_state: string) => {});
 
       expect(stateChanges).toEqual(['loading', 'error']);
     });

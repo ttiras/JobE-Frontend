@@ -44,9 +44,11 @@ jobs:
 
       - name: Upload test coverage
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && (success() || failure())
+        continue-on-error: true
         with:
           name: test-coverage
           path: coverage/
           retention-days: 7
+          if-no-files-found: ignore
 
