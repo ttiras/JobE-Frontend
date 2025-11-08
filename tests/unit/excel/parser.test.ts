@@ -94,7 +94,7 @@ describe('Excel Parser', () => {
     it('should parse departments sheet correctly', () => {
       const wb = XLSX.utils.book_new();
       
-      // Departments sheet
+      // Departments sheet (only one sheet, as departments and positions are imported separately)
       const deptData = [
         ['dept_code', 'name', 'parent_dept_code', 'metadata'],
         ['ENG', 'Engineering', null, null],
@@ -102,11 +102,7 @@ describe('Excel Parser', () => {
       ];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptData), 'Departments');
       
-      // Empty positions sheet
-      const posData = [['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count']];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(posData), 'Positions');
-      
-      const result = parseSheetData(wb);
+      const result = parseSheetData(wb, 'departments');
       
       expect(result.departments).toHaveLength(2);
       expect(result.departments[0]).toMatchObject({
@@ -122,25 +118,22 @@ describe('Excel Parser', () => {
         excelRow: 3,
       });
       expect(result.departments[1].metadata).toEqual({ team_size: 10 });
+      expect(result.positions).toHaveLength(0);
     });
 
     it('should parse positions sheet correctly', () => {
       const wb = XLSX.utils.book_new();
       
-      // Empty departments sheet
-      const deptData = [['dept_code', 'name', 'parent_dept_code', 'metadata']];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptData), 'Departments');
-      
-      // Positions sheet
+      // Positions sheet (only one sheet, as departments and positions are imported separately)
       const posData = [
         ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
-        ['CTO', 'Chief Technology Officer', 'ENG', null, true, true, 1],
-        ['FE-LEAD', 'Frontend Lead', 'ENG-FE', 'CTO', true, true, 1],
-        ['FE-DEV', 'Frontend Developer', 'ENG-FE', 'FE-LEAD', false, true, 5],
+        ['CTO', 'Chief Technology Officer', 'ENG', null, true, 1],
+        ['FE-LEAD', 'Frontend Lead', 'ENG-FE', 'CTO', true, 1],
+        ['FE-DEV', 'Frontend Developer', 'ENG-FE', 'FE-LEAD', false, 5],
       ];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(posData), 'Positions');
       
-      const result = parseSheetData(wb);
+      const result = parseSheetData(wb, 'positions');
       
       expect(result.positions).toHaveLength(3);
       expect(result.positions[0]).toMatchObject({
@@ -157,13 +150,11 @@ describe('Excel Parser', () => {
         is_manager: false,
         incumbents_count: 5,
       });
+      expect(result.departments).toHaveLength(0);
     });
 
     it('should handle boolean string values (true/false, yes/no)', () => {
       const wb = XLSX.utils.book_new();
-      
-      const deptData = [['dept_code', 'name', 'parent_dept_code', 'metadata']];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptData), 'Departments');
       
       const posData = [
         ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
@@ -173,7 +164,7 @@ describe('Excel Parser', () => {
       ];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(posData), 'Positions');
       
-      const result = parseSheetData(wb);
+      const result = parseSheetData(wb, 'positions');
       
       expect(result.positions[0].is_manager).toBe(true);
       expect(result.positions[1].is_manager).toBe(false);
@@ -187,23 +178,17 @@ describe('Excel Parser', () => {
       const deptData = [['dept_code', 'parent_dept_code']];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptData), 'Departments');
       
-      const posData = [['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count']];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(posData), 'Positions');
-      
-      expect(() => parseSheetData(wb)).toThrow('Missing required columns');
+      expect(() => parseSheetData(wb, 'departments')).toThrow('Missing required columns');
     });
 
     it('should throw error for missing required columns in Positions', () => {
       const wb = XLSX.utils.book_new();
       
-      const deptData = [['dept_code', 'name', 'parent_dept_code', 'metadata']];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptData), 'Departments');
-      
       // Missing 'title' column
       const posData = [['pos_code', 'dept_code']];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(posData), 'Positions');
       
-      expect(() => parseSheetData(wb)).toThrow('Missing required columns');
+      expect(() => parseSheetData(wb, 'positions')).toThrow('Missing required columns');
     });
 
     it('should trim whitespace from string values', () => {
@@ -215,10 +200,7 @@ describe('Excel Parser', () => {
       ];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptData), 'Departments');
       
-      const posData = [['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count']];
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(posData), 'Positions');
-      
-      const result = parseSheetData(wb);
+      const result = parseSheetData(wb, 'departments');
       
       expect(result.departments[0].dept_code).toBe('ENG');
       expect(result.departments[0].name).toBe('Engineering');
@@ -227,7 +209,7 @@ describe('Excel Parser', () => {
   });
 
   describe('parseExcelImport', () => {
-    it('should complete full parsing workflow successfully', async () => {
+    it('should complete full parsing workflow successfully for departments', async () => {
       const wb = XLSX.utils.book_new();
       
       const deptData = [
@@ -236,41 +218,62 @@ describe('Excel Parser', () => {
       ];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptData), 'Departments');
       
+      const buffer = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+      
+      const result = await parseExcelImport(buffer, 'departments');
+      
+      expect(result.departments).toHaveLength(1);
+      expect(result.positions).toHaveLength(0);
+    });
+
+    it('should complete full parsing workflow successfully for positions', async () => {
+      const wb = XLSX.utils.book_new();
+      
       const posData = [
         ['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count'],
-        ['P1', 'Position 1', 'D1', null, true, true, 1],
+        ['P1', 'Position 1', 'D1', null, true, 1],
       ];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(posData), 'Positions');
       
       const buffer = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
       
-      const result = await parseExcelImport(buffer);
+      const result = await parseExcelImport(buffer, 'positions');
       
-      expect(result.departments).toHaveLength(1);
       expect(result.positions).toHaveLength(1);
+      expect(result.departments).toHaveLength(0);
     });
 
-    it('should throw error for missing sheets', async () => {
+    it('should throw error for missing required columns when sheet name does not match', async () => {
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([]), 'OnlyOneSheet');
+      // Sheet with wrong name and missing required columns
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([['wrong']]), 'OnlyOneSheet');
       
       const buffer = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
       
-      await expect(parseExcelImport(buffer)).rejects.toThrow('Missing required sheets');
+      // Should throw error about missing required columns (parser only looks at first sheet)
+      await expect(parseExcelImport(buffer, 'departments')).rejects.toThrow('Missing required columns');
     });
 
-    it('should throw error for empty file', async () => {
+    it('should throw error for empty departments file', async () => {
       const wb = XLSX.utils.book_new();
       
       const deptData = [['dept_code', 'name', 'parent_dept_code', 'metadata']];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(deptData), 'Departments');
       
-      const posData = [['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'is_active', 'incumbents_count']];
+      const buffer = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+      
+      await expect(parseExcelImport(buffer, 'departments')).rejects.toThrow('Excel file contains no department data');
+    });
+
+    it('should throw error for empty positions file', async () => {
+      const wb = XLSX.utils.book_new();
+      
+      const posData = [['pos_code', 'title', 'dept_code', 'reports_to_pos_code', 'is_manager', 'incumbents_count']];
       XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(posData), 'Positions');
       
       const buffer = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
       
-      await expect(parseExcelImport(buffer)).rejects.toThrow('contains no data');
+      await expect(parseExcelImport(buffer, 'positions')).rejects.toThrow('Excel file contains no position data');
     });
   });
 });
