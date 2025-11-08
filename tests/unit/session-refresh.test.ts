@@ -107,7 +107,7 @@ describe('useSessionRefresh Hook', () => {
 
       const { result } = renderHook(() => useSessionRefresh())
 
-      let refreshResult: Promise<RefreshResult>
+      let refreshResult: Promise<RefreshResult> | undefined
       act(() => {
         refreshResult = result.current.refreshWithRetry()
       })
@@ -136,7 +136,8 @@ describe('useSessionRefresh Hook', () => {
       })
 
       // Wait for the promise to resolve
-      const res = await refreshResult
+      expect(refreshResult).toBeDefined()
+      const res = await refreshResult!
       expect(res).toBeDefined()
       expect(res.success).toBe(false)
       expect(res.attempts).toBe(3)
