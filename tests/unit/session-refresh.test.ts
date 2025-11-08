@@ -44,7 +44,8 @@ describe('useSessionRefresh Hook', () => {
         refreshResult = await result.current.refreshWithRetry()
       })
 
-      expect(refreshResult.success).toBe(true)
+      expect(refreshResult).toBeDefined()
+      expect(refreshResult!.success).toBe(true)
       expect(result.current.retryCount).toBe(0)
       expect(mockRefreshSession).toHaveBeenCalledTimes(1)
       expect(mockRefreshSession).toHaveBeenCalledWith(0) // Force refresh
@@ -105,7 +106,8 @@ describe('useSessionRefresh Hook', () => {
 
       await waitFor(async () => {
         const res = await refreshResult
-        expect(res.success).toBe(false)
+        expect(res).toBeDefined()
+        expect(res!.success).toBe(false)
       })
 
       // Should have tried 3 times total (initial + 2 retries based on maxAttempts: 3)

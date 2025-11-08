@@ -43,22 +43,30 @@ jobs:
       - name: Check for high/critical vulnerabilities
         run: |
           set +e
+          # Run audit and capture output
           AUDIT_OUTPUT=$(pnpm audit --audit-level=high --json 2>&1)
           AUDIT_EXIT_CODE=$?
           
+          # If audit succeeds (exit code 0), no vulnerabilities found
           if [ $AUDIT_EXIT_CODE -eq 0 ]; then
             echo "✅ No high or critical vulnerabilities found"
             exit 0
           fi
           
-          # Check if there are actual vulnerabilities or just audit issues
-          if echo "$AUDIT_OUTPUT" | grep -q '"vulnerabilities"'; then
+          # If audit fails, check if it's due to vulnerabilities or other issues
+          # pnpm audit returns exit code 1 if vulnerabilities are found
+          # Check if JSON output contains vulnerabilities
+          if echo "$AUDIT_OUTPUT" | grep -qE '"vulnerabilities"|"advisories"'; then
             echo "❌ High or critical vulnerabilities found!"
-            pnpm audit --audit-level=high
+            echo "Running detailed audit report:"
+            pnpm audit --audit-level=high || true
             exit 1
           else
-            echo "⚠️ Audit check completed (may have moderate/low vulnerabilities)"
-            echo "$AUDIT_OUTPUT"
+            # Audit failed but not due to vulnerabilities (maybe network issue, etc.)
+            echo "⚠️ Audit check encountered an issue (not vulnerability-related)"
+            echo "Output: $AUDIT_OUTPUT"
+            # Don't fail the build for non-vulnerability issues
             exit 0
           fi
+        continue-on-error: false
 
