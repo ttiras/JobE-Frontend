@@ -125,7 +125,8 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
       onSuccess?.()
       // Redirect to login after 2 seconds
       setTimeout(() => {
-        router.push(`/${locale}/login`)
+        const loginPath = locale === 'en' ? '/login' : `/${locale}/login`
+        router.push(loginPath)
       }, 2000)
     } catch (err) {
       type TypedError = { type?: string; message?: string }
@@ -207,7 +208,7 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
         </Button>
 
         <div className="text-center text-sm">
-          <Link href={`/${locale}/login`} className="text-primary hover:underline">
+          <Link href={locale === 'en' ? '/login' : `/${locale}/login`} className="text-primary hover:underline">
             {tAuth('resetPassword.backToLogin')}
           </Link>
         </div>
@@ -295,7 +296,7 @@ export function PasswordResetForm({ resetToken, onSuccess, onError }: PasswordRe
       </Button>
 
       <div className="text-center text-sm">
-        <Link href={`/${locale}/login`} className="text-primary hover:underline">
+        <Link href={locale === 'en' ? '/login' : `/${locale}/login`} className="text-primary hover:underline">
           {tAuth('resetPassword.backToLogin')}
         </Link>
       </div>

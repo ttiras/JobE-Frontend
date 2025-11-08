@@ -87,8 +87,12 @@ JobE is a Next.js 16 application for HR professionals to manage organizational s
 ### Internationalization
 - All user-facing text must use `useTranslations()` from next-intl
 - Translation keys in `messages/en.json` and `messages/tr.json`
-- Default locale ('en') omitted from URLs
+- **CRITICAL**: Default locale ('en') is **omitted** from URLs - only Turkish locale uses prefix
+  - ✅ Correct: `/dashboard` (English, no prefix)
+  - ✅ Correct: `/tr/dashboard` (Turkish, with prefix)
+  - ❌ Wrong: `/en/dashboard` (never use /en/ prefix)
 - Use `usePathname()` and `useParams()` from `next/navigation`
+- When building URLs: `locale === 'en' ? '/path' : `/${locale}/path``
 
 ## Important Notes
 
@@ -111,11 +115,12 @@ JobE is a Next.js 16 application for HR professionals to manage organizational s
 - See `docs/rbac.md` for details
 
 ## Documentation Files
+**IMPORTANT**: For comprehensive architecture and pattern documentation, read these files:
+- **`CURSOR_AGENT_GUIDE.md`** - **READ THIS FIRST** - Comprehensive AI agent guide with architecture details, patterns, and common tasks
 - `README.md` - Project overview and setup
 - `.specify/memory/constitution.md` - Core principles (MUST READ)
 - `docs/` - Comprehensive feature documentation
 - `IMPLEMENTATION_SUMMARY.md` - Current implementation status
-- `CURSOR_AGENT_GUIDE.md` - Detailed AI agent guide (this file's companion)
 
 ## When Making Changes
 1. **Always** check if tests exist - if not, write them first (TDD)

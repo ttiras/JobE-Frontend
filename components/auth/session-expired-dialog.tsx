@@ -76,11 +76,13 @@ export function SessionExpiredDialog({
    * Preserves current page URL for redirect after login
    */
   const handleReAuthenticate = useCallback(() => {
-    // Preserve current page for redirect after login
-    const returnUrl = encodeURIComponent(pathname || `/${locale}/dashboard`);
+    // Preserve current page for redirect after login (omit locale prefix for default locale)
+    const dashboardPath = locale === 'en' ? '/dashboard' : `/${locale}/dashboard`
+    const returnUrl = encodeURIComponent(pathname || dashboardPath);
     
-    // Navigate to login with returnUrl
-    router.push(`/${locale}/login?returnUrl=${returnUrl}`);
+    // Navigate to login with returnUrl (omit locale prefix for default locale)
+    const loginPath = locale === 'en' ? '/login' : `/${locale}/login`
+    router.push(`${loginPath}?returnUrl=${returnUrl}`);
     
     // Call parent handler
     onReAuthenticate();

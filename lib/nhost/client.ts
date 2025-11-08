@@ -60,18 +60,22 @@ export const nhost = createClient({
 /**
  * Get redirect URL for email verification
  * Defaults to English locale, but can be customized
+ * Omit locale prefix for default locale ('en')
  */
 export function getVerifyEmailRedirectUrl(locale: string = 'en'): string {
   // Route groups like (auth) are not part of the URL; actual path is /[locale]/verify-email
-  return `${getBaseUrl()}/${locale}/verify-email`
+  const path = locale === 'en' ? '/verify-email' : `/${locale}/verify-email`
+  return `${getBaseUrl()}${path}`
 }
 
 /**
  * Get redirect URL for password reset
  * Defaults to English locale, but can be customized
+ * Omit locale prefix for default locale ('en')
  */
 export function getResetPasswordRedirectUrl(locale: string = 'en'): string {
   // Route groups like (auth) are not part of the URL; actual path is /[locale]/reset-password
-  return `${getBaseUrl()}/${locale}/reset-password`
+  const path = locale === 'en' ? '/reset-password' : `/${locale}/reset-password`
+  return `${getBaseUrl()}${path}`
 }
 

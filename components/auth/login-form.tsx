@@ -111,10 +111,17 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
           } catch {}
         }
         if (normalized && normalized.startsWith('/')) {
-          const target = /^\/(en|tr)\b/.test(normalized) ? normalized : `/${locale}${normalized}`
+          // If normalized already has locale prefix, use it; otherwise add locale prefix (omit for 'en')
+          const target = /^\/(en|tr)\b/.test(normalized) 
+            ? normalized 
+            : locale === 'en' 
+              ? normalized 
+              : `/${locale}${normalized}`
           router.replace(target)
         } else {
-          router.replace(`/${locale}/dashboard`)
+          // Omit locale prefix for default locale
+          const dashboardPath = locale === 'en' ? '/dashboard' : `/${locale}/dashboard`
+          router.replace(dashboardPath)
         }
       } else {
         throw new Error(tAuth('login.error'))
@@ -190,7 +197,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
         <div className="flex items-center justify-between">
           <Label htmlFor="password">{tAuth('login.password')}</Label>
           <Link 
-            href={`/${locale}/reset-password`} 
+            href={locale === 'en' ? '/reset-password' : `/${locale}/reset-password`} 
             className="text-sm text-primary hover:underline"
           >
             {tAuth('login.forgotPassword')}
@@ -264,7 +271,7 @@ export function LoginForm({ onSuccess, onError }: LoginFormProps) {
 
       <div className="text-center text-sm">
   <span className="text-muted-foreground">{tAuth('login.noAccount')} </span>
-        <Link href={`/${locale}/register`} className="text-primary hover:underline">
+        <Link href={locale === 'en' ? '/register' : `/${locale}/register`} className="text-primary hover:underline">
           {tAuth('login.signUp')}
         </Link>
       </div>

@@ -7,6 +7,9 @@ export default async function DashboardPage({
 }) {
   const { locale } = await params;
   
-  // Redirect to organizations page
-  redirect(`/${locale}/dashboard/organizations`);
+  // Redirect to organizations page (omit locale prefix for default locale)
+  const organizationsPath = locale === 'en' 
+    ? '/dashboard/organizations' 
+    : `/${locale}/dashboard/organizations`
+  redirect(organizationsPath);
 }

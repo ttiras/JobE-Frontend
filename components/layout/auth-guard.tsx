@@ -24,12 +24,15 @@ export function AuthGuard({ children }: AuthGuardProps) {
     if (isLoading) return
     if (isAuthenticated) return
 
-    // Derive locale from pathname prefix (e.g., /en/..., /tr/...)
-    const match = pathname?.match(/^\/(en|tr)(.*)$/)
+    // Derive locale from pathname prefix (e.g., /tr/...)
+    // Note: default locale ('en') is omitted from URLs
+    const match = pathname?.match(/^\/(tr)(.*)$/)
     const locale = match?.[1] || 'en'
-    const withoutLocale = match?.[2] || '/'
+    const withoutLocale = match?.[2] || pathname || '/'
 
-  const loginUrl = `/${locale}/login?redirect=${encodeURIComponent(withoutLocale)}`
+    // Omit locale prefix for default locale
+    const loginPath = locale === 'en' ? '/login' : `/${locale}/login`
+    const loginUrl = `${loginPath}?redirect=${encodeURIComponent(withoutLocale)}`
     router.replace(loginUrl)
   }, [isAuthenticated, isLoading, pathname, router])
 

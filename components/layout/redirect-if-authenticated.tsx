@@ -19,7 +19,8 @@ export default function RedirectIfAuthenticated() {
   useEffect(() => {
     if (isLoading || !isAuthenticated) return
 
-    const locale = pathname?.match(/^\/(en|tr)\b/)?.[1] || 'en'
+    // Derive locale from pathname (default locale 'en' is omitted from URLs)
+    const locale = pathname?.match(/^\/(tr)\b/)?.[1] || 'en'
 
     // Prefer explicit returnUrl or legacy redirect param
     const raw = searchParams.get('returnUrl') || searchParams.get('redirect')
@@ -37,9 +38,15 @@ export default function RedirectIfAuthenticated() {
 
     let target: string
     if (candidate && candidate.startsWith('/')) {
-      target = /^\/(en|tr)\b/.test(candidate) ? candidate : `/${locale}${candidate}`
+      // If candidate already has locale prefix, use it; otherwise add locale prefix (omit for 'en')
+      if (/^\/(tr)\b/.test(candidate)) {
+        target = candidate
+      } else {
+        target = locale === 'en' ? candidate : `/${locale}${candidate}`
+      }
     } else {
-      target = `/${locale}/dashboard`
+      // Omit locale prefix for default locale
+      target = locale === 'en' ? '/dashboard' : `/${locale}/dashboard`
     }
 
     // Avoid redundant navigation if we're already on the target

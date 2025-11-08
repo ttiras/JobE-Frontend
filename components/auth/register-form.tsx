@@ -125,8 +125,9 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
       // email verification, in which case session will be null but the
       // account is created. Treat this as success and guide the user.
       onSuccess?.(result)
-      // Redirect to verify email page (localized)
-      router.push(`/${locale}/verify-email`)
+      // Redirect to verify email page (omit locale prefix for default locale)
+      const verifyEmailPath = locale === 'en' ? '/verify-email' : `/${locale}/verify-email`
+      router.push(verifyEmailPath)
     } catch (err) {
       type TypedAuthError = {
         type?: AuthErrorType
@@ -335,7 +336,7 @@ export function RegisterForm({ onSuccess, onError }: RegisterFormProps) {
 
       <div className="text-center text-sm">
   <span className="text-muted-foreground">{tAuth('register.hasAccount')} </span>
-        <Link href={`/${locale}/login`} className="text-primary hover:underline">
+        <Link href={locale === 'en' ? '/login' : `/${locale}/login`} className="text-primary hover:underline">
           {tAuth('register.signIn')}
         </Link>
       </div>

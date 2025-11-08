@@ -15,9 +15,10 @@ export default async function proxy(request: NextRequest) {
   const locale = localeMatch?.[1] || defaultLocale
   const pathnameWithoutLocale = pathname.replace(/^\/(en|tr)/, '') || '/'
 
-  // Redirect root to localized dashboard
+  // Redirect root to localized dashboard (omit locale prefix for default locale)
   if (pathnameWithoutLocale === '/') {
-    const target = new URL(`/${locale}/dashboard`, request.url)
+    const dashboardPath = locale === defaultLocale ? '/dashboard' : `/${locale}/dashboard`
+    const target = new URL(dashboardPath, request.url)
     return NextResponse.redirect(target)
   }
 
