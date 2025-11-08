@@ -121,6 +121,9 @@ describe('ThemeToggle', () => {
       const user = userEvent.setup();
       render(<ThemeToggle />);
 
+      // Wait for component to mount (mounted state)
+      await new Promise(resolve => setTimeout(resolve, 10));
+
       // Tab to button
       await user.tab();
       const button = screen.getByRole('button');
@@ -139,6 +142,9 @@ describe('ThemeToggle', () => {
       
       const user = userEvent.setup();
       render(<ThemeToggle />);
+
+      // Wait for component to mount (mounted state)
+      await new Promise(resolve => setTimeout(resolve, 10));
 
       const button = screen.getByRole('button');
       button.focus();

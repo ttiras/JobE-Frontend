@@ -107,6 +107,8 @@ jest.mock('next/navigation', () => ({
     back: jest.fn(),
   }),
   usePathname: () => '/en/dashboard',
+  useParams: () => ({ locale: 'en' }),
+  useSearchParams: () => new URLSearchParams(),
 }))
 
 // Provide a default mock for useAuth to satisfy components that require AuthProvider

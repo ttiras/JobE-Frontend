@@ -32,8 +32,10 @@ export function LanguageSwitcher() {
       pathWithoutLocale = pathname.slice(locale.length + 1) || '/';
     }
 
-    // Build new path with new locale
-    const newPathname = `/${newLocale}${pathWithoutLocale}`;
+    // Build new path with new locale (omit default locale 'en')
+    const newPathname = newLocale === 'en' 
+      ? pathWithoutLocale 
+      : `/${newLocale}${pathWithoutLocale}`;
 
     // Use replace to change locale without adding to history
     router.replace(newPathname);

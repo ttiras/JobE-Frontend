@@ -7,6 +7,15 @@ jest.mock('next-intl', () => ({
   useTranslations: jest.fn(),
 }));
 
+// Mock next/navigation
+const mockPush = jest.fn();
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: mockPush,
+  }),
+  usePathname: () => '/dashboard', // Default locale omitted - pathname without locale
+}));
+
 // Mock next/link
 jest.mock('next/link', () => {
   const MockLink = ({ children, href }: { children: React.ReactNode; href: string }) => (
@@ -15,6 +24,35 @@ jest.mock('next/link', () => {
   MockLink.displayName = 'MockLink';
   return MockLink;
 });
+
+// Mock useAuth
+jest.mock('@/lib/hooks/use-auth', () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    user: { displayName: 'Test User' },
+  }),
+}));
+
+// Mock useTheme
+jest.mock('next-themes', () => ({
+  useTheme: () => ({
+    setTheme: jest.fn(),
+    theme: 'light',
+  }),
+}));
+
+// Mock sonner
+jest.mock('sonner', () => ({
+  toast: {
+    success: jest.fn(),
+    error: jest.fn(),
+  },
+}));
+
+// Mock OrganizationSwitcher to avoid needing OrganizationProvider
+jest.mock('@/components/layout/organization-switcher', () => ({
+  OrganizationSwitcher: () => null,
+}));
 
 describe('Header', () => {
   const mockT = jest.fn((key: string) => key);
@@ -33,6 +71,7 @@ describe('Header', () => {
     render(<Header />);
     const logoLink = screen.getByRole('link', { name: /JobE/i });
     expect(logoLink).toBeInTheDocument();
+    // Header should use '/dashboard' for default locale (en), not '/en/dashboard'
     expect(logoLink).toHaveAttribute('href', '/dashboard');
   });
 

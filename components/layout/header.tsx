@@ -50,7 +50,7 @@ export default function Header({
     try {
       await logout();
       toast.success('Successfully signed out');
-      router.push(`/${locale}/login`);
+      router.push(locale === 'en' ? '/login' : `/${locale}/login`);
     } catch {
       toast.error('Failed to sign out. Please try again.');
     }
@@ -91,7 +91,7 @@ export default function Header({
           </Button>
         )}
         <Link
-          href={`/${locale}/dashboard`}
+          href={locale === 'en' ? '/dashboard' : `/${locale}/dashboard`}
           className={cn(
             "text-xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent",
             "hover:from-primary/80 hover:to-primary/40 transition-all duration-200",
