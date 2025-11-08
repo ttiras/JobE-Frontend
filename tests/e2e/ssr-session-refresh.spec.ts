@@ -29,7 +29,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.click('button[type="submit"]')
     
     // Verify login successful
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     await expect(page.locator('text=Dashboard')).toBeVisible()
     
     // Step 2: Get cookies (simulate browser close)
@@ -49,11 +49,11 @@ test.describe('Server-Side Session Refresh', () => {
     await newPage.goto('/dashboard')
     
     // Step 6: Verify session refreshed on server and page renders
-    await expect(newPage).toHaveURL(/\/en\/dashboard/)
+    await expect(newPage).toHaveURL(/\/dashboard/)
     await expect(newPage.locator('text=Dashboard')).toBeVisible()
     
     // Should NOT be redirected to login
-    await expect(newPage).not.toHaveURL(/\/en\/login/)
+    await expect(newPage).not.toHaveURL(/\/login/)
   })
 
   test('should access protected server page directly after login', async ({ page }) => {
@@ -63,13 +63,13 @@ test.describe('Server-Side Session Refresh', () => {
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
     
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Close and reopen (simulated by navigation)
     await page.goto('/dashboard')
     
     // Should render without redirect
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     await expect(page.locator('text=Dashboard')).toBeVisible()
   })
 
@@ -80,7 +80,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
     
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Wait a moment to simulate time passing
     await page.waitForTimeout(2000)
@@ -92,7 +92,7 @@ test.describe('Server-Side Session Refresh', () => {
     await expect(page.locator('text=Dashboard')).toBeVisible()
     
     // Should not see login page
-    await expect(page).not.toHaveURL(/\/en\/login/)
+    await expect(page).not.toHaveURL(/\/login/)
   })
 
   test('should refresh expired session on server and render page', async ({ page, context }) => {
@@ -102,7 +102,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
     
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Get current cookies
     const cookies = await context.cookies()
@@ -118,7 +118,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.goto('/dashboard', { waitUntil: 'networkidle' })
     
     // Verify page renders without redirect to login
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     await expect(page.locator('text=Dashboard')).toBeVisible()
   })
 
@@ -129,13 +129,13 @@ test.describe('Server-Side Session Refresh', () => {
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
     
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Directly navigate to a deep protected route
     await page.goto('/dashboard')
     
     // Should render without redirect
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     await expect(page.locator('text=Dashboard')).toBeVisible()
   })
 
@@ -144,7 +144,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.goto('/dashboard')
     
     // Should redirect to login
-    await expect(page).toHaveURL(/\/en\/login/)
+    await expect(page).toHaveURL(/\/login/)
     
     // Should show login form
     await expect(page.locator('input[name="email"]')).toBeVisible()
@@ -158,14 +158,14 @@ test.describe('Server-Side Session Refresh', () => {
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
     
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Load the same protected page multiple times
     for (let i = 0; i < 3; i++) {
       await page.goto('/dashboard')
       
       // Each load should succeed (session refreshed if needed)
-      await expect(page).toHaveURL(/\/en\/dashboard/)
+      await expect(page).toHaveURL(/\/dashboard/)
       await expect(page.locator('text=Dashboard')).toBeVisible()
       
       // Wait between loads
@@ -180,7 +180,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
     
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Navigate to protected page
     await page.goto('/dashboard')
@@ -192,7 +192,7 @@ test.describe('Server-Side Session Refresh', () => {
     ])
     
     // Final state should still be authenticated
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     await expect(page.locator('text=Dashboard')).toBeVisible()
   })
 
@@ -209,7 +209,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.click('button[type="submit"]')
     
     // Should redirect to the return URL (dashboard)
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     await expect(page.locator('text=Dashboard')).toBeVisible()
   })
 
@@ -220,7 +220,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
     
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Disable JavaScript to test pure SSR
     await page.context().addInitScript(() => {
@@ -231,7 +231,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.goto('/dashboard')
     
     // Even with JS disabled, server should validate session
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Re-enable JavaScript for subsequent tests
     await page.context().clearCookies()
@@ -244,7 +244,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
     
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Simulate network offline briefly
     await context.setOffline(true)
@@ -259,6 +259,6 @@ test.describe('Server-Side Session Refresh', () => {
     
     // Try again - should work
     await page.goto('/dashboard')
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    await expect(page).toHaveURL(/\/dashboard/)
   })
 })
