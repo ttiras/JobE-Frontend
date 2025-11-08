@@ -676,11 +676,18 @@
     },
     "confirmation": {
       "title": "Confirm Import",
+      "subtitle": "Review the summary below before confirming",
       "message": "Are you sure you want to import this data?",
       "summary": "This will create {creates} and update {updates} records.",
-      "warning": "This action cannot be undone.",
-      "confirm": "Import Data",
-      "cancel": "Cancel"
+      "warning": "This operation will modify your organization structure. Please review carefully before proceeding.",
+      "confirm": "Confirm Import",
+      "confirming": "Importing...",
+      "cancel": "Cancel",
+      "departments": "Departments",
+      "positions": "Positions",
+      "creates": "New",
+      "updates": "Updates",
+      "total": "Total"
     },
     "success": {
       "title": "Import Successful!",

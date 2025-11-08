@@ -81,6 +81,50 @@ export function DataPreviewTable({
 
   return (
     <div className={`space-y-6 ${className}`}>
+      {/* Summary Statistics */}
+      {showOperations && (departments.length > 0 || positions.length > 0) && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {departments.length > 0 && (
+            <div className="flex items-start gap-3 p-4 border rounded-lg">
+              <div className="p-2 bg-blue-100 dark:bg-blue-950 rounded-lg shrink-0">
+                <Building2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-sm mb-2">{t('departments')}</h4>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-lg font-bold">{stats.departments.total} total</span>
+                  <span className="text-sm text-muted-foreground">
+                    {stats.departments.creates} new
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    {stats.departments.updates} updates
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+          {positions.length > 0 && (
+            <div className="flex items-start gap-3 p-4 border rounded-lg">
+              <div className="p-2 bg-green-100 dark:bg-green-950 rounded-lg shrink-0">
+                <Briefcase className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-sm mb-2">{t('positions')}</h4>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-lg font-bold">{stats.positions.total} total</span>
+                  <span className="text-sm text-muted-foreground">
+                    {stats.positions.creates} new
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    {stats.positions.updates} updates
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Departments table */}
       {departments.length > 0 && (
         <div className="border rounded-lg overflow-hidden">
