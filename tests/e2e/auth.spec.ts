@@ -47,7 +47,7 @@ async function getPasswordResetLink(email: string): Promise<string> {
 test.describe('T028: Full Authentication Flow', () => {
   test('should complete full registration and login flow', async ({ page }) => {
     // Step 1: Navigate to registration page
-    await page.goto(`${BASE_URL}/en/auth/register`)
+    await page.goto(`${BASE_URL}/auth/register`)
     await expect(page).toHaveTitle(/register|sign up|create account/i)
 
     // Step 2: Fill registration form
@@ -66,7 +66,7 @@ test.describe('T028: Full Authentication Flow', () => {
     await waitForEmailVerification(page, TEST_USER.email)
 
     // Step 6: Navigate to login page
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
 
     // Step 7: Login with new credentials
     await page.getByLabel(/email/i).fill(TEST_USER.email)
@@ -88,7 +88,7 @@ test.describe('T028: Full Authentication Flow', () => {
   })
 
   test('should prevent access to protected routes when not authenticated', async ({ page }) => {
-    await page.goto(`${BASE_URL}/en/dashboard`)
+    await page.goto(`${BASE_URL}/dashboard`)
 
     // Should redirect to login
     await expect(page).toHaveURL(/\/auth\/login/)
@@ -97,14 +97,14 @@ test.describe('T028: Full Authentication Flow', () => {
 
   test('should redirect authenticated users away from auth pages', async ({ page, context }) => {
     // First login
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
     await page.getByLabel(/email/i).fill(TEST_USER.email)
     await page.getByLabel(/password/i).fill(TEST_USER.password)
     await page.getByRole('button', { name: /sign in|log in/i }).click()
     await expect(page).toHaveURL(/\/dashboard/)
 
     // Try to access login page while authenticated
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
 
     // Should redirect back to dashboard
     await expect(page).toHaveURL(/\/dashboard/)
@@ -112,7 +112,7 @@ test.describe('T028: Full Authentication Flow', () => {
 
   test('should persist session across page reloads', async ({ page }) => {
     // Login
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
     await page.getByLabel(/email/i).fill(TEST_USER.email)
     await page.getByLabel(/password/i).fill(TEST_USER.password)
     await page.getByRole('button', { name: /sign in|log in/i }).click()
@@ -136,7 +136,7 @@ test.describe('T029: Password Reset Flow', () => {
 
   test('should complete full password reset flow', async ({ page }) => {
     // Step 1: Navigate to password reset page
-    await page.goto(`${BASE_URL}/en/auth/reset-password`)
+    await page.goto(`${BASE_URL}/auth/reset-password`)
     await expect(page.getByText(/reset.*password|forgot.*password/i)).toBeVisible()
 
     // Step 2: Request password reset
@@ -160,7 +160,7 @@ test.describe('T029: Password Reset Flow', () => {
     await expect(page.getByText(/password.*reset.*success|password.*changed/i)).toBeVisible()
 
     // Step 7: Login with new password
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
     await page.getByLabel(/email/i).fill(TEST_USER.email)
     await page.getByLabel(/password/i).fill(newPassword)
     await page.getByRole('button', { name: /sign in|log in/i }).click()
@@ -170,7 +170,7 @@ test.describe('T029: Password Reset Flow', () => {
 
     // Step 9: Verify old password no longer works
     await page.getByRole('button', { name: /log out|logout/i }).click()
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
     await page.getByLabel(/email/i).fill(TEST_USER.email)
     await page.getByLabel(/password/i).fill(TEST_USER.password) // Old password
     await page.getByRole('button', { name: /sign in|log in/i }).click()
@@ -180,7 +180,7 @@ test.describe('T029: Password Reset Flow', () => {
   })
 
   test('should show error for non-existent email', async ({ page }) => {
-    await page.goto(`${BASE_URL}/en/auth/reset-password`)
+    await page.goto(`${BASE_URL}/auth/reset-password`)
     await page.getByLabel(/email/i).fill('nonexistent@example.com')
     await page.getByRole('button', { name: /send.*link|reset/i }).click()
 
@@ -191,7 +191,7 @@ test.describe('T029: Password Reset Flow', () => {
 
   test('should reject expired reset token', async ({ page }) => {
     const expiredToken = 'expired-reset-token'
-    await page.goto(`${BASE_URL}/en/auth/reset-password?token=${expiredToken}`)
+    await page.goto(`${BASE_URL}/auth/reset-password?token=${expiredToken}`)
 
     await page.getByLabel(/new password/i).fill(newPassword)
     await page.getByLabel(/confirm password/i).fill(newPassword)
@@ -207,7 +207,7 @@ test.describe('T029: Password Reset Flow', () => {
  */
 test.describe('T030: Rate Limiting and CAPTCHA', () => {
   test('should show CAPTCHA after 3 failed login attempts', async ({ page }) => {
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
 
     // Attempt 1
     await page.getByLabel(/email/i).fill(TEST_USER.email)
@@ -234,7 +234,7 @@ test.describe('T030: Rate Limiting and CAPTCHA', () => {
   })
 
   test('should enforce account lockout after 5 failed attempts', async ({ page }) => {
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
 
     // Make 5 failed attempts
     for (let i = 1; i <= 5; i++) {
@@ -257,7 +257,7 @@ test.describe('T030: Rate Limiting and CAPTCHA', () => {
 
   test('should allow login with correct credentials and CAPTCHA', async ({ page }) => {
     // First trigger CAPTCHA by failing 3 times
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
     
     for (let i = 1; i <= 3; i++) {
       await page.getByLabel(/email/i).fill(TEST_USER.email)
@@ -285,14 +285,14 @@ test.describe('T030: Rate Limiting and CAPTCHA', () => {
 test.describe('T031: Account Deletion', () => {
   test('should delete account and all associated data', async ({ page }) => {
     // Step 1: Login
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
     await page.getByLabel(/email/i).fill(TEST_USER.email)
     await page.getByLabel(/password/i).fill(TEST_USER.password)
     await page.getByRole('button', { name: /sign in|log in/i }).click()
     await expect(page).toHaveURL(/\/dashboard/)
 
     // Step 2: Navigate to settings
-    await page.goto(`${BASE_URL}/en/settings`)
+    await page.goto(`${BASE_URL}/settings`)
     await expect(page.getByText(/settings|account settings/i)).toBeVisible()
 
     // Step 3: Find delete account section
@@ -321,7 +321,7 @@ test.describe('T031: Account Deletion', () => {
 
     // Step 8: Verify cannot register with same email (if email is soft-deleted)
     // Note: Some systems allow re-registration, others don't
-    await page.goto(`${BASE_URL}/en/auth/register`)
+    await page.goto(`${BASE_URL}/auth/register`)
     await page.getByLabel(/email/i).fill(TEST_USER.email)
     await page.getByLabel(/password/i).fill(TEST_USER.password)
     await page.getByRole('button', { name: /create account|register/i }).click()
@@ -332,13 +332,13 @@ test.describe('T031: Account Deletion', () => {
 
   test('should require password confirmation for account deletion', async ({ page }) => {
     // Login
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
     await page.getByLabel(/email/i).fill(TEST_USER.email)
     await page.getByLabel(/password/i).fill(TEST_USER.password)
     await page.getByRole('button', { name: /sign in|log in/i }).click()
 
     // Go to settings
-    await page.goto(`${BASE_URL}/en/settings`)
+    await page.goto(`${BASE_URL}/settings`)
     await page.getByText(/delete account/i).click()
 
     // Try to delete without password
@@ -350,13 +350,13 @@ test.describe('T031: Account Deletion', () => {
 
   test('should cancel account deletion', async ({ page }) => {
     // Login
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
     await page.getByLabel(/email/i).fill(TEST_USER.email)
     await page.getByLabel(/password/i).fill(TEST_USER.password)
     await page.getByRole('button', { name: /sign in|log in/i }).click()
 
     // Go to settings
-    await page.goto(`${BASE_URL}/en/settings`)
+    await page.goto(`${BASE_URL}/settings`)
     await page.getByText(/delete account/i).click()
 
     // Start deletion process
@@ -389,14 +389,14 @@ test.describe('Additional Security Tests', () => {
     const page2 = await context2.newPage()
 
     // Login on device 1
-    await page1.goto(`${BASE_URL}/en/auth/login`)
+    await page1.goto(`${BASE_URL}/auth/login`)
     await page1.getByLabel(/email/i).fill(TEST_USER.email)
     await page1.getByLabel(/password/i).fill(TEST_USER.password)
     await page1.getByRole('button', { name: /sign in|log in/i }).click()
     await expect(page1).toHaveURL(/\/dashboard/)
 
     // Login on device 2
-    await page2.goto(`${BASE_URL}/en/auth/login`)
+    await page2.goto(`${BASE_URL}/auth/login`)
     await page2.getByLabel(/email/i).fill(TEST_USER.email)
     await page2.getByLabel(/password/i).fill(TEST_USER.password)
     await page2.getByRole('button', { name: /sign in|log in/i }).click()
@@ -411,7 +411,7 @@ test.describe('Additional Security Tests', () => {
   })
 
   test('should validate email format', async ({ page }) => {
-    await page.goto(`${BASE_URL}/en/auth/login`)
+    await page.goto(`${BASE_URL}/auth/login`)
     
     await page.getByLabel(/email/i).fill('invalid-email')
     await page.getByLabel(/password/i).fill(TEST_USER.password)
@@ -421,7 +421,7 @@ test.describe('Additional Security Tests', () => {
   })
 
   test('should enforce password strength on registration', async ({ page }) => {
-    await page.goto(`${BASE_URL}/en/auth/register`)
+    await page.goto(`${BASE_URL}/auth/register`)
     
     await page.getByLabel(/full name/i).fill('Test User')
     await page.getByLabel(/email/i).fill('newuser@example.com')

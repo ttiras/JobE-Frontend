@@ -22,7 +22,7 @@ test.describe('Idle Session Refresh', () => {
 
   test('should login successfully and navigate to dashboard', async ({ page }) => {
     // Navigate to login page
-    await page.goto('/en/login')
+    await page.goto('/login')
     
     // Fill in credentials
     await page.fill('input[name="email"]', TEST_EMAIL)
@@ -40,7 +40,7 @@ test.describe('Idle Session Refresh', () => {
 
   test('should refresh session after simulated idle period', async ({ page }) => {
     // Login first
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -62,7 +62,7 @@ test.describe('Idle Session Refresh', () => {
 
   test('should handle page load without login redirect after token refresh', async ({ page }) => {
     // Login first
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -79,7 +79,7 @@ test.describe('Idle Session Refresh', () => {
 
   test('should maintain authentication across multiple page navigations', async ({ page }) => {
     // Login
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -87,7 +87,7 @@ test.describe('Idle Session Refresh', () => {
     await expect(page).toHaveURL(/\/en\/dashboard/)
     
     // Navigate to different pages
-    const pages = ['/', '/en/dashboard']
+    const pages = ['/', '/dashboard']
     
     for (const targetPage of pages) {
       await page.goto(targetPage)
@@ -100,13 +100,13 @@ test.describe('Idle Session Refresh', () => {
     }
     
     // Verify still authenticated
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     await expect(page.locator('text=Dashboard')).toBeVisible()
   })
 
   test('should recover from expired token during navigation', async ({ page, context }) => {
     // Login first
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -135,7 +135,7 @@ test.describe('Idle Session Refresh', () => {
 
   test('should handle session refresh within 2 seconds after idle', async ({ page }) => {
     // Login
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -146,7 +146,7 @@ test.describe('Idle Session Refresh', () => {
     const startTime = Date.now()
     
     // Navigate (triggers refresh check)
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     
     // Wait for page to be ready
     await page.waitForLoadState('networkidle')
@@ -165,7 +165,7 @@ test.describe('Idle Session Refresh', () => {
 test.describe('Session Refresh Error Handling', () => {
   test('should handle network errors gracefully', async ({ page, context }) => {
     // Login first
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -176,7 +176,7 @@ test.describe('Session Refresh Error Handling', () => {
     await context.setOffline(true)
     
     // Try to navigate
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     
     // Should show appropriate error or maintain current state
     // (Specific behavior depends on implementation)
@@ -185,7 +185,7 @@ test.describe('Session Refresh Error Handling', () => {
 
   test('should redirect to login if refresh token is invalid', async ({ page, context }) => {
     // Login first
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -196,7 +196,7 @@ test.describe('Session Refresh Error Handling', () => {
     await context.clearCookies()
     
     // Navigate to protected page
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     
     // Should redirect to login
     await expect(page).toHaveURL(/\/en\/login/)

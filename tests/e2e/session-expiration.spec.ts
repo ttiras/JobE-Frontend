@@ -17,29 +17,29 @@ import { AuthErrorFactory, AuthErrorType } from '@/lib/utils/auth-errors';
 
 test.describe('Session Expiration E2E Flow', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/en');
+    await page.goto('/');
   });
 
   test('should handle complete session expiration flow', async ({ page }) => {
     // Step 1: Login
-    await page.goto('/en/login');
+    await page.goto('/login');
     await page.fill('input[name="email"]', 'test@example.com');
     await page.fill('input[name="password"]', 'TestPassword123!');
     await page.click('button[type="submit"]');
     
     // Wait for redirect to dashboard
     await page.waitForURL(/\/en\/dashboard/);
-    expect(page.url()).toContain('/en/dashboard');
+    expect(page.url()).toContain('/dashboard');
 
     // Step 2: Navigate to a protected page
-    await page.goto('/en/dashboard/profile');
+    await page.goto('/dashboard/profile');
     await expect(page.locator('h1')).toContainText('Profile');
 
     // Step 3: Simulate session expiration by clearing cookies
     await page.context().clearCookies();
 
     // Step 4: Try to make an authenticated request (should fail with session expired)
-    await page.goto('/en/dashboard/profile');
+    await page.goto('/dashboard/profile');
     
     // Verify we're redirected to login or see an error
     await page.waitForTimeout(1000);
@@ -52,7 +52,7 @@ test.describe('Session Expiration E2E Flow', () => {
 
   test('should preserve returnUrl when session expires', async ({ page }) => {
     // Step 1: Login
-    await page.goto('/en/login');
+    await page.goto('/login');
     await page.fill('input[name="email"]', 'test@example.com');
     await page.fill('input[name="password"]', 'TestPassword123!');
     await page.click('button[type="submit"]');
@@ -60,7 +60,7 @@ test.describe('Session Expiration E2E Flow', () => {
     await page.waitForURL(/\/en\/dashboard/);
 
     // Step 2: Navigate to specific page
-    const targetPage = '/en/dashboard/settings';
+    const targetPage = '/dashboard/settings';
     await page.goto(targetPage);
 
     // Step 3: Clear session
@@ -101,7 +101,7 @@ test.describe('Session Expiration E2E Flow', () => {
       };
     });
 
-    await page.goto('/en/login');
+    await page.goto('/login');
     
     // Verify error categorization logic exists
     const hasErrorHandler = await page.evaluate(() => {
@@ -116,7 +116,7 @@ test.describe('Session Expiration E2E Flow', () => {
 
   test('should redirect back to original page after re-authentication', async ({ page }) => {
     // Step 1: Login
-    await page.goto('/en/login');
+    await page.goto('/login');
     await page.fill('input[name="email"]', 'test@example.com');
     await page.fill('input[name="password"]', 'TestPassword123!');
     await page.click('button[type="submit"]');
@@ -124,13 +124,13 @@ test.describe('Session Expiration E2E Flow', () => {
     await page.waitForURL(/\/en\/dashboard/);
 
     // Step 2: Go to specific page
-    const originalPage = '/en/dashboard/profile';
+    const originalPage = '/dashboard/profile';
     await page.goto(originalPage);
 
     // Step 3: Clear session and navigate with returnUrl
     await page.context().clearCookies();
     const returnUrl = encodeURIComponent(originalPage);
-    await page.goto(`/en/login?returnUrl=${returnUrl}`);
+    await page.goto(`/login?returnUrl=${returnUrl}`);
 
     // Step 4: Login again
     await page.fill('input[name="email"]', 'test@example.com');
@@ -176,7 +176,7 @@ test.describe('Error Categorization System', () => {
 test.describe('Session Cookie Management', () => {
   test('should clear session cookie on logout', async ({ page }) => {
     // Login
-    await page.goto('/en/login');
+    await page.goto('/login');
     await page.fill('input[name="email"]', 'test@example.com');
     await page.fill('input[name="password"]', 'TestPassword123!');
     await page.click('button[type="submit"]');
@@ -213,7 +213,7 @@ test.describe('Session Cookie Management', () => {
     }]);
 
     // Try to access protected page
-    await page.goto('/en/dashboard/profile');
+    await page.goto('/dashboard/profile');
     await page.waitForTimeout(1000);
 
     // Should redirect to login
@@ -229,14 +229,14 @@ test.describe('Multi-Tab Session Sync', () => {
     const page2 = await context.newPage();
 
     // Login in first tab
-    await page1.goto('/en/login');
+    await page1.goto('/login');
     await page1.fill('input[name="email"]', 'test@example.com');
     await page1.fill('input[name="password"]', 'TestPassword123!');
     await page1.click('button[type="submit"]');
     await page1.waitForURL(/\/en\/dashboard/);
 
     // Navigate to dashboard in second tab
-    await page2.goto('/en/dashboard');
+    await page2.goto('/dashboard');
     await page2.waitForTimeout(500);
 
     // Verify both tabs are authenticated

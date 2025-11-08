@@ -23,7 +23,7 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should login and persist session across browser restart', async ({ page, context }) => {
     // Step 1: Login
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -46,7 +46,7 @@ test.describe('Server-Side Session Refresh', () => {
     const newPage = await context.newPage()
     
     // Step 5: Access protected page directly (should trigger server-side refresh)
-    await newPage.goto('/en/dashboard')
+    await newPage.goto('/dashboard')
     
     // Step 6: Verify session refreshed on server and page renders
     await expect(newPage).toHaveURL(/\/en\/dashboard/)
@@ -58,7 +58,7 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should access protected server page directly after login', async ({ page }) => {
     // Login first
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -66,7 +66,7 @@ test.describe('Server-Side Session Refresh', () => {
     await expect(page).toHaveURL(/\/en\/dashboard/)
     
     // Close and reopen (simulated by navigation)
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     
     // Should render without redirect
     await expect(page).toHaveURL(/\/en\/dashboard/)
@@ -75,7 +75,7 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should handle server-side session validation on protected routes', async ({ page }) => {
     // Login
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -86,7 +86,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.waitForTimeout(2000)
     
     // Navigate to a protected route that requires SSR validation
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     
     // Page should load successfully (session validated on server)
     await expect(page.locator('text=Dashboard')).toBeVisible()
@@ -97,7 +97,7 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should refresh expired session on server and render page', async ({ page, context }) => {
     // Login
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -115,7 +115,7 @@ test.describe('Server-Side Session Refresh', () => {
     await page.waitForTimeout(1000)
     
     // Access page directly (should trigger server-side refresh)
-    await page.goto('/en/dashboard', { waitUntil: 'networkidle' })
+    await page.goto('/dashboard', { waitUntil: 'networkidle' })
     
     // Verify page renders without redirect to login
     await expect(page).toHaveURL(/\/en\/dashboard/)
@@ -124,7 +124,7 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should handle deep link to protected page with valid session', async ({ page }) => {
     // Login first
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -132,7 +132,7 @@ test.describe('Server-Side Session Refresh', () => {
     await expect(page).toHaveURL(/\/en\/dashboard/)
     
     // Directly navigate to a deep protected route
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     
     // Should render without redirect
     await expect(page).toHaveURL(/\/en\/dashboard/)
@@ -141,7 +141,7 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should redirect to login when accessing protected page without session', async ({ page }) => {
     // Try to access protected page without logging in
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     
     // Should redirect to login
     await expect(page).toHaveURL(/\/en\/login/)
@@ -153,7 +153,7 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should maintain session across multiple protected page loads', async ({ page }) => {
     // Login
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -162,7 +162,7 @@ test.describe('Server-Side Session Refresh', () => {
     
     // Load the same protected page multiple times
     for (let i = 0; i < 3; i++) {
-      await page.goto('/en/dashboard')
+      await page.goto('/dashboard')
       
       // Each load should succeed (session refreshed if needed)
       await expect(page).toHaveURL(/\/en\/dashboard/)
@@ -175,7 +175,7 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should handle concurrent protected page requests', async ({ page }) => {
     // Login
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -183,7 +183,7 @@ test.describe('Server-Side Session Refresh', () => {
     await expect(page).toHaveURL(/\/en\/dashboard/)
     
     // Navigate to protected page
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     
     // Reload multiple times quickly
     await Promise.all([
@@ -198,10 +198,10 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should preserve return URL after authentication', async ({ page }) => {
     // Try to access protected page
-    const returnUrl = encodeURIComponent('/en/dashboard')
+    const returnUrl = encodeURIComponent('/dashboard')
     
     // Go to login (would normally be redirected here with returnUrl)
-    await page.goto(`/en/login?returnUrl=${returnUrl}`)
+    await page.goto(`/login?returnUrl=${returnUrl}`)
     
     // Login
     await page.fill('input[name="email"]', TEST_EMAIL)
@@ -215,7 +215,7 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should handle session refresh during server-side rendering', async ({ page }) => {
     // Login
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -228,7 +228,7 @@ test.describe('Server-Side Session Refresh', () => {
     })
     
     // Navigate to protected page
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     
     // Even with JS disabled, server should validate session
     await expect(page).toHaveURL(/\/en\/dashboard/)
@@ -239,7 +239,7 @@ test.describe('Server-Side Session Refresh', () => {
 
   test('should handle network errors during server-side refresh gracefully', async ({ page, context }) => {
     // Login
-    await page.goto('/en/login')
+    await page.goto('/login')
     await page.fill('input[name="email"]', TEST_EMAIL)
     await page.fill('input[name="password"]', TEST_PASSWORD)
     await page.click('button[type="submit"]')
@@ -250,7 +250,7 @@ test.describe('Server-Side Session Refresh', () => {
     await context.setOffline(true)
     
     // Try to navigate (should fail gracefully)
-    await page.goto('/en/dashboard').catch(() => {
+    await page.goto('/dashboard').catch(() => {
       // Expected to fail
     })
     
@@ -258,7 +258,7 @@ test.describe('Server-Side Session Refresh', () => {
     await context.setOffline(false)
     
     // Try again - should work
-    await page.goto('/en/dashboard')
+    await page.goto('/dashboard')
     await expect(page).toHaveURL(/\/en\/dashboard/)
   })
 })
