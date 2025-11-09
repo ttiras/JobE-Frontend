@@ -32,7 +32,6 @@ export function Sidebar({
   const navRef = useRef<HTMLElement>(null);
   const { user } = useAuth();
   const [isHovered, setIsHovered] = useState(false);
-  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   // Get orgId from URL params
   const orgId = params?.orgId as string | undefined;
@@ -61,26 +60,8 @@ export function Sidebar({
       href: `${localePrefix}/dashboard/${orgId}${item.href}`,
       // Store normalized href for comparison (without locale)
       normalizedHref: `/dashboard/${orgId}${item.href}`,
-      children: item.children?.map(child => ({
-        ...child,
-        href: `${localePrefix}/dashboard/${orgId}${child.href}`,
-        normalizedHref: `/dashboard/${orgId}${child.href}`
-      }))
     }));
   }, [visibleNavItems, orgId, locale]);
-
-  // Toggle parent item expansion
-  const toggleExpanded = (itemId: string) => {
-    setExpandedItems(prev => {
-      const next = new Set(prev);
-      if (next.has(itemId)) {
-        next.delete(itemId);
-      } else {
-        next.add(itemId);
-      }
-      return next;
-    });
-  };
 
   // Handle arrow key navigation
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -110,75 +91,53 @@ export function Sidebar({
     <nav
       ref={navRef}
       aria-label="Main navigation"
-      className="flex flex-col p-3 space-y-1 flex-1 relative z-10"
+      className="flex flex-col p-3 flex-1 relative z-10"
       onKeyDown={handleKeyDown}
     >
-      {orgAwareNavItems.map((item) => {
-        // Check if any child is active using normalized paths
-        const hasActiveChild = item.children?.some(child => {
-          const childNormalized = (child as any).normalizedHref || child.href;
-          return normalizedPathname === childNormalized || normalizedPathname.startsWith(`${childNormalized}/`);
-        });
+      {orgAwareNavItems.map((item, index) => {
+        // Determine if we should add spacing before this item
+        const prevItem = index > 0 ? orgAwareNavItems[index - 1] : null;
+        const shouldAddSpacing = prevItem && item.group !== prevItem.group;
         
         // Check if current item is active using normalized paths
-        // Parent items should NOT be active if a child is active
         const itemNormalized = (item as any).normalizedHref || item.href;
         
         let isActive = false;
-        if (itemNormalized) {
-          // For items with children, only exact match (no startsWith to avoid matching children routes)
-          if (item.children && item.children.length > 0) {
-            isActive = !hasActiveChild && normalizedPathname === itemNormalized;
-          } else {
-            // For items without children, allow startsWith for sub-routes
-            isActive = normalizedPathname === itemNormalized || normalizedPathname.startsWith(`${itemNormalized}/`);
-          }
-        } else {
-          // Dashboard (empty href) - only exact match
-          isActive = !hasActiveChild && (normalizedPathname === `/dashboard/${orgId}` || normalizedPathname === `/dashboard/${orgId}/`);
-        }
         
-        // Auto-expand parent if a child is active
-        const isExpanded = expandedItems.has(item.id) || hasActiveChild;
+        // URL matching logic
+        // Special case: Dashboard (check by ID since href gets transformed)
+        if (item.id === 'dashboard') {
+          // Dashboard: Only active when at exact dashboard root, not any sub-routes
+          const dashboardRoot = `/dashboard/${orgId}`;
+          // Normalize both paths for comparison (remove trailing slashes)
+          const normalizedCurrent = normalizedPathname.replace(/\/$/, '');
+          const normalizedDashboard = dashboardRoot.replace(/\/$/, '');
+          isActive = normalizedCurrent === normalizedDashboard;
+        } else if (itemNormalized) {
+          // All items are now leaf routes (no children)
+          // Active if exact match or a deeper sub-route
+          const normalizedCurrent = normalizedPathname.replace(/\/$/, '');
+          const normalizedItem = itemNormalized.replace(/\/$/, '');
+          isActive = normalizedCurrent === normalizedItem || normalizedCurrent.startsWith(`${normalizedItem}/`);
+        }
         
         return (
           <div key={item.id}>
+            {/* Add spacing between different groups */}
+            {shouldAddSpacing && (
+              <div className="h-4" aria-hidden="true" />
+            )}
+            
             <NavItem
               item={item}
               isActive={isActive ?? false}
               label={t(item.label)}
               isCollapsed={!isHovered && !isMobile}
               isHovered={isHovered || isMobile}
-              hasChildren={!!item.children}
-              isExpanded={isExpanded}
-              onToggle={() => toggleExpanded(item.id)}
+              hasChildren={false}
+              isExpanded={false}
+              onToggle={undefined}
             />
-            
-            {/* Render children with sliding animation */}
-            <div className={cn(
-              "overflow-hidden transition-all duration-300 ease-out",
-              item.children && isExpanded && (isHovered || isMobile) 
-                ? "max-h-96 opacity-100" 
-                : "max-h-0 opacity-0"
-            )}>
-              <div className="ml-4 mt-1 space-y-1">
-                {item.children?.map((child) => {
-                  const childNormalized = (child as any).normalizedHref || child.href;
-                  const isChildItemActive = normalizedPathname === childNormalized || normalizedPathname.startsWith(`${childNormalized}/`);
-                  return (
-                    <NavItem
-                      key={child.id}
-                      item={child}
-                      isActive={isChildItemActive}
-                      label={t(child.label)}
-                      isCollapsed={false}
-                      isHovered={isHovered || isMobile}
-                      isChild={true}
-                    />
-                  );
-                })}
-              </div>
-            </div>
           </div>
         );
       })}
@@ -213,14 +172,23 @@ export function Sidebar({
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
         'fixed left-0 top-14 z-50 h-[calc(100vh-3.5rem)] flex flex-col',
-        'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
-        'transition-[width] duration-250 ease-out',
-        isHovered ? 'w-60' : 'w-16',
-        'shadow-sm overflow-hidden' // Add overflow-hidden to clip content
+        'bg-background/95 backdrop-blur-md supports-[backdrop-filter]:bg-background/80',
+        'transition-all duration-300 ease-out',
+        isHovered ? 'w-60 shadow-lg' : 'w-16 shadow-sm',
+        'overflow-hidden'
       )}
     >
-      {/* Border that moves with the width */}
-      <div className="absolute right-0 top-0 h-full w-px bg-border" />
+      {/* Elegant border with gradient accent */}
+      <div className={cn(
+        "absolute right-0 top-0 h-full w-px",
+        "bg-gradient-to-b from-border/50 via-border to-border/50",
+        "transition-opacity duration-300",
+        isHovered && "opacity-70"
+      )} />
+      
+      {/* Subtle gradient overlay for depth */}
+      <div className="absolute inset-0 bg-gradient-to-br from-background/0 via-background/0 to-accent/5 pointer-events-none" />
+      
       {navContent}
     </aside>
   );

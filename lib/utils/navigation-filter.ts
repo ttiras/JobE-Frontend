@@ -7,6 +7,7 @@ export interface NavigationItem {
   href: string;
   requiredRoles: UserRole[];
   children?: NavigationItem[];
+  group?: string; // Optional grouping for visual spacing
 }
 
 /**

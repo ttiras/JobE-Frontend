@@ -50,62 +50,65 @@ export function NavItem({
       href={hasChildren ? '#' : item.href}
       onClick={handleClick}
       className={cn(
-        'group relative flex items-center transition-all duration-200',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
-        'py-2.5 px-2 rounded-lg',
-        'overflow-hidden', // Important for clipping the sliding content
-        isActive 
-          ? 'bg-primary/90 text-primary-foreground font-semibold shadow-sm border-l-4 border-primary-foreground/30' 
-          : 'text-muted-foreground hover:text-foreground hover:bg-accent/50',
-        isChild && 'text-sm py-2'
+        'group relative flex items-center transition-all duration-300',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:rounded-lg',
+        'py-2 rounded-xl text-sm',
+        'overflow-hidden',
+        // Center icons when collapsed, normal padding when expanded
+        isCollapsed ? 'justify-center px-0' : 'px-3',
+        // Only apply background when expanded (hovered)
+        isActive && isHovered
+          ? 'bg-primary/10 text-primary font-medium shadow-sm' 
+          : isActive 
+            ? 'text-primary font-medium'
+            : 'text-muted-foreground hover:text-foreground hover:bg-accent/50',
+        isChild && 'py-1.5 rounded-lg text-xs'
       )}
       aria-label={isCollapsed ? label : undefined}
       aria-current={isActive ? 'page' : undefined}
       aria-expanded={hasChildren ? isExpanded : undefined}
     >
-      {/* Active indicator bar */}
-      {isActive && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-foreground rounded-r-full" />
-      )}
-      
-      {/* Icon container - fixed position */}
+      {/* Icon container - active background when collapsed */}
       <div className={cn(
-        'flex items-center justify-center transition-all duration-200 flex-shrink-0',
-        'w-8 h-8 rounded-md',
+        'flex items-center justify-center transition-all duration-300 flex-shrink-0',
+        'w-8 h-8 rounded-lg',
+        // Apply background to icon only when collapsed and active
+        isActive && !isHovered && 'bg-primary/10 shadow-sm',
         isChild && 'w-6 h-6'
       )}>
         {IconComponent && (
           <IconComponent
             className={cn(
-              "transition-transform duration-200",
-              'h-4 w-4',
-              !isActive && 'group-hover:scale-110',
-              isChild && 'h-3 w-3'
+              "transition-all duration-300",
+              'h-[17px] w-[17px]',
+              isActive ? 'scale-105 stroke-[2.5]' : 'stroke-[2] group-hover:scale-105',
+              isChild && 'h-3.5 w-3.5'
             )}
             aria-hidden="true"
           />
         )}
       </div>
       
-      {/* Label container with sliding animation */}
+      {/* Label with smooth animation */}
       <div
         className={cn(
-          "flex items-center gap-2 ml-3 whitespace-nowrap",
+          "flex items-center gap-2 ml-2.5 whitespace-nowrap",
           "transition-all duration-300 ease-out",
-          // Use width and opacity for smooth slide effect
           isHovered 
             ? 'w-40 opacity-100' 
-            : 'w-0 opacity-0 ml-0',
-          isChild && 'text-xs'
+            : 'w-0 opacity-0 ml-0'
         )}
       >
-        <span className="font-medium">
+        <span className={cn(
+          "transition-all duration-200",
+          isActive && "font-medium"
+        )}>
           {label}
         </span>
         {hasChildren && isHovered && (
           <ChevronDown 
             className={cn(
-              "h-3 w-3 transition-transform duration-200 ml-auto",
+              "h-3.5 w-3.5 transition-transform duration-300 ml-auto",
               isExpanded && "rotate-180"
             )}
           />
@@ -117,15 +120,15 @@ export function NavItem({
   // Wrap with Tooltip when collapsed
   if (isCollapsed && !isHovered) {
     return (
-      <TooltipProvider delayDuration={300}>
+      <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
             {linkContent}
           </TooltipTrigger>
           <TooltipContent 
             side="right" 
-            className="font-medium bg-popover/95 backdrop-blur-sm border shadow-lg"
-            sideOffset={8}
+            className="font-medium bg-popover/98 backdrop-blur-md border shadow-xl px-3 py-2 rounded-lg"
+            sideOffset={12}
           >
             {label}
           </TooltipContent>

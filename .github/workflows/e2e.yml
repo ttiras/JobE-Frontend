@@ -43,7 +43,9 @@ jobs:
 
       - name: Start development server
         if: github.event_name != 'workflow_dispatch' || github.event.inputs.environment == 'local'
-        run: pnpm dev &
+        run: |
+          pnpm dev > /dev/null 2>&1 &
+          echo $! > /tmp/dev-server.pid
         env:
           NEXT_PUBLIC_NHOST_SUBDOMAIN: ${{ secrets.NEXT_PUBLIC_NHOST_SUBDOMAIN || 'placeholder' }}
           NEXT_PUBLIC_APP_URL: http://localhost:3000
