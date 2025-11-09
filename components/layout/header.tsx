@@ -162,10 +162,10 @@ export default function Header({
               
               <DropdownMenuItem 
                 className="cursor-pointer"
-                onClick={() => router.push(`/${locale}/settings`)}
+                onClick={() => router.push(locale === 'en' ? '/account/settings' : `/${locale}/account/settings`)}
               >
                 <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+                <span>Account Settings</span>
               </DropdownMenuItem>
               
               <DropdownMenuSeparator />

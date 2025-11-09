@@ -1,159 +1,40 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { useAuth } from '@/lib/contexts/auth-context'
-import { changeEmail, changePassword } from '@/lib/nhost/auth'
-import { nhost } from '@/lib/nhost/client'
+import { useOrganization } from '@/lib/contexts/organization-context'
 import { toast } from 'sonner'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { Loader2, User, Lock, Trash2, Mail } from 'lucide-react'
+import { Loader2, Building2, Users, CreditCard } from 'lucide-react'
 
-export default function SettingsPage() {
-  const router = useRouter()
-  const { user, isLoading } = useAuth()
+export default function OrganizationSettingsPage() {
+  const { user, isLoading: authLoading } = useAuth()
+  const { currentOrganization, isLoading: orgLoading } = useOrganization()
   const t = useTranslations('pages.settings')
   
-  // Profile state
-  const [displayName, setDisplayName] = useState(user?.displayName || '')
-  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false)
-  
-  // Email change state
-  const [newEmail, setNewEmail] = useState('')
-  const [isChangingEmail, setIsChangingEmail] = useState(false)
-  
-  // Password change state
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [isChangingPassword, setIsChangingPassword] = useState(false)
-  
-  // Account deletion state
-  const [deleteConfirmation, setDeleteConfirmation] = useState('')
-  const [deletePassword, setDeletePassword] = useState('')
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  // Organization profile state
+  const [orgName, setOrgName] = useState(currentOrganization?.name || '')
+  // Note: industry, country, size, currency are not yet in the Organization type
+  // These will be added when the organization profile is fully implemented
+  const [industry, setIndustry] = useState('')
+  const [country, setCountry] = useState('')
+  const [orgSize, setOrgSize] = useState('')
+  const [currency, setCurrency] = useState('USD')
+  const [isUpdatingOrg, setIsUpdatingOrg] = useState(false)
 
-  // Update display name (simplified - just show info for now)
-  const handleUpdateProfile = async (e: React.FormEvent) => {
+  // Update organization profile
+  const handleUpdateOrganization = async (e: React.FormEvent) => {
     e.preventDefault()
-    toast.info('Display name updates will be available soon')
-    // TODO: Implement display name update via GraphQL mutation
+    toast.info('Organization profile updates will be available soon')
+    // TODO: Implement organization update via GraphQL mutation
   }
 
-  // Change email
-  const handleChangeEmail = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!newEmail) {
-      toast.error('Please enter a new email address')
-      return
-    }
-
-    setIsChangingEmail(true)
-
-    try {
-      await changeEmail(newEmail)
-      toast.success('Verification email sent! Please check your new email address.')
-      setNewEmail('')
-    } catch (error) {
-      toast.error('Failed to change email')
-      console.error('Email change error:', error)
-    } finally {
-      setIsChangingEmail(false)
-    }
-  }
-
-  // Change password
-  const handleChangePassword = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!newPassword || !confirmPassword) {
-      toast.error('Please fill in all password fields')
-      return
-    }
-
-    if (newPassword !== confirmPassword) {
-      toast.error('Passwords do not match')
-      return
-    }
-
-    if (newPassword.length < 8) {
-      toast.error('Password must be at least 8 characters')
-      return
-    }
-
-    setIsChangingPassword(true)
-
-    try {
-      await changePassword(newPassword)
-      toast.success('Password changed successfully')
-      setCurrentPassword('')
-      setNewPassword('')
-      setConfirmPassword('')
-    } catch (error) {
-      toast.error('Failed to change password')
-      console.error('Password change error:', error)
-    } finally {
-      setIsChangingPassword(false)
-    }
-  }
-
-  // Delete account
-  const handleDeleteAccount = async () => {
-    if (deleteConfirmation !== 'DELETE') {
-      toast.error('Please type DELETE to confirm')
-      return
-    }
-
-    if (!deletePassword) {
-      toast.error('Please enter your password')
-      return
-    }
-
-    setIsDeleting(true)
-
-    try {
-      // Re-authenticate before deletion
-      const loginResponse = await nhost.auth.signInEmailPassword({
-        email: user?.email || '',
-        password: deletePassword,
-      })
-
-      if (loginResponse.status !== 200 || !loginResponse.body.session) {
-        throw new Error('Invalid password')
-      }
-
-      // For now, just sign out (actual deletion would need backend function)
-      // TODO: Implement actual account deletion via Nhost function or GraphQL
-      toast.info('Account deletion will be available soon. For now, we\'ll sign you out.')
-      
-      setShowDeleteDialog(false)
-      
-      // Sign out
-      await nhost.auth.signOut({})
-      router.push('/auth/login')
-    } catch (error) {
-      toast.error('Failed to delete account. Please check your password.')
-      console.error('Account deletion error:', error)
-    } finally {
-      setIsDeleting(false)
-    }
-  }
+  const isLoading = authLoading || orgLoading
 
   if (isLoading) {
     return (
@@ -182,213 +63,119 @@ export default function SettingsPage() {
 
       <Separator />
 
-      {/* Profile Section */}
+      {/* Organization Profile Section */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
-            {t('profile.titleShort')}
+            <Building2 className="h-5 w-5" />
+            {t('organizationProfile.titleShort')}
           </CardTitle>
           <CardDescription>
-            {t('profile.updateInfo')}
+            {t('organizationProfile.updateInfo')}
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleUpdateProfile}>
+        <form onSubmit={handleUpdateOrganization}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">{t('profile.email')}</Label>
+              <Label htmlFor="orgName">{t('organizationProfile.name')}</Label>
               <Input
-                id="email"
-                type="email"
-                value={user.email || ''}
-                disabled
-                className="bg-muted"
-              />
-              <p className="text-sm text-muted-foreground">
-                {t('profile.emailCannotChange')}
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="displayName">{t('profile.displayName')}</Label>
-              <Input
-                id="displayName"
+                id="orgName"
                 type="text"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-                placeholder={t('profile.displayNamePlaceholder')}
+                value={orgName}
+                onChange={(e) => setOrgName(e.target.value)}
+                placeholder={t('organizationProfile.namePlaceholder')}
+                disabled={!currentOrganization}
               />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="industry">{t('organizationProfile.industry')}</Label>
+                <Input
+                  id="industry"
+                  type="text"
+                  value={industry}
+                  onChange={(e) => setIndustry(e.target.value)}
+                  disabled={!currentOrganization}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="country">{t('organizationProfile.country')}</Label>
+                <Input
+                  id="country"
+                  type="text"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  disabled={!currentOrganization}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="orgSize">{t('organizationProfile.size')}</Label>
+                <Input
+                  id="orgSize"
+                  type="text"
+                  value={orgSize}
+                  onChange={(e) => setOrgSize(e.target.value)}
+                  disabled={!currentOrganization}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="currency">{t('organizationProfile.currency')}</Label>
+                <Input
+                  id="currency"
+                  type="text"
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  disabled={!currentOrganization}
+                />
+              </div>
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" disabled={isUpdatingProfile}>
-              {isUpdatingProfile && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('profile.updateButton')}
+            <Button type="submit" disabled={isUpdatingOrg || !currentOrganization}>
+              {isUpdatingOrg && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {t('organizationProfile.updateButton')}
             </Button>
           </CardFooter>
         </form>
       </Card>
 
-      {/* Email Change Section */}
+      {/* Team Members Section */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Mail className="h-5 w-5" />
-            {t('email.titleShort')}
+            <Users className="h-5 w-5" />
+            {t('members.titleShort')}
           </CardTitle>
           <CardDescription>
-            {t('email.changeDescription')}
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleChangeEmail}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="currentEmail">{t('email.currentEmail')}</Label>
-              <Input
-                id="currentEmail"
-                type="email"
-                value={user.email || ''}
-                disabled
-                className="bg-muted"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="newEmail">{t('email.newEmail')}</Label>
-              <Input
-                id="newEmail"
-                type="email"
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                placeholder={t('email.newEmailPlaceholder')}
-              />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" disabled={isChangingEmail || !newEmail}>
-              {isChangingEmail && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('email.changeButton')}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
-
-      {/* Password Change Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Lock className="h-5 w-5" />
-            {t('password.titleShort')}
-          </CardTitle>
-          <CardDescription>
-            {t('password.changeDescription')}
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleChangePassword}>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="newPassword">{t('password.newPassword')}</Label>
-              <Input
-                id="newPassword"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder={t('password.newPasswordPlaceholder')}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t('password.confirmPassword')}</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder={t('password.confirmPasswordPlaceholder')}
-              />
-            </div>
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" disabled={isChangingPassword || !newPassword || !confirmPassword}>
-              {isChangingPassword && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t('password.changeButton')}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
-
-      {/* Danger Zone - Account Deletion */}
-      <Card className="border-destructive">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-destructive">
-            <Trash2 className="h-5 w-5" />
-            {t('deleteAccount.titleShort')}
-          </CardTitle>
-          <CardDescription>
-            {t('deleteAccount.description')}
+            {t('members.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground mb-4">
-            {t('deleteAccount.warningDescription')}
+          <p className="text-sm text-muted-foreground">
+            Team member management will be available soon.
           </p>
-          <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-            <DialogTrigger asChild>
-              <Button variant="destructive">
-                {t('deleteAccount.button')}
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{t('deleteAccount.dialog.title')}</DialogTitle>
-                <DialogDescription>
-                  {t('deleteAccount.dialog.description')}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="deleteConfirmation">
-                    {t('deleteAccount.dialog.confirmLabel')}
-                  </Label>
-                  <Input
-                    id="deleteConfirmation"
-                    value={deleteConfirmation}
-                    onChange={(e) => setDeleteConfirmation(e.target.value)}
-                    placeholder={t('deleteAccount.dialog.confirmPlaceholder')}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="deletePassword">
-                    {t('deleteAccount.dialog.passwordLabel')}
-                  </Label>
-                  <Input
-                    id="deletePassword"
-                    type="password"
-                    value={deletePassword}
-                    onChange={(e) => setDeletePassword(e.target.value)}
-                    placeholder={t('deleteAccount.dialog.passwordPlaceholder')}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowDeleteDialog(false)}
-                  disabled={isDeleting}
-                >
-                  {t('deleteAccount.dialog.cancelButton')}
-                </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleDeleteAccount}
-                  disabled={isDeleting || deleteConfirmation !== 'DELETE' || !deletePassword}
-                >
-                  {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {t('deleteAccount.dialog.confirmButton')}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+        </CardContent>
+      </Card>
+
+      {/* Billing Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CreditCard className="h-5 w-5" />
+            {t('billing.titleShort')}
+          </CardTitle>
+          <CardDescription>
+            {t('billing.description')}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            {t('billing.comingSoon')}
+          </p>
         </CardContent>
       </Card>
     </div>
   )
 }
-

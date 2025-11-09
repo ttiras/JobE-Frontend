@@ -208,11 +208,10 @@
       "title": "Analytics",
       "description": "View analytics and reports"
     },
-    "settings": {
-      "title": "Settings",
-      "description": "Manage your settings and preferences",
-      "managePreferences": "Manage your account settings and preferences",
-      "pleaseLogIn": "Please log in to access settings.",
+    "accountSettings": {
+      "title": "Account Settings",
+      "description": "Manage your account settings and preferences",
+      "pleaseLogIn": "Please log in to access account settings.",
       "profile": {
         "title": "Profile Information",
         "titleShort": "Profile",
@@ -281,6 +280,40 @@
         }
       },
       "comingSoon": "Display name updates will be available soon"
+    },
+    "settings": {
+      "title": "Organization Settings",
+      "description": "Manage your organization settings and preferences",
+      "managePreferences": "Manage your organization settings and preferences",
+      "pleaseLogIn": "Please log in to access organization settings.",
+      "organizationProfile": {
+        "title": "Organization Profile",
+        "titleShort": "Organization Profile",
+        "description": "Update your organization's profile information",
+        "updateInfo": "Update your organization information",
+        "name": "Organization Name",
+        "namePlaceholder": "Enter organization name",
+        "industry": "Industry",
+        "country": "Country",
+        "size": "Organization Size",
+        "currency": "Currency",
+        "updateButton": "Update Organization",
+        "updating": "Updating..."
+      },
+      "members": {
+        "title": "Team Members",
+        "titleShort": "Members",
+        "description": "Manage organization members and their roles",
+        "addMember": "Add Member",
+        "removeMember": "Remove Member",
+        "changeRole": "Change Role"
+      },
+      "billing": {
+        "title": "Billing & Subscription",
+        "titleShort": "Billing",
+        "description": "Manage your organization's billing and subscription",
+        "comingSoon": "Billing management will be available soon"
+      }
     }
   },
   "errors": {
