@@ -575,7 +575,7 @@ test.describe('T031: Account Deletion', () => {
           throw new Error(`Expected redirect to /login but still on account settings. URL: ${currentUrl}`)
         } else {
           // We're somewhere else - might be AuthGuard redirect or another page
-          throw new Error(`Expected redirect to /login but navigated to: ${currentUrl}\nPage content: ${pageText.substring(0, 300)}`)
+          throw new Error(`Expected redirect to /login but navigated to: ${currentUrl}\nPage content: ${pageText?.substring(0, 300) || 'N/A'}`)
         }
       }
     }
