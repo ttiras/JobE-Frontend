@@ -64,8 +64,9 @@ describe('Nhost Client Configuration', () => {
       it('should generate correct verify email URL with default locale', () => {
         const url = getVerifyEmailRedirectUrl()
         
-        // Should include locale in path
-        expect(url).toContain('/en/verify-email')
+        // Default locale (en) is omitted from URLs
+        expect(url).toContain('/verify-email')
+        expect(url).not.toContain('/en/verify-email')
       })
 
       it('should generate correct verify email URL with custom locale', () => {
@@ -79,7 +80,9 @@ describe('Nhost Client Configuration', () => {
       it('should generate correct reset password URL with default locale', () => {
         const url = getResetPasswordRedirectUrl()
         
-        expect(url).toContain('/en/reset-password')
+        // Default locale (en) is omitted from URLs
+        expect(url).toContain('/reset-password')
+        expect(url).not.toContain('/en/reset-password')
       })
 
       it('should generate correct reset password URL with custom locale', () => {

@@ -49,8 +49,8 @@ describe('SessionExpiredDialog Integration', () => {
     };
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
 
-    // Setup pathname mock
-    (usePathname as jest.Mock).mockReturnValue('/en/dashboard');
+    // Setup pathname mock (default locale 'en' is omitted from URLs)
+    (usePathname as jest.Mock).mockReturnValue('/dashboard');
 
     // Setup locale mock
     (useLocale as jest.Mock).mockReturnValue('en');
@@ -179,10 +179,10 @@ describe('SessionExpiredDialog Integration', () => {
       // Verify callbacks triggered
       expect(onReAuthenticate).toHaveBeenCalledTimes(1);
 
-      // Verify navigation to login with returnUrl
+      // Verify navigation to login with returnUrl (default locale 'en' is omitted)
       await waitFor(() => {
         expect(mockRouter.push).toHaveBeenCalledWith(
-          '/en/login?returnUrl=%2Fen%2Fdashboard'
+          '/login?returnUrl=%2Fdashboard'
         );
       });
     });
@@ -335,10 +335,10 @@ describe('SessionExpiredDialog Integration', () => {
       const loginButton = screen.getByRole('button', { name: /log in again/i });
       await user.click(loginButton);
 
-      // Should fallback to default dashboard path
+      // Should fallback to default dashboard path (default locale 'en' is omitted)
       await waitFor(() => {
         expect(mockRouter.push).toHaveBeenCalledWith(
-          '/en/login?returnUrl=%2Fen%2Fdashboard'
+          '/login?returnUrl=%2Fdashboard'
         );
       });
     });

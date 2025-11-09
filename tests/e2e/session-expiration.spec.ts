@@ -27,8 +27,8 @@ test.describe('Session Expiration E2E Flow', () => {
     await page.fill('input[name="password"]', 'TestPassword123!');
     await page.click('button[type="submit"]');
     
-    // Wait for redirect to dashboard
-    await page.waitForURL(/\/en\/dashboard/);
+    // Wait for redirect to dashboard (default locale 'en' is omitted)
+    await page.waitForURL(/\/dashboard/);
     expect(page.url()).toContain('/dashboard');
 
     // Step 2: Navigate to a protected page
@@ -57,7 +57,7 @@ test.describe('Session Expiration E2E Flow', () => {
     await page.fill('input[name="password"]', 'TestPassword123!');
     await page.click('button[type="submit"]');
     
-    await page.waitForURL(/\/en\/dashboard/);
+    await page.waitForURL(/\/dashboard/);
 
     // Step 2: Navigate to specific page
     const targetPage = '/dashboard/settings';
@@ -121,7 +121,7 @@ test.describe('Session Expiration E2E Flow', () => {
     await page.fill('input[name="password"]', 'TestPassword123!');
     await page.click('button[type="submit"]');
     
-    await page.waitForURL(/\/en\/dashboard/);
+    await page.waitForURL(/\/dashboard/);
 
     // Step 2: Go to specific page
     const originalPage = '/dashboard/profile';
@@ -181,7 +181,7 @@ test.describe('Session Cookie Management', () => {
     await page.fill('input[name="password"]', 'TestPassword123!');
     await page.click('button[type="submit"]');
     
-    await page.waitForURL(/\/en\/dashboard/);
+    await page.waitForURL(/\/dashboard/);
 
     // Verify session cookie exists
     const cookies = await page.context().cookies();
@@ -246,7 +246,7 @@ test.describe('Multi-Tab Session Sync', () => {
     // Logout in first tab
     await page1.click('[data-testid="user-menu"]');
     await page1.click('text=Logout');
-    await page1.waitForURL(/\/en\/login/);
+    await page1.waitForURL(/\/login/);
 
     // Refresh second tab - should also be logged out
     await page2.reload();

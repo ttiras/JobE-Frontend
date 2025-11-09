@@ -31,8 +31,8 @@ test.describe('Idle Session Refresh', () => {
     // Submit login form
     await page.click('button[type="submit"]')
     
-    // Should redirect to dashboard
-    await expect(page).toHaveURL(/\/en\/dashboard/)
+    // Should redirect to dashboard (default locale 'en' is omitted)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Verify user is authenticated
     await expect(page.locator('text=Dashboard')).toBeVisible()
@@ -54,7 +54,7 @@ test.describe('Idle Session Refresh', () => {
     await page.click('text=Profile', { timeout: 5000 })
     
     // Should successfully navigate without being logged out
-    await expect(page).toHaveURL(/\/en\//)
+    await expect(page).toHaveURL(/\/dashboard/)
     
     // Verify still authenticated (no redirect to login)
     await expect(page.locator('text=Login')).not.toBeVisible()
@@ -93,7 +93,7 @@ test.describe('Idle Session Refresh', () => {
       await page.goto(targetPage)
       
       // Should not be redirected to login
-      await expect(page).not.toHaveURL(/\/en\/login/)
+      await expect(page).not.toHaveURL(/\/login/)
       
       // Give time for potential refresh
       await page.waitForTimeout(1000)
@@ -199,6 +199,6 @@ test.describe('Session Refresh Error Handling', () => {
     await page.goto('/dashboard')
     
     // Should redirect to login
-    await expect(page).toHaveURL(/\/en\/login/)
+    await expect(page).toHaveURL(/\/login/)
   })
 })
