@@ -173,7 +173,8 @@ describe('SessionExpiredDialog', () => {
 
     it('should navigate to login with returnUrl when re-authenticating', async () => {
       const user = userEvent.setup();
-      (usePathname as jest.Mock).mockReturnValue('/en/dashboard/settings');
+      // Default locale 'en' is omitted from URLs
+      (usePathname as jest.Mock).mockReturnValue('/dashboard/settings');
 
       render(
         <SessionExpiredDialog
@@ -187,11 +188,13 @@ describe('SessionExpiredDialog', () => {
       const loginButton = screen.getByTestId('reauth-button');
       await user.click(loginButton);
 
+      // Default locale 'en' is omitted from login URL
       expect(mockRouter.push).toHaveBeenCalledWith(
-        expect.stringContaining('/en/login?returnUrl=')
+        expect.stringContaining('/login?returnUrl=')
       );
+      // ReturnUrl should also omit default locale
       expect(mockRouter.push).toHaveBeenCalledWith(
-        expect.stringContaining(encodeURIComponent('/en/dashboard/settings'))
+        expect.stringContaining(encodeURIComponent('/dashboard/settings'))
       );
     });
 
@@ -211,9 +214,9 @@ describe('SessionExpiredDialog', () => {
       const loginButton = screen.getByTestId('reauth-button');
       await user.click(loginButton);
 
-      // Should use default dashboard path as fallback
+      // Should use default dashboard path as fallback (default locale 'en' is omitted)
       expect(mockRouter.push).toHaveBeenCalledWith(
-        '/en/login?returnUrl=%2Fen%2Fdashboard'
+        '/login?returnUrl=%2Fdashboard'
       );
     });
   });
