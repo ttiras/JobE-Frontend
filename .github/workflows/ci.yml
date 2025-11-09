@@ -41,6 +41,9 @@ jobs:
 
       - name: Build application
         run: pnpm build
+        env:
+          NEXT_PUBLIC_NHOST_SUBDOMAIN: ${{ secrets.NEXT_PUBLIC_NHOST_SUBDOMAIN || 'placeholder' }}
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
 
       - name: Upload test coverage
         uses: actions/upload-artifact@v4

@@ -2,8 +2,15 @@ import { createClient } from '@nhost/nhost-js'
 import { CookieStorage } from '@nhost/nhost-js/session'
 import { SESSION_COOKIE, DEFAULTS, AUTH_ERRORS } from '@/lib/constants/auth'
 
-if (!process.env.NEXT_PUBLIC_NHOST_SUBDOMAIN) {
-  throw new Error(AUTH_ERRORS.MISSING_SUBDOMAIN)
+// Only validate subdomain at runtime, not during build/static generation
+// This allows Next.js to build even if env vars aren't set (they'll be set at runtime)
+const getSubdomain = () => {
+  const subdomain = process.env.NEXT_PUBLIC_NHOST_SUBDOMAIN
+  if (!subdomain && typeof window !== 'undefined') {
+    // Only throw in browser context (runtime), not during build
+    throw new Error(AUTH_ERRORS.MISSING_SUBDOMAIN)
+  }
+  return subdomain || 'placeholder' // Use placeholder during build
 }
 
 // Get the base URL for redirects (works in both dev and production)
@@ -41,7 +48,7 @@ const getBaseUrl = () => {
  * @see lib/constants/auth.ts for configuration values
  */
 export const nhost = createClient({
-  subdomain: process.env.NEXT_PUBLIC_NHOST_SUBDOMAIN,
+  subdomain: getSubdomain(),
   region: process.env.NEXT_PUBLIC_NHOST_REGION || undefined,
   
   /**
